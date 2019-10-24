@@ -1,0 +1,7 @@
+{
+	"name": "mssql-fabtimedev",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "testing on-premis FabTime server"
+	}
+}
