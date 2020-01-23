@@ -1,0 +1,6 @@
+{
+	"name": "integrationRuntime1FT3",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
