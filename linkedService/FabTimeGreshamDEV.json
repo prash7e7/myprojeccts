@@ -6,7 +6,7 @@
 		"type": "SqlServer",
 		"typeProperties": {
 			"connectionString": "integrated security=False;data source=PAPRIKA\\GRFTDEV;initial catalog=FabTime717ScrapeData;user id=fabtime",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI2NWNiNTQ4Yy0zMGYwLTQyMjYtYTNkNy05MGQwNDNjYTQxZWEiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJjNmYwMjU1OS0xMzc2LTRjNzAtYWQ2NC00NGJkZWY5MDcxZTEiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "integrationRuntime128Jan",
