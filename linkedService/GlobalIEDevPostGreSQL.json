@@ -1,0 +1,17 @@
+{
+	"name": "GlobalIEDevPostGreSQL",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "GlobalIEDevPostGreSQL",
+		"annotations": [],
+		"type": "PostgreSql",
+		"typeProperties": {
+			"connectionString": "host=cxciengd-db;port=5445;database=itv_stats;uid=itv_stats_user;encryptionmethod=0",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJhODYyYmM4MC1iMTc4LTRkZWYtYjE1NC1mZGVhNWMwZWMyOTAiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "integrationRuntime128Jan",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
