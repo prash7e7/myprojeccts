@@ -1,5 +1,5 @@
 {
-	"name": "GRFTDevShip",
+	"name": "SQLServerExample",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "FabTimeGreshamDEV",
