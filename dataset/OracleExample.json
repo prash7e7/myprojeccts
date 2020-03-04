@@ -1,0 +1,16 @@
+{
+	"name": "OracleExample",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Pocatello_PLL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "FABTIMEADM",
+			"table": "DBD_LOT_LIST"
+		}
+	}
+}
