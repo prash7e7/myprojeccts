@@ -1,5 +1,5 @@
 {
-	"name": "PostgreSqlTable1",
+	"name": "PostgreExample",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "GlobalIEDevPostGreSQL",
