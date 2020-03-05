@@ -20,6 +20,12 @@
 						"sqlReaderQuery": "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED\nselect * from [FabTime717].[dbo].tblTempWIPTranList where temptag =\n(Select * from openquery([PAPRIKA\\GRFTDEV],\n'Declare @RetValue int = 1\nSET FMTONLY OFF;  \nEXEC @RetValue=Fabtime717.dbo.prcGetData_siteCode @QueryString=''FactoryID=1&Chart=LOTHISTORY&LotsLike=GAW52161.1''\nWITH RESULT SETS ((TempTag Int))\ncommit;\n'))\norder by MESRecordID",
 						"queryTimeout": "02:00:00"
 					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						}
+					},
 					"enableStaging": false
 				},
 				"inputs": [
@@ -27,7 +33,40 @@
 						"referenceName": "fabTimeGreshamLotHistory",
 						"type": "DatasetReference"
 					}
+				],
+				"outputs": [
+					{
+						"referenceName": "GreshamLotListParquet",
+						"type": "DatasetReference"
+					}
 				]
+			},
+			{
+				"name": "FtDataBricks",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/prashanth.nair@onsemi.com/parquettest"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks1",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"annotations": []
