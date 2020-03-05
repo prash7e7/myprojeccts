@@ -1,6 +1,35 @@
 {
 	"name": "ftGreshamLotHistory",
 	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED\nselect * from [FabTime717].[dbo].tblTempWIPTranList where temptag =\n(Select * from openquery([PAPRIKA\\GRFTDEV],\n'Declare @RetValue int = 1\nSET FMTONLY OFF;  \nEXEC @RetValue=Fabtime717.dbo.prcGetData_siteCode @QueryString=''FactoryID=1&Chart=LOTHISTORY&LotsLike=GAW52161.1''\nWITH RESULT SETS ((TempTag Int))\ncommit;\n'))\norder by MESRecordID",
+						"queryTimeout": "02:00:00"
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "fabTimeGreshamLotHistory",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
 		"annotations": []
 	}
 }
