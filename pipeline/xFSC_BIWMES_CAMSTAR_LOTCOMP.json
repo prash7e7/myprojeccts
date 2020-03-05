@@ -26,7 +26,6 @@
 						"storeSettings": {
 							"type": "AzureBlobFSWriteSettings",
 							"maxConcurrentConnections": 1,
-							"copyBehavior": "MergeFiles",
 							"blockSizeInMB": 4
 						}
 					},
