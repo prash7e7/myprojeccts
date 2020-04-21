@@ -1,0 +1,7 @@
+{
+	"name": "integrationRuntimeMfgDataLake",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "integrationRuntimeMfgDataLake"
+	}
+}
