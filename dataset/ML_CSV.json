@@ -1,0 +1,20 @@
+{
+	"name": "ML_CSV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ONPREMVM",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "FileServerLocation"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
