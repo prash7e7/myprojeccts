@@ -209,10 +209,11 @@
 		"parameters": {
 			"SourceStore_Location": {
 				"type": "String",
-				"defaultValue": "staged"
+				"defaultValue": "adls"
 			},
 			"SourceStore_Directory": {
-				"type": "String"
+				"type": "String",
+				"defaultValue": "staged"
 			},
 			"DestinationStore_Location": {
 				"type": "String",
