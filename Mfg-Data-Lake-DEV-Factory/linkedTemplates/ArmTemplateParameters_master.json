@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "Mfg-Data-Lake-DEV-Factory"
+		},
+		"ONPREMVM_password": {
+			"value": ""
+		},
+		"onsemidevmdlstoragelink_accountKey": {
+			"value": ""
+		},
+		"ONPREMVM_properties_typeProperties_host": {
+			"value": "\\\\USCO01WS0029.ad.onsemi.com\\MLArtifacts"
+		},
+		"ONPREMVM_properties_typeProperties_userId": {
+			"value": "onsemi\\fabtimesys"
+		},
+		"onsemidevmdlstoragelink_properties_typeProperties_url": {
+			"value": "https://onsemidevmdlstorage.dfs.core.windows.net"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
