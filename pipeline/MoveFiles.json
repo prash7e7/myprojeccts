@@ -209,7 +209,7 @@
 		"parameters": {
 			"SourceStore_Location": {
 				"type": "String",
-				"defaultValue": "MLArtifacts"
+				"defaultValue": "staged"
 			},
 			"SourceStore_Directory": {
 				"type": "String"
