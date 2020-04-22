@@ -2,12 +2,13 @@
 	"name": "ONPREMVM",
 	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
+		"description": "onpremvm",
 		"annotations": [],
 		"type": "FileServer",
 		"typeProperties": {
 			"host": "\\\\USCO01WS0029.ad.onsemi.com\\MLArtifacts",
 			"userId": "onsemi\\fabtimesys",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI0ZTg4YTBkZi1kYjQ2LTRlY2MtYmUyZC0zNDA1NGFmOGM3Y2MiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI2NDIyODljNS0yMTIyLTRlYmEtYjI2Yi1jYzQ0OTRhZWRlOTciLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "integrationRuntimeMfgDataLake",
