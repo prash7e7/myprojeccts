@@ -10,7 +10,8 @@
 					"type": "PipelineReference"
 				},
 				"parameters": {
-					"SourceStore_Location": "staged",
+					"SourceStore_Location": "adls",
+					"SourceStore_Directory": "staged",
 					"DestinationStore_Location": "adls",
 					"DestinationStore_Directory": "staged"
 				}
