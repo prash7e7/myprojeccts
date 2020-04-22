@@ -26,6 +26,22 @@
 		"ONPREMVM_properties_typeProperties_userId": {
 			"type": "string",
 			"defaultValue": "onsemi\\fabtimesys"
+		},
+		"5MinRun_properties_MoveFiles_parameters_SourceStore_Location": {
+			"type": "string",
+			"defaultValue": "adls"
+		},
+		"5MinRun_properties_MoveFiles_parameters_SourceStore_Directory": {
+			"type": "string",
+			"defaultValue": "staged"
+		},
+		"5MinRun_properties_MoveFiles_parameters_DestinationStore_Location": {
+			"type": "string",
+			"defaultValue": "adls"
+		},
+		"5MinRun_properties_MoveFiles_parameters_DestinationStore_Directory": {
+			"type": "string",
+			"defaultValue": "staged"
 		}
 	},
 	"variables": {
@@ -415,10 +431,11 @@
 				"parameters": {
 					"SourceStore_Location": {
 						"type": "String",
-						"defaultValue": "staged"
+						"defaultValue": "adls"
 					},
 					"SourceStore_Directory": {
-						"type": "String"
+						"type": "String",
+						"defaultValue": "staged"
 					},
 					"DestinationStore_Location": {
 						"type": "String",
@@ -435,6 +452,41 @@
 				"[concat(variables('factoryId'), '/datasets/BinaryDataSource_Folder')]",
 				"[concat(variables('factoryId'), '/datasets/BinaryDataSource_File')]",
 				"[concat(variables('factoryId'), '/datasets/BinaryDataDestination')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/5MinRun')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "MoveFiles",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"SourceStore_Location": "[parameters('5MinRun_properties_MoveFiles_parameters_SourceStore_Location')]",
+							"SourceStore_Directory": "[parameters('5MinRun_properties_MoveFiles_parameters_SourceStore_Directory')]",
+							"DestinationStore_Location": "[parameters('5MinRun_properties_MoveFiles_parameters_DestinationStore_Location')]",
+							"DestinationStore_Directory": "[parameters('5MinRun_properties_MoveFiles_parameters_DestinationStore_Directory')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 5,
+						"startTime": "2020-04-22T04:52:00.000Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/MoveFiles')]"
 			]
 		}
 	]

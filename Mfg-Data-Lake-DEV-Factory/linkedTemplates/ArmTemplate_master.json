@@ -27,6 +27,22 @@
 			"type": "string",
 			"defaultValue": "https://onsemidevmdlstorage.dfs.core.windows.net"
 		},
+		"5MinRun_properties_MoveFiles_parameters_SourceStore_Location": {
+			"type": "string",
+			"defaultValue": "adls"
+		},
+		"5MinRun_properties_MoveFiles_parameters_SourceStore_Directory": {
+			"type": "string",
+			"defaultValue": "staged"
+		},
+		"5MinRun_properties_MoveFiles_parameters_DestinationStore_Location": {
+			"type": "string",
+			"defaultValue": "adls"
+		},
+		"5MinRun_properties_MoveFiles_parameters_DestinationStore_Directory": {
+			"type": "string",
+			"defaultValue": "staged"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -68,6 +84,18 @@
 					},
 					"ONPREMVM_properties_typeProperties_userId": {
 						"value": "[parameters('ONPREMVM_properties_typeProperties_userId')]"
+					},
+					"5MinRun_properties_MoveFiles_parameters_SourceStore_Location": {
+						"value": "[parameters('5MinRun_properties_MoveFiles_parameters_SourceStore_Location')]"
+					},
+					"5MinRun_properties_MoveFiles_parameters_SourceStore_Directory": {
+						"value": "[parameters('5MinRun_properties_MoveFiles_parameters_SourceStore_Directory')]"
+					},
+					"5MinRun_properties_MoveFiles_parameters_DestinationStore_Location": {
+						"value": "[parameters('5MinRun_properties_MoveFiles_parameters_DestinationStore_Location')]"
+					},
+					"5MinRun_properties_MoveFiles_parameters_DestinationStore_Directory": {
+						"value": "[parameters('5MinRun_properties_MoveFiles_parameters_DestinationStore_Directory')]"
 					}
 				}
 			},

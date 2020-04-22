@@ -19,6 +19,18 @@
 		},
 		"onsemidevmdlstoragelink_properties_typeProperties_url": {
 			"value": "https://onsemidevmdlstorage.dfs.core.windows.net"
+		},
+		"5MinRun_properties_MoveFiles_parameters_SourceStore_Location": {
+			"value": "adls"
+		},
+		"5MinRun_properties_MoveFiles_parameters_SourceStore_Directory": {
+			"value": "staged"
+		},
+		"5MinRun_properties_MoveFiles_parameters_DestinationStore_Location": {
+			"value": "adls"
+		},
+		"5MinRun_properties_MoveFiles_parameters_DestinationStore_Directory": {
+			"value": "staged"
 		}
 	}
 }
