@@ -208,10 +208,12 @@
 		],
 		"parameters": {
 			"SourceStore_Location": {
-				"type": "String"
+				"type": "String",
+				"defaultValue": "ML"
 			},
 			"SourceStore_Directory": {
-				"type": "String"
+				"type": "String",
+				"defaultValue": "MLArtifacts"
 			},
 			"DestinationStore_Location": {
 				"type": "String",
