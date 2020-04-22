@@ -209,11 +209,10 @@
 		"parameters": {
 			"SourceStore_Location": {
 				"type": "String",
-				"defaultValue": "ML"
+				"defaultValue": "MLArtifacts"
 			},
 			"SourceStore_Directory": {
-				"type": "String",
-				"defaultValue": "MLArtifacts"
+				"type": "String"
 			},
 			"DestinationStore_Location": {
 				"type": "String",
