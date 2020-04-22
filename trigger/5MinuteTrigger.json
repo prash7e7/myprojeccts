@@ -1,0 +1,29 @@
+{
+	"name": "5MinuteTrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "MoveFiles",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"SourceStore_Location": "staged",
+					"DestinationStore_Location": "adls",
+					"DestinationStore_Directory": "staged"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 5,
+				"startTime": "2020-04-22T01:22:00.000Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}
