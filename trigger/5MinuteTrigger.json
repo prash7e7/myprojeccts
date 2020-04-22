@@ -3,19 +3,7 @@
 	"properties": {
 		"annotations": [],
 		"runtimeState": "Started",
-		"pipelines": [
-			{
-				"pipelineReference": {
-					"referenceName": "MoveFiles",
-					"type": "PipelineReference"
-				},
-				"parameters": {
-					"SourceStore_Location": "staged",
-					"DestinationStore_Location": "adls",
-					"DestinationStore_Directory": "staged"
-				}
-			}
-		],
+		"pipelines": [],
 		"type": "ScheduleTrigger",
 		"typeProperties": {
 			"recurrence": {
