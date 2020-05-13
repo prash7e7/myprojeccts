@@ -8,7 +8,7 @@
 		"ONPREMVM_password": {
 			"value": ""
 		},
-		"onsemidevmdlstoragelink_accountKey": {
+		"ONPREMALLUSERS_password": {
 			"value": ""
 		},
 		"ONPREMVM_properties_typeProperties_host": {
@@ -20,17 +20,11 @@
 		"onsemidevmdlstoragelink_properties_typeProperties_url": {
 			"value": "https://onsemidevmdlstorage.dfs.core.windows.net"
 		},
-		"5MinRun_properties_MoveFiles_parameters_SourceStore_Location": {
-			"value": "adls"
+		"ONPREMALLUSERS_properties_typeProperties_host": {
+			"value": "\\\\USCO01WS0029\\adls"
 		},
-		"5MinRun_properties_MoveFiles_parameters_SourceStore_Directory": {
-			"value": "staged"
-		},
-		"5MinRun_properties_MoveFiles_parameters_DestinationStore_Location": {
-			"value": "adls"
-		},
-		"5MinRun_properties_MoveFiles_parameters_DestinationStore_Directory": {
-			"value": "staged"
+		"ONPREMALLUSERS_properties_typeProperties_userId": {
+			"value": "onsemi\\fabtimesys"
 		}
 	}
 }

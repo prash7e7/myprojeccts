@@ -11,9 +11,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ONPREMVM'"
 		},
-		"onsemidevmdlstoragelink_accountKey": {
+		"ONPREMALLUSERS_password": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'onsemidevmdlstoragelink'"
+			"metadata": "Secure string for 'password' of 'ONPREMALLUSERS'"
 		},
 		"ONPREMVM_properties_typeProperties_host": {
 			"type": "string",
@@ -27,21 +27,13 @@
 			"type": "string",
 			"defaultValue": "https://onsemidevmdlstorage.dfs.core.windows.net"
 		},
-		"5MinRun_properties_MoveFiles_parameters_SourceStore_Location": {
+		"ONPREMALLUSERS_properties_typeProperties_host": {
 			"type": "string",
-			"defaultValue": "adls"
+			"defaultValue": "\\\\USCO01WS0029\\adls"
 		},
-		"5MinRun_properties_MoveFiles_parameters_SourceStore_Directory": {
+		"ONPREMALLUSERS_properties_typeProperties_userId": {
 			"type": "string",
-			"defaultValue": "staged"
-		},
-		"5MinRun_properties_MoveFiles_parameters_DestinationStore_Location": {
-			"type": "string",
-			"defaultValue": "adls"
-		},
-		"5MinRun_properties_MoveFiles_parameters_DestinationStore_Directory": {
-			"type": "string",
-			"defaultValue": "staged"
+			"defaultValue": "onsemi\\fabtimesys"
 		},
 		"containerUri": {
 			"type": "string",
@@ -70,11 +62,11 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"onsemidevmdlstoragelink_accountKey": {
-						"value": "[parameters('onsemidevmdlstoragelink_accountKey')]"
-					},
 					"ONPREMVM_password": {
 						"value": "[parameters('ONPREMVM_password')]"
+					},
+					"ONPREMALLUSERS_password": {
+						"value": "[parameters('ONPREMALLUSERS_password')]"
 					},
 					"onsemidevmdlstoragelink_properties_typeProperties_url": {
 						"value": "[parameters('onsemidevmdlstoragelink_properties_typeProperties_url')]"
@@ -85,17 +77,11 @@
 					"ONPREMVM_properties_typeProperties_userId": {
 						"value": "[parameters('ONPREMVM_properties_typeProperties_userId')]"
 					},
-					"5MinRun_properties_MoveFiles_parameters_SourceStore_Location": {
-						"value": "[parameters('5MinRun_properties_MoveFiles_parameters_SourceStore_Location')]"
+					"ONPREMALLUSERS_properties_typeProperties_host": {
+						"value": "[parameters('ONPREMALLUSERS_properties_typeProperties_host')]"
 					},
-					"5MinRun_properties_MoveFiles_parameters_SourceStore_Directory": {
-						"value": "[parameters('5MinRun_properties_MoveFiles_parameters_SourceStore_Directory')]"
-					},
-					"5MinRun_properties_MoveFiles_parameters_DestinationStore_Location": {
-						"value": "[parameters('5MinRun_properties_MoveFiles_parameters_DestinationStore_Location')]"
-					},
-					"5MinRun_properties_MoveFiles_parameters_DestinationStore_Directory": {
-						"value": "[parameters('5MinRun_properties_MoveFiles_parameters_DestinationStore_Directory')]"
+					"ONPREMALLUSERS_properties_typeProperties_userId": {
+						"value": "[parameters('ONPREMALLUSERS_properties_typeProperties_userId')]"
 					}
 				}
 			},

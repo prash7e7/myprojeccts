@@ -6,65 +6,12 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "Mfg-Data-Lake-DEV-Factory"
-		},
-		"ONPREMVM_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'ONPREMVM'"
-		},
-		"ONPREMALLUSERS_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'ONPREMALLUSERS'"
-		},
-		"ONPREMVM_properties_typeProperties_host": {
-			"type": "string",
-			"defaultValue": "\\\\USCO01WS0029.ad.onsemi.com\\MLArtifacts"
-		},
-		"ONPREMVM_properties_typeProperties_userId": {
-			"type": "string",
-			"defaultValue": "onsemi\\fabtimesys"
-		},
-		"onsemidevmdlstoragelink_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://onsemidevmdlstorage.dfs.core.windows.net"
-		},
-		"ONPREMALLUSERS_properties_typeProperties_host": {
-			"type": "string",
-			"defaultValue": "\\\\USCO01WS0029\\adls"
-		},
-		"ONPREMALLUSERS_properties_typeProperties_userId": {
-			"type": "string",
-			"defaultValue": "onsemi\\fabtimesys"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('factoryName'), '/ONPREMVM')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "onpremvm",
-				"annotations": [],
-				"type": "FileServer",
-				"typeProperties": {
-					"host": "[parameters('ONPREMVM_properties_typeProperties_host')]",
-					"userId": "[parameters('ONPREMVM_properties_typeProperties_userId')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('ONPREMVM_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntimeMfgDataLake",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeMfgDataLake')]"
-			]
-		},
 		{
 			"name": "[concat(parameters('factoryName'), '/onsemidevmdlstoragelink')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
@@ -74,19 +21,8 @@
 				"annotations": [],
 				"type": "AzureBlobFS",
 				"typeProperties": {
-					"url": "[parameters('onsemidevmdlstoragelink_properties_typeProperties_url')]"
+					"url": "https://onsemidevmdlstorage.dfs.core.windows.net"
 				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/integrationRuntimeMfgDataLake')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"description": "integrationRuntimeMfgDataLake",
-				"typeProperties": {}
 			},
 			"dependsOn": []
 		},
@@ -98,11 +34,11 @@
 				"annotations": [],
 				"type": "FileServer",
 				"typeProperties": {
-					"host": "[parameters('ONPREMALLUSERS_properties_typeProperties_host')]",
-					"userId": "[parameters('ONPREMALLUSERS_properties_typeProperties_userId')]",
+					"host": "\\\\USCO01WS0029\\adls",
+					"userId": "onsemi\\fabtimesys",
 					"password": {
 						"type": "SecureString",
-						"value": "[parameters('ONPREMALLUSERS_password')]"
+						"value": "**********"
 					}
 				},
 				"connectVia": {
@@ -110,9 +46,7 @@
 					"type": "IntegrationRuntimeReference"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeMfgDataLake')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/BinarySourceFileStore1')]",
