@@ -25,6 +25,18 @@
 		},
 		"ONPREMALLUSERS_properties_typeProperties_userId": {
 			"value": "onsemi\\fabtimesys"
+		},
+		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
+			"value": "inbound"
+		},
+		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory": {
+			"value": "user"
+		},
+		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder": {
+			"value": "adls\\inbound"
+		},
+		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
+			"value": "user"
 		}
 	}
 }

@@ -35,6 +35,22 @@
 			"type": "string",
 			"defaultValue": "onsemi\\fabtimesys"
 		},
+		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
+			"type": "string",
+			"defaultValue": "inbound"
+		},
+		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory": {
+			"type": "string",
+			"defaultValue": "user"
+		},
+		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder": {
+			"type": "string",
+			"defaultValue": "adls\\inbound"
+		},
+		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
+			"type": "string",
+			"defaultValue": "user"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -82,6 +98,18 @@
 					},
 					"ONPREMALLUSERS_properties_typeProperties_userId": {
 						"value": "[parameters('ONPREMALLUSERS_properties_typeProperties_userId')]"
+					},
+					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
+						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder')]"
+					},
+					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory": {
+						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory')]"
+					},
+					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder": {
+						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder')]"
+					},
+					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
+						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory')]"
 					}
 				}
 			},
