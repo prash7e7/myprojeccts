@@ -5,11 +5,17 @@
 		"factoryName": {
 			"value": "Mfg-Data-Lake-DEV-Factory"
 		},
+		"ONPREMALLUSERS_password": {
+			"value": ""
+		},
 		"ONPREMVM_password": {
 			"value": ""
 		},
-		"ONPREMALLUSERS_password": {
-			"value": ""
+		"ONPREMALLUSERS_properties_typeProperties_host": {
+			"value": "\\\\USCO01WS0029\\adls"
+		},
+		"ONPREMALLUSERS_properties_typeProperties_userId": {
+			"value": "onsemi\\fabtimesys"
 		},
 		"ONPREMVM_properties_typeProperties_host": {
 			"value": "\\\\USCO01WS0029.ad.onsemi.com\\MLArtifacts"
@@ -19,12 +25,6 @@
 		},
 		"onsemidevmdlstoragelink_properties_typeProperties_url": {
 			"value": "https://onsemidevmdlstorage.dfs.core.windows.net"
-		},
-		"ONPREMALLUSERS_properties_typeProperties_host": {
-			"value": "\\\\USCO01WS0029\\adls"
-		},
-		"ONPREMALLUSERS_properties_typeProperties_userId": {
-			"value": "onsemi\\fabtimesys"
 		},
 		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
 			"value": "inbound"

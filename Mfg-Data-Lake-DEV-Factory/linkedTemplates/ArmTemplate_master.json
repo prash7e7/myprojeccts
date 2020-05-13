@@ -7,13 +7,21 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "Mfg-Data-Lake-DEV-Factory"
 		},
+		"ONPREMALLUSERS_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ONPREMALLUSERS'"
+		},
 		"ONPREMVM_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ONPREMVM'"
 		},
-		"ONPREMALLUSERS_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'ONPREMALLUSERS'"
+		"ONPREMALLUSERS_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "\\\\USCO01WS0029\\adls"
+		},
+		"ONPREMALLUSERS_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "onsemi\\fabtimesys"
 		},
 		"ONPREMVM_properties_typeProperties_host": {
 			"type": "string",
@@ -26,14 +34,6 @@
 		"onsemidevmdlstoragelink_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://onsemidevmdlstorage.dfs.core.windows.net"
-		},
-		"ONPREMALLUSERS_properties_typeProperties_host": {
-			"type": "string",
-			"defaultValue": "\\\\USCO01WS0029\\adls"
-		},
-		"ONPREMALLUSERS_properties_typeProperties_userId": {
-			"type": "string",
-			"defaultValue": "onsemi\\fabtimesys"
 		},
 		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
 			"type": "string",
@@ -78,26 +78,26 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"ONPREMVM_password": {
-						"value": "[parameters('ONPREMVM_password')]"
-					},
 					"ONPREMALLUSERS_password": {
 						"value": "[parameters('ONPREMALLUSERS_password')]"
 					},
+					"ONPREMVM_password": {
+						"value": "[parameters('ONPREMVM_password')]"
+					},
 					"onsemidevmdlstoragelink_properties_typeProperties_url": {
 						"value": "[parameters('onsemidevmdlstoragelink_properties_typeProperties_url')]"
-					},
-					"ONPREMVM_properties_typeProperties_host": {
-						"value": "[parameters('ONPREMVM_properties_typeProperties_host')]"
-					},
-					"ONPREMVM_properties_typeProperties_userId": {
-						"value": "[parameters('ONPREMVM_properties_typeProperties_userId')]"
 					},
 					"ONPREMALLUSERS_properties_typeProperties_host": {
 						"value": "[parameters('ONPREMALLUSERS_properties_typeProperties_host')]"
 					},
 					"ONPREMALLUSERS_properties_typeProperties_userId": {
 						"value": "[parameters('ONPREMALLUSERS_properties_typeProperties_userId')]"
+					},
+					"ONPREMVM_properties_typeProperties_host": {
+						"value": "[parameters('ONPREMVM_properties_typeProperties_host')]"
+					},
+					"ONPREMVM_properties_typeProperties_userId": {
+						"value": "[parameters('ONPREMVM_properties_typeProperties_userId')]"
 					},
 					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
 						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder')]"
