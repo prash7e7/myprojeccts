@@ -137,7 +137,7 @@
 			},
 			"DestinationFileFolder": {
 				"type": "string",
-				"defaultValue": "inbound"
+				"defaultValue": "adls\\inbound"
 			},
 			"DestinationFileDirectory": {
 				"type": "string",
