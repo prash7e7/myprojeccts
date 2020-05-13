@@ -1,0 +1,30 @@
+{
+	"name": "CopyEvery5Mins",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "CopyFilesfromMultipleContainers",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"SourceFileFolder": "inbound",
+					"SourceFileDirectory": "user",
+					"DestinationFileFolder": "adls\\inbound",
+					"DestinationFileDirectory": "user"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 5,
+				"startTime": "2020-05-13T21:36:00.000Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}
