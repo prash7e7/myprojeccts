@@ -5,9 +5,9 @@
 		"annotations": [],
 		"type": "FileServer",
 		"typeProperties": {
-			"host": "\\\\USCO01WS0029\\inbound",
+			"host": "\\\\USCO01WS0029\\adls",
 			"userId": "onsemi\\fabtimesys",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI0ZGI0ZDJkYi0yNjQ2LTQ0ZDQtYWQ3MC05OWJkMTgyYTA0YmEiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI0Y2RlMDg1MC1mNGEyLTRlNmMtOTJkMi05MGIzMmUxOGIzNDkiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "integrationRuntimeMfgDataLake",
