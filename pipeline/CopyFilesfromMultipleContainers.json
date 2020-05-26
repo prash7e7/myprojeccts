@@ -89,7 +89,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "BinarySourceFileStore",
+									"referenceName": "BinarySourceFileStore1",
 									"type": "DatasetReference",
 									"parameters": {
 										"folderPath": "@pipeline().parameters.SourceFileFolder",
