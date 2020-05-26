@@ -157,6 +157,13 @@
 										}
 									}
 								},
+								"logStorageSettings": {
+									"linkedServiceName": {
+										"referenceName": "onsemidevmdlstoragelink",
+										"type": "LinkedServiceReference"
+									},
+									"path": "adls/inbound/logs"
+								},
 								"enableLogging": true,
 								"storeSettings": {
 									"type": "FileServerReadSettings",
