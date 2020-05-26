@@ -178,19 +178,19 @@
 		"parameters": {
 			"SourceFileFolder": {
 				"type": "string",
-				"defaultValue": "inbound"
+				"defaultValue": "inbound\\user"
 			},
 			"SourceFileDirectory": {
 				"type": "string",
-				"defaultValue": "user"
+				"defaultValue": "testuser"
 			},
 			"DestinationFileFolder": {
 				"type": "string",
-				"defaultValue": "adls\\inbound"
+				"defaultValue": "adls\\inbound\\user"
 			},
 			"DestinationFileDirectory": {
 				"type": "string",
-				"defaultValue": "user"
+				"defaultValue": "testuser"
 			}
 		},
 		"annotations": []
