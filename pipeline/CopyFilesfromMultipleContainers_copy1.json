@@ -167,7 +167,8 @@
 								"enableLogging": true,
 								"storeSettings": {
 									"type": "FileServerReadSettings",
-									"recursive": true
+									"recursive": true,
+									"wildcardFileName": "*.*"
 								}
 							}
 						}
