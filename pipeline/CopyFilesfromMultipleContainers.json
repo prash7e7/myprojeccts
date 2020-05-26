@@ -87,21 +87,16 @@
 										"copyBehavior": "PreserveHierarchy"
 									}
 								},
-								"enableStaging": false
+								"enableStaging": false,
+								"validateDataConsistency": false
 							},
 							"inputs": [
 								{
-									"referenceName": "BinarySourceFileStore1",
+									"referenceName": "BinarySourceFileStore",
 									"type": "DatasetReference",
 									"parameters": {
-										"folderPath": {
-											"value": "@pipeline().parameters.SourceFileFolder",
-											"type": "Expression"
-										},
-										"directory": {
-											"value": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)",
-											"type": "Expression"
-										}
+										"folderPath": "@pipeline().parameters.SourceFileFolder",
+										"directory": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)"
 									}
 								}
 							],
