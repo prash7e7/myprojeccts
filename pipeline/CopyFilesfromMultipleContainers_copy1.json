@@ -152,7 +152,7 @@
 									"parameters": {
 										"folderPath": "@pipeline().parameters.SourceFileFolder",
 										"directory": {
-											"value": "*.*",
+											"value": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)",
 											"type": "Expression"
 										}
 									}
