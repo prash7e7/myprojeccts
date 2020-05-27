@@ -27,7 +27,9 @@
 							"directory": "@pipeline().parameters.SourceFileDirectory"
 						}
 					},
-					"fieldList": [],
+					"fieldList": [
+						"childItems"
+					],
 					"storeSettings": {
 						"type": "FileServerReadSettings",
 						"recursive": true
