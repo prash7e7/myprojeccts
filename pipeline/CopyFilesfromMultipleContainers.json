@@ -20,7 +20,10 @@
 						"referenceName": "BinarySourceFileStore1",
 						"type": "DatasetReference",
 						"parameters": {
-							"folderPath": "@pipeline().parameters.SourceFileFolder",
+							"folderPath": {
+								"value": "@pipeline().parameters.SourceFileFolder",
+								"type": "Expression"
+							},
 							"directory": "@pipeline().parameters.SourceFileDirectory"
 						}
 					},
