@@ -17,16 +17,14 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "BinarySourceFileStore",
+						"referenceName": "BinarySourceFileStore1",
 						"type": "DatasetReference",
 						"parameters": {
 							"folderPath": "@pipeline().parameters.SourceFileFolder",
 							"directory": "@pipeline().parameters.SourceFileDirectory"
 						}
 					},
-					"fieldList": [
-						"childItems"
-					],
+					"fieldList": [],
 					"storeSettings": {
 						"type": "FileServerReadSettings",
 						"recursive": true
