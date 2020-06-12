@@ -76,7 +76,7 @@
 									"type": "DelimitedTextSource",
 									"storeSettings": {
 										"type": "AzureBlobFSReadSettings",
-										"recursive": true,
+										"fileListPath": "adls/inbound/user/ffyn9j/student-mat.csv",
 										"enablePartitionDiscovery": false
 									},
 									"formatSettings": {
