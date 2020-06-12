@@ -76,7 +76,9 @@
 									"type": "DelimitedTextSource",
 									"storeSettings": {
 										"type": "AzureBlobFSReadSettings",
-										"fileListPath": "adls/inbound/user/ffyn9j/student-mat.csv",
+										"recursive": true,
+										"wildcardFolderPath": "ffyn9j",
+										"wildcardFileName": "student-mat.csv",
 										"enablePartitionDiscovery": false
 									},
 									"formatSettings": {
@@ -90,10 +92,16 @@
 										"rejectValue": 0,
 										"rejectType": "value",
 										"useTypeDefault": true
-									},
-									"tableOption": "autoCreate"
+									}
 								},
-								"enableStaging": false,
+								"enableStaging": true,
+								"stagingSettings": {
+									"linkedServiceName": {
+										"referenceName": "ADLSBlobStorage",
+										"type": "LinkedServiceReference"
+									},
+									"path": "adfsolutiontemplate/BulkCopyfromFilestoDB"
+								},
 								"translator": {
 									"type": "TabularTranslator",
 									"mappings": [
