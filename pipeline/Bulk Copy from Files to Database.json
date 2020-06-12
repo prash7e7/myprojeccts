@@ -76,7 +76,8 @@
 									"type": "DelimitedTextSource",
 									"storeSettings": {
 										"type": "AzureBlobFSReadSettings",
-										"recursive": true
+										"fileListPath": "adls/inbound/user/ffyn9j/student-mat.csv",
+										"enablePartitionDiscovery": false
 									},
 									"formatSettings": {
 										"type": "DelimitedTextReadSettings"
@@ -89,9 +90,345 @@
 										"rejectValue": 0,
 										"rejectType": "value",
 										"useTypeDefault": true
-									}
+									},
+									"tableOption": "autoCreate"
 								},
-								"enableStaging": true
+								"enableStaging": true,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "school",
+												"type": "String"
+											},
+											"sink": {
+												"name": "school",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "sex",
+												"type": "String"
+											},
+											"sink": {
+												"name": "sex",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "age",
+												"type": "String"
+											},
+											"sink": {
+												"name": "age",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "address",
+												"type": "String"
+											},
+											"sink": {
+												"name": "address",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "famsize",
+												"type": "String"
+											},
+											"sink": {
+												"name": "famsize",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Pstatus",
+												"type": "String"
+											},
+											"sink": {
+												"name": "Pstatus",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Medu",
+												"type": "String"
+											},
+											"sink": {
+												"name": "Medu",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Fedu",
+												"type": "String"
+											},
+											"sink": {
+												"name": "Fedu",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Mjob",
+												"type": "String"
+											},
+											"sink": {
+												"name": "Mjob",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Fjob",
+												"type": "String"
+											},
+											"sink": {
+												"name": "Fjob",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "reason",
+												"type": "String"
+											},
+											"sink": {
+												"name": "reason",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "guardian",
+												"type": "String"
+											},
+											"sink": {
+												"name": "guardian",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "traveltime",
+												"type": "String"
+											},
+											"sink": {
+												"name": "traveltime",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "studytime",
+												"type": "String"
+											},
+											"sink": {
+												"name": "studytime",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "failures",
+												"type": "String"
+											},
+											"sink": {
+												"name": "failures",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "schoolsup",
+												"type": "String"
+											},
+											"sink": {
+												"name": "schoolsup",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "famsup",
+												"type": "String"
+											},
+											"sink": {
+												"name": "famsup",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "paid",
+												"type": "String"
+											},
+											"sink": {
+												"name": "paid",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "activities",
+												"type": "String"
+											},
+											"sink": {
+												"name": "activities",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "nursery",
+												"type": "String"
+											},
+											"sink": {
+												"name": "nursery",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "higher",
+												"type": "String"
+											},
+											"sink": {
+												"name": "higher",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "internet",
+												"type": "String"
+											},
+											"sink": {
+												"name": "internet",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "romantic",
+												"type": "String"
+											},
+											"sink": {
+												"name": "romantic",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "famrel",
+												"type": "String"
+											},
+											"sink": {
+												"name": "famrel",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "freetime",
+												"type": "String"
+											},
+											"sink": {
+												"name": "freetime",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "goout",
+												"type": "String"
+											},
+											"sink": {
+												"name": "goout",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Dalc",
+												"type": "String"
+											},
+											"sink": {
+												"name": "Dalc",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Walc",
+												"type": "String"
+											},
+											"sink": {
+												"name": "Walc",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "health",
+												"type": "String"
+											},
+											"sink": {
+												"name": "health",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "absences",
+												"type": "String"
+											},
+											"sink": {
+												"name": "absences",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "G1",
+												"type": "String"
+											},
+											"sink": {
+												"name": "G1",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "G2",
+												"type": "String"
+											},
+											"sink": {
+												"name": "G2",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "G3",
+												"type": "String"
+											},
+											"sink": {
+												"name": "G3",
+												"type": "String"
+											}
+										}
+									]
+								}
 							},
 							"inputs": [
 								{
