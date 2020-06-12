@@ -76,7 +76,7 @@
 									"type": "DelimitedTextSource",
 									"storeSettings": {
 										"type": "AzureBlobFSReadSettings",
-										"fileListPath": "adls/inbound/user/ffyn9j/student-mat.csv",
+										"recursive": true,
 										"enablePartitionDiscovery": false
 									},
 									"formatSettings": {
@@ -93,7 +93,7 @@
 									},
 									"tableOption": "autoCreate"
 								},
-								"enableStaging": true,
+								"enableStaging": false,
 								"translator": {
 									"type": "TabularTranslator",
 									"mappings": [
