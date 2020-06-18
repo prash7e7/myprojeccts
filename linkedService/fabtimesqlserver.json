@@ -1,0 +1,16 @@
+{
+	"name": "fabtimesqlserver",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"connectionString": "integrated security=False;data source=paprika.ad.onsemi.com\\grftdev;initial catalog=fabtime717scrapedata;user id=fabtime",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI2ZjM4YjViZi1hMzhmLTRhMDEtYTllZC03YjYzZmI5N2VmNDQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "integrationRuntimeMfgDataLake",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
