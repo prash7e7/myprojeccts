@@ -35,8 +35,8 @@
 									"type": "Int32"
 								},
 								"sink": {
-									"name": "registration_dttm",
-									"type": "DateTime"
+									"name": "RecordID",
+									"type": "Int32"
 								}
 							},
 							{
@@ -45,8 +45,8 @@
 									"type": "String"
 								},
 								"sink": {
-									"name": "id",
-									"type": "Int32"
+									"name": "Lot",
+									"type": "String"
 								}
 							},
 							{
@@ -55,8 +55,8 @@
 									"type": "DateTime"
 								},
 								"sink": {
-									"name": "first_name",
-									"type": "String"
+									"name": "ActualShipDate",
+									"type": "DateTime"
 								}
 							},
 							{
@@ -65,8 +65,8 @@
 									"type": "Int32"
 								},
 								"sink": {
-									"name": "last_name",
-									"type": "String"
+									"name": "MainQty",
+									"type": "Int32"
 								}
 							},
 							{
@@ -75,56 +75,8 @@
 									"type": "Int32"
 								},
 								"sink": {
-									"name": "email",
-									"type": "String"
-								}
-							},
-							{
-								"sink": {
-									"name": "gender",
-									"type": "String"
-								}
-							},
-							{
-								"sink": {
-									"name": "ip_address",
-									"type": "String"
-								}
-							},
-							{
-								"sink": {
-									"name": "cc",
-									"type": "String"
-								}
-							},
-							{
-								"sink": {
-									"name": "country",
-									"type": "String"
-								}
-							},
-							{
-								"sink": {
-									"name": "birthdate",
-									"type": "String"
-								}
-							},
-							{
-								"sink": {
-									"name": "salary",
-									"type": "Double"
-								}
-							},
-							{
-								"sink": {
-									"name": "title",
-									"type": "String"
-								}
-							},
-							{
-								"sink": {
-									"name": "comments",
-									"type": "String"
+									"name": "ShipFixUp",
+									"type": "Int32"
 								}
 							}
 						]
