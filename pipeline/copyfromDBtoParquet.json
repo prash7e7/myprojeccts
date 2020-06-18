@@ -1,0 +1,149 @@
+{
+	"name": "copyfromDBtoParquet",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "RecordID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "registration_dttm",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "Lot",
+									"type": "String"
+								},
+								"sink": {
+									"name": "id",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "ActualShipDate",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "first_name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MainQty",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "last_name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShipFixUp",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "email",
+									"type": "String"
+								}
+							},
+							{
+								"sink": {
+									"name": "gender",
+									"type": "String"
+								}
+							},
+							{
+								"sink": {
+									"name": "ip_address",
+									"type": "String"
+								}
+							},
+							{
+								"sink": {
+									"name": "cc",
+									"type": "String"
+								}
+							},
+							{
+								"sink": {
+									"name": "country",
+									"type": "String"
+								}
+							},
+							{
+								"sink": {
+									"name": "birthdate",
+									"type": "String"
+								}
+							},
+							{
+								"sink": {
+									"name": "salary",
+									"type": "Double"
+								}
+							},
+							{
+								"sink": {
+									"name": "title",
+									"type": "String"
+								}
+							},
+							{
+								"sink": {
+									"name": "comments",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "fabtimshipment",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "mfgdlparquet",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
