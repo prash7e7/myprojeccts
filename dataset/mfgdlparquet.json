@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "shipment.parquet",
 				"folderPath": "inbound/user/ffyn9j",
 				"fileSystem": "adls"
 			},
