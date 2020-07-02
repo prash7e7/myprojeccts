@@ -171,7 +171,7 @@
 			},
 			"SourceFileDirectory": {
 				"type": "string",
-				"defaultValue": "user"
+				"defaultValue": "staged"
 			},
 			"DestinationFileFolder": {
 				"type": "string",
