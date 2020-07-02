@@ -175,11 +175,11 @@
 			},
 			"DestinationFileFolder": {
 				"type": "string",
-				"defaultValue": "adls\\inbound"
+				"defaultValue": "adls"
 			},
 			"DestinationFileDirectory": {
 				"type": "string",
-				"defaultValue": "user"
+				"defaultValue": "inbound"
 			}
 		},
 		"annotations": []
