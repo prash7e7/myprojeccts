@@ -11,9 +11,9 @@
 				},
 				"parameters": {
 					"SourceFileFolder": "inbound",
-					"SourceFileDirectory": "user",
-					"DestinationFileFolder": "adls\\inbound",
-					"DestinationFileDirectory": "user"
+					"SourceFileDirectory": "staged",
+					"DestinationFileFolder": "adls",
+					"DestinationFileDirectory": "inbound"
 				}
 			}
 		],
