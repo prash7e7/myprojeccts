@@ -53,15 +53,15 @@
 		},
 		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory": {
 			"type": "string",
-			"defaultValue": "user"
+			"defaultValue": "staged"
 		},
 		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder": {
 			"type": "string",
-			"defaultValue": "adls\\inbound"
+			"defaultValue": "adls"
 		},
 		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
 			"type": "string",
-			"defaultValue": "user"
+			"defaultValue": "inbound"
 		}
 	},
 	"variables": {
@@ -1219,6 +1219,17 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/integrationRuntimeMfgDataLake')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"description": "integrationRuntimeMfgDataLake",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CopyEvery5Mins')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -1252,17 +1263,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/CopyFilesfromMultipleContainers')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/integrationRuntimeMfgDataLake')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"description": "integrationRuntimeMfgDataLake",
-				"typeProperties": {}
-			},
-			"dependsOn": []
 		}
 	]
 }

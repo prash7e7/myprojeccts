@@ -53,15 +53,15 @@
 		},
 		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory": {
 			"type": "string",
-			"defaultValue": "user"
+			"defaultValue": "staged"
 		},
 		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder": {
 			"type": "string",
-			"defaultValue": "adls\\inbound"
+			"defaultValue": "adls"
 		},
 		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
 			"type": "string",
-			"defaultValue": "user"
+			"defaultValue": "inbound"
 		}
 	},
 	"variables": {

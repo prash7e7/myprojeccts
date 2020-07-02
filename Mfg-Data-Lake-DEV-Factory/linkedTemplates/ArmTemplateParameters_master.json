@@ -39,13 +39,13 @@
 			"value": "inbound"
 		},
 		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory": {
-			"value": "user"
+			"value": "staged"
 		},
 		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder": {
-			"value": "adls\\inbound"
+			"value": "adls"
 		},
 		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
-			"value": "user"
+			"value": "inbound"
 		},
 		"containerUri": {
 			"value": ""
