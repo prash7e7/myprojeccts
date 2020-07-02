@@ -7,6 +7,14 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "Mfg-Data-Lake-DEV-Factory"
 		},
+		"ADLSBlobStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ADLSBlobStorage'"
+		},
+		"AzureSynapseDLLink_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSynapseDLLink'"
+		},
 		"ONPREMALLUSERS_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ONPREMALLUSERS'"
@@ -14,6 +22,10 @@
 		"ONPREMVM_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ONPREMVM'"
+		},
+		"fabtimesqlserver_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
 		},
 		"ONPREMALLUSERS_properties_typeProperties_host": {
 			"type": "string",
@@ -78,11 +90,20 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"ADLSBlobStorage_connectionString": {
+						"value": "[parameters('ADLSBlobStorage_connectionString')]"
+					},
+					"AzureSynapseDLLink_connectionString": {
+						"value": "[parameters('AzureSynapseDLLink_connectionString')]"
+					},
 					"ONPREMALLUSERS_password": {
 						"value": "[parameters('ONPREMALLUSERS_password')]"
 					},
 					"ONPREMVM_password": {
 						"value": "[parameters('ONPREMVM_password')]"
+					},
+					"fabtimesqlserver_connectionString": {
+						"value": "[parameters('fabtimesqlserver_connectionString')]"
 					},
 					"onsemidevmdlstoragelink_properties_typeProperties_url": {
 						"value": "[parameters('onsemidevmdlstoragelink_properties_typeProperties_url')]"

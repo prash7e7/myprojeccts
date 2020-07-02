@@ -5,10 +5,19 @@
 		"factoryName": {
 			"value": "Mfg-Data-Lake-DEV-Factory"
 		},
+		"ADLSBlobStorage_connectionString": {
+			"value": ""
+		},
+		"AzureSynapseDLLink_connectionString": {
+			"value": ""
+		},
 		"ONPREMALLUSERS_password": {
 			"value": ""
 		},
 		"ONPREMVM_password": {
+			"value": ""
+		},
+		"fabtimesqlserver_connectionString": {
 			"value": ""
 		},
 		"ONPREMALLUSERS_properties_typeProperties_host": {

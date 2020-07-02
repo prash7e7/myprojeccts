@@ -6,62 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "Mfg-Data-Lake-DEV-Factory"
-		},
-		"ADLSBlobStorage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'ADLSBlobStorage'"
-		},
-		"AzureSynapseDLLink_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSynapseDLLink'"
-		},
-		"ONPREMALLUSERS_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'ONPREMALLUSERS'"
-		},
-		"ONPREMVM_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'ONPREMVM'"
-		},
-		"fabtimesqlserver_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
-		},
-		"ONPREMALLUSERS_properties_typeProperties_host": {
-			"type": "string",
-			"defaultValue": "\\\\USCO01WS0029\\adls"
-		},
-		"ONPREMALLUSERS_properties_typeProperties_userId": {
-			"type": "string",
-			"defaultValue": "onsemi\\fabtimesys"
-		},
-		"ONPREMVM_properties_typeProperties_host": {
-			"type": "string",
-			"defaultValue": "\\\\USCO01WS0029.ad.onsemi.com\\MLArtifacts"
-		},
-		"ONPREMVM_properties_typeProperties_userId": {
-			"type": "string",
-			"defaultValue": "onsemi\\fabtimesys"
-		},
-		"onsemidevmdlstoragelink_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://onsemidevmdlstorage.dfs.core.windows.net"
-		},
-		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
-			"type": "string",
-			"defaultValue": "inbound"
-		},
-		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory": {
-			"type": "string",
-			"defaultValue": "user"
-		},
-		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder": {
-			"type": "string",
-			"defaultValue": "adls\\inbound"
-		},
-		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
-			"type": "string",
-			"defaultValue": "user"
 		}
 	},
 	"variables": {
@@ -562,8 +506,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/GetMetadataDataset')]",
 				"[concat(variables('factoryId'), '/datasets/SourceDataset')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlDWSinkDataset')]",
-				"[concat(variables('factoryId'), '/linkedServices/ADLSBlobStorage')]"
+				"[concat(variables('factoryId'), '/datasets/AzureSqlDWSinkDataset')]"
 			]
 		},
 		{
@@ -754,11 +697,7 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/BinarySourceFileStore1')]",
-				"[concat(variables('factoryId'), '/datasets/BinarySinkFileStore')]",
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/copyfromDBtoParquet')]",
@@ -849,15 +788,13 @@
 						"inputs": [
 							{
 								"referenceName": "fabtimshipment",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "mfgdlparquet",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					}
@@ -895,81 +832,7 @@
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSynapseDLLink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BinarySinkFileStore')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your destination data store.",
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"container": {
-						"type": "string"
-					},
-					"directory": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": {
-							"value": "@dataset().directory",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().container",
-							"type": "Expression"
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BinarySourceFileStore1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your source data store.",
-				"linkedServiceName": {
-					"referenceName": "ONPREMALLUSERS",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"folderPath": {
-						"type": "string"
-					},
-					"directory": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "FileServerLocation",
-						"folderPath": {
-							"value": "@concat(dataset().folderPath,'/',dataset().directory)",
-							"type": "Expression"
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ONPREMALLUSERS')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/GetMetadataDataset')]",
@@ -1009,9 +872,7 @@
 				},
 				"schema": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SourceDataset')]",
@@ -1059,9 +920,7 @@
 				},
 				"schema": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/fabtimshipment')]",
@@ -1080,9 +939,7 @@
 					"table": "tblShipment"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/fabtimesqlserver')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/mfgdlparquet')]",
@@ -1105,162 +962,6 @@
 					"compressionCodec": "snappy"
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLSBlobStorage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('ADLSBlobStorage_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSynapseDLLink')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDW",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureSynapseDLLink_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ONPREMALLUSERS')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "FileServer",
-				"typeProperties": {
-					"host": "[parameters('ONPREMALLUSERS_properties_typeProperties_host')]",
-					"userId": "[parameters('ONPREMALLUSERS_properties_typeProperties_userId')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('ONPREMALLUSERS_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntimeMfgDataLake",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeMfgDataLake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ONPREMVM')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "onpremvm",
-				"annotations": [],
-				"type": "FileServer",
-				"typeProperties": {
-					"host": "[parameters('ONPREMVM_properties_typeProperties_host')]",
-					"userId": "[parameters('ONPREMVM_properties_typeProperties_userId')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('ONPREMVM_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntimeMfgDataLake",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeMfgDataLake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/fabtimesqlserver')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('fabtimesqlserver_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntimeMfgDataLake",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeMfgDataLake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/onsemidevmdlstoragelink')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "linked service for ADLS",
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('onsemidevmdlstoragelink_properties_typeProperties_url')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CopyEvery5Mins')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "CopyFilesfromMultipleContainers",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"SourceFileFolder": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder')]",
-							"SourceFileDirectory": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory')]",
-							"DestinationFileFolder": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder')]",
-							"DestinationFileDirectory": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 5,
-						"startTime": "2020-05-12T21:36:00.000Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/CopyFilesfromMultipleContainers')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/integrationRuntimeMfgDataLake')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"description": "integrationRuntimeMfgDataLake",
-				"typeProperties": {}
 			},
 			"dependsOn": []
 		}
