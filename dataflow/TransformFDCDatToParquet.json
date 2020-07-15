@@ -22,7 +22,7 @@
 				}
 			],
 			"transformations": [],
-			"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tskipLines: 63,\n\tdateFormats: ['MM/dd/yyyy'],\n\ttimestampFormats: ['MM/dd/yyyy','MM/dd/yyyy HH:mm:ss'],\n\tpreferredIntegralType: 'long',\n\tpreferredFractionalType: 'decimal') ~> FDCDataFile\nFDCDataFile sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionFileNames:['prash_sample.parquet'],\n\tmapColumn(\n\t\t{} = Column_1\n\t),\n\tpartitionBy('roundRobin', 2),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FDCtoParquet"
+			"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tskipLines: 63,\n\tdateFormats: ['MM/dd/yyyy'],\n\ttimestampFormats: ['MM/dd/yyyy','MM/dd/yyyy HH:mm:ss'],\n\tpreferredIntegralType: 'long',\n\tpreferredFractionalType: 'decimal') ~> FDCDataFile\nFDCDataFile sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionFileNames:['prash_sample.parquet'],\n\tmapColumn(\n\t\tcolumn = Column_1\n\t),\n\tpartitionBy('roundRobin', 2),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FDCtoParquet"
 		}
 	}
 }
