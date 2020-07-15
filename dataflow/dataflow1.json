@@ -9,12 +9,12 @@
 						"referenceName": "FDCData",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "FDCDataFile"
 				}
 			],
 			"sinks": [],
 			"transformations": [],
-			"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipLines: 63,\n\tdateFormats: ['MM/dd/yyyy'],\n\ttimestampFormats: ['MM/dd/yyyy','MM/dd/yyyy HH:mm:ss'],\n\tpreferredIntegralType: 'long',\n\tpreferredFractionalType: 'decimal') ~> source1"
+			"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipLines: 63,\n\tdateFormats: ['MM/dd/yyyy'],\n\ttimestampFormats: ['MM/dd/yyyy','MM/dd/yyyy HH:mm:ss'],\n\tpreferredIntegralType: 'long',\n\tpreferredFractionalType: 'decimal') ~> FDCDataFile"
 		}
 	}
 }
