@@ -12,9 +12,17 @@
 					"name": "FDCDataFile"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "FDCParquetDS",
+						"type": "DatasetReference"
+					},
+					"name": "FDCParquet"
+				}
+			],
 			"transformations": [],
-			"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipLines: 63,\n\tdateFormats: ['MM/dd/yyyy'],\n\ttimestampFormats: ['MM/dd/yyyy','MM/dd/yyyy HH:mm:ss'],\n\tpreferredIntegralType: 'long',\n\tpreferredFractionalType: 'decimal') ~> FDCDataFile"
+			"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipLines: 63,\n\tdateFormats: ['MM/dd/yyyy'],\n\ttimestampFormats: ['MM/dd/yyyy','MM/dd/yyyy HH:mm:ss'],\n\tpreferredIntegralType: 'long',\n\tpreferredFractionalType: 'decimal') ~> FDCDataFile\nFDCDataFile sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionFileNames:['prash_sample.parquet'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FDCParquet"
 		}
 	}
 }
