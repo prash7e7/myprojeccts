@@ -6,10 +6,10 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "FDCData",
+						"referenceName": "FDCMetaData",
 						"type": "DatasetReference"
 					},
-					"name": "FDCData"
+					"name": "FDCMetaData"
 				}
 			],
 			"sinks": [],
@@ -18,7 +18,7 @@
 					"name": "Pivot1"
 				}
 			],
-			"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 63,\n\tinferDriftedColumnTypes: true,\n\tskipLines: 3) ~> FDCData\nFDCData pivot(pivotBy(Column_1),\n\tcolumnNaming: '$N$V',\n\tlateral: true) ~> Pivot1"
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 63,\n\tskipLines: 3) ~> FDCMetaData\nFDCMetaData pivot(pivotBy(Column_1),\n\tcolumnNaming: '$N$V',\n\tlateral: true) ~> Pivot1"
 		}
 	}
 }
