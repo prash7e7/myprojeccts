@@ -3,10 +3,22 @@
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "FDCData",
+						"type": "DatasetReference"
+					},
+					"name": "FDCData"
+				}
+			],
 			"sinks": [],
-			"transformations": [],
-			"script": ""
+			"transformations": [
+				{
+					"name": "Pivot1"
+				}
+			],
+			"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 63,\n\tinferDriftedColumnTypes: true,\n\tskipLines: 3) ~> FDCData\nFDCData pivot(pivotBy(Column_1),\n\tcolumnNaming: '$N$V',\n\tlateral: true) ~> Pivot1"
 		}
 	}
 }
