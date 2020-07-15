@@ -18,7 +18,7 @@
 					"name": "Pivot1"
 				}
 			],
-			"script": "source(output(\n\t\tfdc_metadata_key as string,\n\t\tfdc_metadata_value as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 63,\n\tinferDriftedColumnTypes: true,\n\tskipLines: 3) ~> FDCMetaData\nFDCMetaData pivot(pivotBy(fdc_metadata_key),\n\tcolumnNaming: '$V$N',\n\tlateral: false) ~> Pivot1"
+			"script": "source(output(\n\t\tfdc_metadata_key as string,\n\t\tfdc_metadata_value as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 63,\n\tinferDriftedColumnTypes: true,\n\tskipLines: 3) ~> FDCMetaData\nFDCMetaData pivot(groupBy(fdc_metadata_value),\n\tpivotBy(fdc_metadata_key),\n\tcolumnNaming: '$V$N',\n\tlateral: false) ~> Pivot1"
 		}
 	}
 }
