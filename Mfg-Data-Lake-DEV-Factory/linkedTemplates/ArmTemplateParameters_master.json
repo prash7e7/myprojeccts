@@ -47,6 +47,18 @@
 		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
 			"value": "inbound"
 		},
+		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder": {
+			"value": "adls"
+		},
+		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileDirectory": {
+			"value": "outbound"
+		},
+		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileFolder": {
+			"value": "outbound"
+		},
+		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileDirectory": {
+			"value": "staged"
+		},
 		"containerUri": {
 			"value": ""
 		},
