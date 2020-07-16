@@ -1,0 +1,30 @@
+{
+	"name": "trigger_copyadlstoonprem",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "CopyFiles_from_adls_toprem",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"SourceFileFolder": "adls",
+					"SourceFileDirectory": "outbound",
+					"DestinationFileFolder": "outbound",
+					"DestinationFileDirectory": "staged"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 5,
+				"startTime": "2020-07-16T15:59:00.000Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}
