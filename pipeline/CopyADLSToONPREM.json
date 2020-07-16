@@ -36,6 +36,9 @@
 					"storeSettings": {
 						"type": "FileServerReadSettings",
 						"recursive": true
+					},
+					"formatSettings": {
+						"type": "BinaryReadSettings"
 					}
 				}
 			},
@@ -78,6 +81,9 @@
 									"storeSettings": {
 										"type": "FileServerReadSettings",
 										"recursive": true
+									},
+									"formatSettings": {
+										"type": "BinaryReadSettings"
 									}
 								},
 								"sink": {
@@ -129,11 +135,11 @@
 		"parameters": {
 			"SourceFileFolder": {
 				"type": "string",
-				"defaultValue": "sourcefolder"
+				"defaultValue": "adls"
 			},
 			"SourceFileDirectory": {
 				"type": "string",
-				"defaultValue": "subfolder"
+				"defaultValue": "outbound"
 			},
 			"DestinationFileFolder": {
 				"type": "string",
