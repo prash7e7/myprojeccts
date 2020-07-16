@@ -119,6 +119,24 @@
 					},
 					"ONPREMVM_properties_typeProperties_userId": {
 						"value": "[parameters('ONPREMVM_properties_typeProperties_userId')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
 						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder')]"
@@ -134,7 +152,9 @@
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_0')]"
+			]
 		}
 	]
 }

@@ -46,22 +46,6 @@
 		"ONPREMVM_properties_typeProperties_userId": {
 			"type": "string",
 			"defaultValue": "onsemi\\fabtimesys"
-		},
-		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
-			"type": "string",
-			"defaultValue": "inbound"
-		},
-		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory": {
-			"type": "string",
-			"defaultValue": "staged"
-		},
-		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder": {
-			"type": "string",
-			"defaultValue": "adls"
-		},
-		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
-			"type": "string",
-			"defaultValue": "inbound"
 		}
 	},
 	"variables": {
@@ -182,6 +166,95 @@
 						}
 					}
 				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "inbound/site/USR/FDC/Samples",
+						"fileSystem": "adls"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FDCData')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "GAY11091.1-example1.dat",
+						"folderPath": "inbound/site/USR/FDC/Samples",
+						"fileSystem": "adls"
+					},
+					"columnDelimiter": "\t",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FDCParquetDS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "inbound/site/USR/FDC/Samples",
+						"fileSystem": "adls"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
@@ -371,6 +444,34 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeMfgDataLake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FDCMetaData')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "GAY11091.1-example1.dat",
+						"folderPath": "inbound/site/USR/FDC/Samples",
+						"fileSystem": "adls"
+					},
+					"columnDelimiter": "\t",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
 			]
 		},
 		{
@@ -927,341 +1028,42 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/CopyFilesfromMultipleContainers')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/TransformFDCDatToParquet')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "Scan the file path on your source storage store and get the container list.",
-				"activities": [
-					{
-						"name": "EnumerateContainersList",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "BinarySourceFileStore1",
-								"type": "DatasetReference",
-								"parameters": {
-									"folderPath": {
-										"value": "@pipeline().parameters.SourceFileFolder",
-										"type": "Expression"
-									},
-									"directory": "@pipeline().parameters.SourceFileDirectory"
-								}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "FileServerReadSettings",
-								"recursive": true
-							},
-							"formatSettings": {
-								"type": "BinaryReadSettings"
-							}
-						}
-					},
-					{
-						"name": "ForEachContainer",
-						"description": "Get the container list from Metadata activity and then iterates each of them to Copy activity.",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "EnumerateContainersList",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('EnumerateContainersList').output.childItems",
-								"type": "Expression"
-							},
-							"batchCount": 4,
-							"activities": [
-								{
-									"name": "CopyOneContainer",
-									"description": "Copy each container from source storage store to destination store.",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "BinarySource",
-											"storeSettings": {
-												"type": "FileServerReadSettings",
-												"recursive": true
-											}
-										},
-										"sink": {
-											"type": "BinarySink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings",
-												"copyBehavior": "PreserveHierarchy"
-											}
-										},
-										"enableStaging": false,
-										"validateDataConsistency": false
-									},
-									"inputs": [
-										{
-											"referenceName": "BinarySourceFileStore1",
-											"type": "DatasetReference",
-											"parameters": {
-												"folderPath": "@pipeline().parameters.SourceFileFolder",
-												"directory": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)"
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "BinarySinkFileStore",
-											"type": "DatasetReference",
-											"parameters": {
-												"container": {
-													"value": "@pipeline().parameters.DestinationFileFolder",
-													"type": "Expression"
-												},
-												"directory": {
-													"value": "@concat(pipeline().parameters.DestinationFileDirectory,'/',item().name)",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								},
-								{
-									"name": "DeleteActivity",
-									"type": "Delete",
-									"dependsOn": [
-										{
-											"activity": "CopyOneContainer",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"dataset": {
-											"referenceName": "BinarySourceFileStore1",
-											"type": "DatasetReference",
-											"parameters": {
-												"folderPath": "@pipeline().parameters.SourceFileFolder",
-												"directory": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)"
-											}
-										},
-										"logStorageSettings": {
-											"linkedServiceName": {
-												"referenceName": "onsemidevmdlstoragelink",
-												"type": "LinkedServiceReference"
-											},
-											"path": "adls/inbound/logs"
-										},
-										"enableLogging": true,
-										"storeSettings": {
-											"type": "FileServerReadSettings",
-											"recursive": true,
-											"wildcardFileName": "*.*"
-										}
-									}
-								}
-							]
-						}
-					}
-				],
-				"parameters": {
-					"SourceFileFolder": {
-						"type": "string",
-						"defaultValue": "inbound"
-					},
-					"SourceFileDirectory": {
-						"type": "string",
-						"defaultValue": "staged"
-					},
-					"DestinationFileFolder": {
-						"type": "string",
-						"defaultValue": "adls"
-					},
-					"DestinationFileDirectory": {
-						"type": "string",
-						"defaultValue": "inbound"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/BinarySourceFileStore1')]",
-				"[concat(variables('factoryId'), '/datasets/BinarySinkFileStore')]",
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/copyfromDBtoParquet')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"queryTimeout": "02:00:00"
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "RecordID",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "RecordID",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "Lot",
-											"type": "String"
-										},
-										"sink": {
-											"name": "Lot",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "ActualShipDate",
-											"type": "DateTime"
-										},
-										"sink": {
-											"name": "ActualShipDate",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "MainQty",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "MainQty",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "ShipFixUp",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "ShipFixUp",
-											"type": "Int32"
-										}
-									}
-								]
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "fabtimshipment",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "mfgdlparquet",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/fabtimshipment')]",
-				"[concat(variables('factoryId'), '/datasets/mfgdlparquet')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CopyEvery5Mins')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "CopyFilesfromMultipleContainers",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"SourceFileFolder": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder')]",
-							"SourceFileDirectory": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory')]",
-							"DestinationFileFolder": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder')]",
-							"DestinationFileDirectory": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
+				"type": "MappingDataFlow",
 				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 5,
-						"startTime": "2020-05-12T21:36:00.000Z",
-						"timeZone": "UTC"
-					}
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "FDCData",
+								"type": "DatasetReference"
+							},
+							"name": "FDCDataFile"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "FDCParquetDS",
+								"type": "DatasetReference"
+							},
+							"name": "FDCtoParquet"
+						}
+					],
+					"transformations": [
+						{
+							"name": "MapDrifted1",
+							"description": "Creates an explicit mapping for each drifted column"
+						}
+					],
+					"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tskipLines: 63,\n\tdateFormats: ['MM/dd/yyyy'],\n\ttimestampFormats: ['MM/dd/yyyy','MM/dd/yyyy HH:mm:ss'],\n\tpreferredIntegralType: 'long',\n\tpreferredFractionalType: 'decimal') ~> FDCDataFile\nFDCDataFile derive({Time Relative (sec)} = toString(byName('Time Relative (sec)')),\n\t\t{Time Absolute (UTC)} = toString(byName('Time Absolute (UTC)')),\n\t\t{Time Absolute (Date_Time)} = toString(byName('Time Absolute (Date_Time)')),\n\t\tStep = toString(byName('Step')),\n\t\tStatus = toString(byName('Status')),\n\t\t{Tool:_SST1_chamber_2_rpm_(r/min);_SVID200} = toString(byName('Tool:_SST1_chamber_2_rpm_(r/min);_SVID200')),\n\t\t{Tool:_SST1_chmbr_2_rx_time_rem_(cs);_SVID201} = toString(byName('Tool:_SST1_chmbr_2_rx_time_rem_(cs);_SVID201')),\n\t\t{Tool:_SST1_chmbr_2_step_time_rem_(cs);_SVID202} = toString(byName('Tool:_SST1_chmbr_2_step_time_rem_(cs);_SVID202')),\n\t\t{Tool:_SST1_chmbr_2_wafers_present;_SVID205} = toString(byName('Tool:_SST1_chmbr_2_wafers_present;_SVID205')),\n\t\t{Tool:_SST1_chmbr_2_door_state;_SVID206} = toString(byName('Tool:_SST1_chmbr_2_door_state;_SVID206')),\n\t\t{Tool:_SST1_chmbr_2_processed_state;_SVID208} = toString(byName('Tool:_SST1_chmbr_2_processed_state;_SVID208')),\n\t\t{Tool:_SST1_chmbr_2_PP_Step;_SVID211_[Tool's_Step]} = toString(byName('Tool:_SST1_chmbr_2_PP_Step;_SVID211_[Tools_Step]')),\n\t\t{Tool:_SST1_chmbr_2_PP_Exec_Name;_SVID212} = toString(byName('Tool:_SST1_chmbr_2_PP_Exec_Name;_SVID212')),\n\t\t{Tool:_SST1_chmbr_2_Process_State;_SVID213} = toString(byName('Tool:_SST1_chmbr_2_Process_State;_SVID213')),\n\t\t{Tool:_SST1_chmbr_2_N2_Temperature_(degC);_SVID214} = toString(byName('Tool:_SST1_chmbr_2_N2_Temperature_(degC);_SVID214')),\n\t\t{Tool:_SST1_chmbr_2_left_vision_score;_SVID215} = toString(byName('Tool:_SST1_chmbr_2_left_vision_score;_SVID215')),\n\t\t{Tool:_SST1_chmbr_2_right_vision_score;_SVID216} = toString(byName('Tool:_SST1_chmbr_2_right_vision_score;_SVID216')),\n\t\t{Snapshot:_SST1_chmbr_2_left_vision_score;_SVID215} = toString(byName('Snapshot:_SST1_chmbr_2_left_vision_score;_SVID215')),\n\t\t{Snapshot:_SST1_chmbr_2_right_vision_score;_SVID216} = toString(byName('Snapshot:_SST1_chmbr_2_right_vision_score;_SVID216')),\n\t\tTool_Bin_Polling_Latency = toString(byName('Tool_Bin_Polling_Latency')),\n\t\tTool_Bin_Data_Age = toString(byName('Tool_Bin_Data_Age')),\n\t\tTool_Bin_Data_Age_SECS = toString(byName('Tool_Bin_Data_Age_SECS'))) ~> MapDrifted1\nMapDrifted1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionFileNames:['prash_example.parquet'],\n\tmapColumn(\n\t\ttime_relative_sec = {Time Relative (sec)},\n\t\ttime_absolute_utc = {Time Absolute (UTC)},\n\t\ttime_absolute_dt = {Time Absolute (Date_Time)}\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FDCtoParquet"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/CopyFilesfromMultipleContainers')]"
+				"[concat(variables('factoryId'), '/datasets/FDCData')]",
+				"[concat(variables('factoryId'), '/datasets/FDCParquetDS')]"
 			]
 		}
 	]
