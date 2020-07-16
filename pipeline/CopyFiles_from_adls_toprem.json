@@ -135,19 +135,19 @@
 		"parameters": {
 			"SourceFileFolder": {
 				"type": "string",
-				"defaultValue": "sourcefolder"
+				"defaultValue": "inbound"
 			},
 			"SourceFileDirectory": {
 				"type": "string",
-				"defaultValue": "subfolder"
+				"defaultValue": "staged"
 			},
 			"DestinationFileFolder": {
 				"type": "string",
-				"defaultValue": "destinationfolder"
+				"defaultValue": "adls"
 			},
 			"DestinationFileDirectory": {
 				"type": "string",
-				"defaultValue": "subfolder"
+				"defaultValue": "inbound"
 			}
 		},
 		"annotations": []
