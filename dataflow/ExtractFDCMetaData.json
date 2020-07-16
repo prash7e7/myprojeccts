@@ -16,9 +16,12 @@
 			"transformations": [
 				{
 					"name": "Pivot1"
+				},
+				{
+					"name": "Filter1"
 				}
 			],
-			"script": "source(output(\n\t\tfdc_metadata_key as string,\n\t\tfdc_metadata_value as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 63,\n\tinferDriftedColumnTypes: true,\n\tskipLines: 3) ~> FDCMetaData\nFDCMetaData pivot(groupBy(fdc_metadata_key,\n\t\tfdc_metadata_value),\n\tpivotBy(fdc_metadata_key),\n\tcolumnNaming: '$N$V',\n\tlateral: true) ~> Pivot1"
+			"script": "source(output(\n\t\tfdc_metadata_key as string,\n\t\tfdc_metadata_value as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tskipLines: 3) ~> FDCMetaData\nFilter1 pivot(groupBy(fdc_metadata_key,\n\t\tfdc_metadata_value),\n\tpivotBy(fdc_metadata_key),\n\t{} = count(),\n\tcolumnNaming: '$N$V',\n\tlateral: true) ~> Pivot1\nFDCMetaData filter(contains([\"General Info, Run Path and Name\" ], fdc_metadata_key)) ~> Filter1"
 		}
 	}
 }
