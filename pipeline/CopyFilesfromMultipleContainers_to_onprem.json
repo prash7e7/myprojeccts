@@ -17,22 +17,14 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "BinarySourceFileStore1",
-						"type": "DatasetReference",
-						"parameters": {
-							"folderPath": {
-								"value": "@pipeline().parameters.SourceFileFolder",
-								"type": "Expression"
-							},
-							"directory": "@pipeline().parameters.SourceFileDirectory"
-						}
+						"referenceName": "mdloutbound",
+						"type": "DatasetReference"
 					},
 					"fieldList": [
 						"childItems"
 					],
 					"storeSettings": {
-						"type": "FileServerReadSettings",
-						"recursive": true
+						"type": "AzureBlobFSReadSettings"
 					},
 					"formatSettings": {
 						"type": "BinaryReadSettings"
@@ -170,19 +162,19 @@
 		"parameters": {
 			"SourceFileFolder": {
 				"type": "string",
-				"defaultValue": "inbound"
+				"defaultValue": "adls"
 			},
 			"SourceFileDirectory": {
 				"type": "string",
-				"defaultValue": "staged"
+				"defaultValue": "outbound"
 			},
 			"DestinationFileFolder": {
 				"type": "string",
-				"defaultValue": "adls"
+				"defaultValue": "outbound"
 			},
 			"DestinationFileDirectory": {
 				"type": "string",
-				"defaultValue": "inbound"
+				"defaultValue": "staged"
 			}
 		},
 		"annotations": []
