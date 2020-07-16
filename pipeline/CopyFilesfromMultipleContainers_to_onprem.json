@@ -68,7 +68,7 @@
 								"source": {
 									"type": "BinarySource",
 									"storeSettings": {
-										"type": "FileServerReadSettings",
+										"type": "AzureBlobFSReadSettings",
 										"recursive": true
 									},
 									"formatSettings": {
@@ -78,8 +78,7 @@
 								"sink": {
 									"type": "BinarySink",
 									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings",
-										"copyBehavior": "PreserveHierarchy"
+										"type": "FileServerWriteSettings"
 									}
 								},
 								"enableStaging": false,
@@ -87,73 +86,16 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "BinarySourceFileStore1",
-									"type": "DatasetReference",
-									"parameters": {
-										"folderPath": "@pipeline().parameters.SourceFileFolder",
-										"directory": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)"
-									}
+									"referenceName": "mdloutbound",
+									"type": "DatasetReference"
 								}
 							],
 							"outputs": [
 								{
-									"referenceName": "BinarySinkFileStore",
-									"type": "DatasetReference",
-									"parameters": {
-										"container": {
-											"value": "@pipeline().parameters.DestinationFileFolder",
-											"type": "Expression"
-										},
-										"directory": {
-											"value": "@concat(pipeline().parameters.DestinationFileDirectory,'/',item().name)",
-											"type": "Expression"
-										}
-									}
+									"referenceName": "BinarySourceFileStore1",
+									"type": "DatasetReference"
 								}
 							]
-						},
-						{
-							"name": "DeleteActivity",
-							"type": "Delete",
-							"dependsOn": [
-								{
-									"activity": "CopyOneContainer",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"policy": {
-								"timeout": "7.00:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"dataset": {
-									"referenceName": "BinarySourceFileStore1",
-									"type": "DatasetReference",
-									"parameters": {
-										"folderPath": "@pipeline().parameters.SourceFileFolder",
-										"directory": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)"
-									}
-								},
-								"logStorageSettings": {
-									"linkedServiceName": {
-										"referenceName": "onsemidevmdlstoragelink",
-										"type": "LinkedServiceReference"
-									},
-									"path": "adls/inbound/logs"
-								},
-								"enableLogging": true,
-								"storeSettings": {
-									"type": "FileServerReadSettings",
-									"recursive": true,
-									"wildcardFileName": "*.*"
-								}
-							}
 						}
 					]
 				}
