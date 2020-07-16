@@ -143,11 +143,11 @@
 			},
 			"DestinationFileFolder": {
 				"type": "string",
-				"defaultValue": "destinationfolder"
+				"defaultValue": "outbound"
 			},
 			"DestinationFileDirectory": {
 				"type": "string",
-				"defaultValue": "subfolder"
+				"defaultValue": "staged"
 			}
 		},
 		"annotations": []
