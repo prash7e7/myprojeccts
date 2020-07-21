@@ -29,7 +29,7 @@
 					"name": "Filter1"
 				}
 			],
-			"script": "source(output(\n\t\tfdc_metadata_key as string,\n\t\tfdc_metadata_value as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tskipLines: 3) ~> FDCMetaData\nFilter1 pivot(groupBy(fdc_metadata_key),\n\tpivotBy(fdc_metadata_value),\n\t{} = first(fdc_metadata_value),\n\tcolumnNaming: '$V$N',\n\tlateral: false) ~> Pivot1\nFDCMetaData filter(instr(\"General Info, Run Path and Name\" , fdc_metadata_key)>0 || \r\ninstr(\"Sensor ID\" , fdc_metadata_key)>0 ||\r\ninstr(\"Substrate Information, Lot ID\" , fdc_metadata_key)>0 ||\r\ninstr(\"Substrate Information, Slot ID\" , fdc_metadata_key)>0) ~> Filter1\nPivot1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+			"script": "source(output(\n\t\tfdc_metadata_key as string,\n\t\tfdc_metadata_value as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tskipLines: 3) ~> FDCMetaData\nFilter1 pivot(groupBy(fdc_metadata_value),\n\tpivotBy(fdc_metadata_value),\n\t{} = first(fdc_metadata_value),\n\tcolumnNaming: '$V$N',\n\tlateral: false) ~> Pivot1\nFDCMetaData filter(instr(\"General Info, Run Path and Name\" , fdc_metadata_key)>0 || \r\ninstr(\"Sensor ID\" , fdc_metadata_key)>0 ||\r\ninstr(\"Substrate Information, Lot ID\" , fdc_metadata_key)>0 ||\r\ninstr(\"Substrate Information, Slot ID\" , fdc_metadata_key)>0) ~> Filter1\nPivot1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
 		}
 	}
 }
