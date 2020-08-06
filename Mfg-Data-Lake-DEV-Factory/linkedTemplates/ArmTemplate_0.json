@@ -19,14 +19,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ONPREMALLUSERS'"
 		},
-		"ONPREMVM_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'ONPREMVM'"
-		},
-		"fabtimesqlserver_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
-		},
 		"onsemidevmdlstoragelink_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://onsemidevmdlstorage.dfs.core.windows.net"
@@ -36,14 +28,6 @@
 			"defaultValue": "\\\\USCO01WS0029\\adls"
 		},
 		"ONPREMALLUSERS_properties_typeProperties_userId": {
-			"type": "string",
-			"defaultValue": "onsemi\\fabtimesys"
-		},
-		"ONPREMVM_properties_typeProperties_host": {
-			"type": "string",
-			"defaultValue": "\\\\USCO01WS0029.ad.onsemi.com\\MLArtifacts"
-		},
-		"ONPREMVM_properties_typeProperties_userId": {
 			"type": "string",
 			"defaultValue": "onsemi\\fabtimesys"
 		}
@@ -172,6 +156,82 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/BinarySinkFileStore1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your destination data store.",
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"container": {
+						"type": "string"
+					},
+					"directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().directory",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().container",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BinarySourceFileStore2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your source data store.",
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"container": {
+						"type": "string"
+					},
+					"directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().directory",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().container",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DelimitedText1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -190,6 +250,38 @@
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "translated/csv",
+						"fileSystem": "adls"
+					},
+					"columnDelimiter": "\t",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
 				"schema": [
@@ -230,6 +322,34 @@
 						"type": "String"
 					}
 				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FDCMetaData')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "GAY11091.1-example1.dat",
+						"folderPath": "inbound/site/USR/FDC/Samples",
+						"fileSystem": "adls"
+					},
+					"columnDelimiter": "\t",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
@@ -353,6 +473,77 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/mdloutbound')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/mergedCSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "translated/parquet",
+						"fileSystem": "adls"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/mergedCSVToParquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "translated/parquet",
+						"fileSystem": "adls"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/mfgdlparquet')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -400,673 +591,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeMfgDataLake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ONPREMVM')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "onpremvm",
-				"annotations": [],
-				"type": "FileServer",
-				"typeProperties": {
-					"host": "[parameters('ONPREMVM_properties_typeProperties_host')]",
-					"userId": "[parameters('ONPREMVM_properties_typeProperties_userId')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('ONPREMVM_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntimeMfgDataLake",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeMfgDataLake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/fabtimesqlserver')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('fabtimesqlserver_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntimeMfgDataLake",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeMfgDataLake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/FDCMetaData')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "GAY11091.1-example1.dat",
-						"folderPath": "inbound/site/USR/FDC/Samples",
-						"fileSystem": "adls"
-					},
-					"columnDelimiter": "\t",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/mdloutbound')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BinarySinkFileStore1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your destination data store.",
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"container": {
-						"type": "string"
-					},
-					"directory": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": {
-							"value": "@dataset().directory",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().container",
-							"type": "Expression"
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BinarySourceFileStore2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your source data store.",
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"container": {
-						"type": "string"
-					},
-					"directory": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": {
-							"value": "@dataset().directory",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().container",
-							"type": "Expression"
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Bulk Copy from Files to Database')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Get Files",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "GetMetadataDataset",
-								"type": "DatasetReference",
-								"parameters": {
-									"SourceContainer": {
-										"value": "@pipeline().parameters.SourceContainer",
-										"type": "Expression"
-									},
-									"SourceDirectory": {
-										"value": "@pipeline().parameters.SourceDirectory",
-										"type": "Expression"
-									}
-								}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true
-							},
-							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
-							}
-						}
-					},
-					{
-						"name": "ForEachFile",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "Get Files",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Get Files').output.childItems",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "CopyFiles",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": true,
-												"wildcardFolderPath": "ffyn9j",
-												"wildcardFileName": "student-mat.csv",
-												"enablePartitionDiscovery": false
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
-										},
-										"sink": {
-											"type": "SqlDWSink",
-											"allowPolyBase": true,
-											"polyBaseSettings": {
-												"rejectValue": 0,
-												"rejectType": "value",
-												"useTypeDefault": true
-											}
-										},
-										"enableStaging": true,
-										"stagingSettings": {
-											"linkedServiceName": {
-												"referenceName": "ADLSBlobStorage",
-												"type": "LinkedServiceReference"
-											},
-											"path": "adfsolutiontemplate/BulkCopyfromFilestoDB"
-										},
-										"translator": {
-											"type": "TabularTranslator",
-											"mappings": [
-												{
-													"source": {
-														"name": "school",
-														"type": "String"
-													},
-													"sink": {
-														"name": "school",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "sex",
-														"type": "String"
-													},
-													"sink": {
-														"name": "sex",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "age",
-														"type": "String"
-													},
-													"sink": {
-														"name": "age",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "address",
-														"type": "String"
-													},
-													"sink": {
-														"name": "address",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "famsize",
-														"type": "String"
-													},
-													"sink": {
-														"name": "famsize",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "Pstatus",
-														"type": "String"
-													},
-													"sink": {
-														"name": "Pstatus",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "Medu",
-														"type": "String"
-													},
-													"sink": {
-														"name": "Medu",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "Fedu",
-														"type": "String"
-													},
-													"sink": {
-														"name": "Fedu",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "Mjob",
-														"type": "String"
-													},
-													"sink": {
-														"name": "Mjob",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "Fjob",
-														"type": "String"
-													},
-													"sink": {
-														"name": "Fjob",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "reason",
-														"type": "String"
-													},
-													"sink": {
-														"name": "reason",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "guardian",
-														"type": "String"
-													},
-													"sink": {
-														"name": "guardian",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "traveltime",
-														"type": "String"
-													},
-													"sink": {
-														"name": "traveltime",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "studytime",
-														"type": "String"
-													},
-													"sink": {
-														"name": "studytime",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "failures",
-														"type": "String"
-													},
-													"sink": {
-														"name": "failures",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "schoolsup",
-														"type": "String"
-													},
-													"sink": {
-														"name": "schoolsup",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "famsup",
-														"type": "String"
-													},
-													"sink": {
-														"name": "famsup",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "paid",
-														"type": "String"
-													},
-													"sink": {
-														"name": "paid",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "activities",
-														"type": "String"
-													},
-													"sink": {
-														"name": "activities",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "nursery",
-														"type": "String"
-													},
-													"sink": {
-														"name": "nursery",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "higher",
-														"type": "String"
-													},
-													"sink": {
-														"name": "higher",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "internet",
-														"type": "String"
-													},
-													"sink": {
-														"name": "internet",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "romantic",
-														"type": "String"
-													},
-													"sink": {
-														"name": "romantic",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "famrel",
-														"type": "String"
-													},
-													"sink": {
-														"name": "famrel",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "freetime",
-														"type": "String"
-													},
-													"sink": {
-														"name": "freetime",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "goout",
-														"type": "String"
-													},
-													"sink": {
-														"name": "goout",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "Dalc",
-														"type": "String"
-													},
-													"sink": {
-														"name": "Dalc",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "Walc",
-														"type": "String"
-													},
-													"sink": {
-														"name": "Walc",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "health",
-														"type": "String"
-													},
-													"sink": {
-														"name": "health",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "absences",
-														"type": "String"
-													},
-													"sink": {
-														"name": "absences",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "G1",
-														"type": "String"
-													},
-													"sink": {
-														"name": "G1",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "G2",
-														"type": "String"
-													},
-													"sink": {
-														"name": "G2",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "G3",
-														"type": "String"
-													},
-													"sink": {
-														"name": "G3",
-														"type": "String"
-													}
-												}
-											]
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "SourceDataset",
-											"type": "DatasetReference",
-											"parameters": {
-												"fileName": {
-													"value": "@item().name",
-													"type": "Expression"
-												},
-												"SourceContainer": {
-													"value": "@pipeline().parameters.SourceContainer",
-													"type": "Expression"
-												},
-												"SourceDirectory": {
-													"value": "@pipeline().parameters.SourceDirectory",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "AzureSqlDWSinkDataset",
-											"type": "DatasetReference",
-											"parameters": {
-												"sinkTableName": {
-													"value": "@item().name",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
-						}
-					}
-				],
-				"parameters": {
-					"SourceContainer": {
-						"type": "string",
-						"defaultValue": "adls\\inbound\\user"
-					},
-					"SourceDirectory": {
-						"type": "string",
-						"defaultValue": "ffyn9j"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/GetMetadataDataset')]",
-				"[concat(variables('factoryId'), '/datasets/SourceDataset')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlDWSinkDataset')]",
-				"[concat(variables('factoryId'), '/linkedServices/ADLSBlobStorage')]"
 			]
 		}
 	]
