@@ -14,7 +14,7 @@
 			],
 			"sinks": [],
 			"transformations": [],
-			"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tmodifiedAfter: (addDays(currentTimestamp(), -1)),\n\tmodifiedBefore: (currentTimestamp()),\n\twildcardPaths:['*.csv']) ~> source1"
+			"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tmodifiedAfter: (addDays(currentTimestamp(), -1)),\n\tmodifiedBefore: (currentTimestamp()),\n\twildcardPaths:['translated/csv/*.csv']) ~> source1"
 		}
 	}
 }
