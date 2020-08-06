@@ -13,7 +13,7 @@
 				"folderPath": "translated/csv",
 				"fileSystem": "adls"
 			},
-			"columnDelimiter": ",",
+			"columnDelimiter": "\t",
 			"escapeChar": "\\",
 			"quoteChar": "\""
 		},
