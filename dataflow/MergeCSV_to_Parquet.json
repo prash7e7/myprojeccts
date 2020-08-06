@@ -1,0 +1,20 @@
+{
+	"name": "MergeCSV_to_Parquet",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText2",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tmodifiedAfter: (addDays(currentTimestamp(), -1)),\n\tmodifiedBefore: (currentTimestamp()),\n\twildcardPaths:['*.csv']) ~> source1"
+		}
+	}
+}
