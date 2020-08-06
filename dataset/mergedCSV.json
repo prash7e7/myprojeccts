@@ -1,0 +1,20 @@
+{
+	"name": "mergedCSV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "onsemidevmdlstoragelink",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "translated/parquet",
+				"fileSystem": "adls"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
