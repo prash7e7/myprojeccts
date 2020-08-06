@@ -22,7 +22,7 @@
 				}
 			],
 			"transformations": [],
-			"script": "source(output(\n\t\tcol1 as short,\n\t\tcol2 as short,\n\t\tcol3 as boolean,\n\t\tcol4 as boolean\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tmodifiedAfter: (addDays(currentTimestamp(), -1)),\n\tmodifiedBefore: (currentTimestamp()),\n\twildcardPaths:['translated/csv/*.csv']) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionBy('roundRobin', 2),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+			"script": "source(output(\n\t\tcol1 as short,\n\t\tcol2 as short,\n\t\tcol3 as boolean,\n\t\tcol4 as boolean\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tmodifiedAfter: (addDays(currentTimestamp(), -1)),\n\tmodifiedBefore: (currentTimestamp()),\n\twildcardPaths:['translated/csv/*.csv']) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
 		}
 	}
 }
