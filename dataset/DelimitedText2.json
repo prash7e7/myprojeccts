@@ -10,7 +10,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "1596792318.198779.csv",
 				"folderPath": "translated/csv/site/USR/FDC/Tools/ASH10653/2020-008-01",
 				"fileSystem": "adls"
 			},
