@@ -1,0 +1,20 @@
+{
+	"name": "DataFlowForCSVMergeToParquet",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText2",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\twildcardPaths:['@concat(pipeline().parameters.SourceFileDirectory,\\'/\\',item().name)']) ~> source1"
+		}
+	}
+}
