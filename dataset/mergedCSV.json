@@ -10,7 +10,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "translated/parquet",
+				"folderPath": {
+					"value": "$recursiveOutputPath",
+					"type": "Expression"
+				},
 				"fileSystem": "adls"
 			},
 			"compressionCodec": "snappy"
