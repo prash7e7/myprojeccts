@@ -155,8 +155,10 @@
 									"referenceName": "DataFlowForCSVMergeToParquet",
 									"type": "DataFlowReference",
 									"parameters": {
-										"recursiveInputPath": "'translated/csv/site/USR/FDC/Tools/ASH10653/2020-008-01/*.csv'",
-										"recursiveOutputPath": "'translated/parquet/site/USR/FDC/Tools/ASH10653/2020-008-01'"
+										"recursiveInputPath": {
+											"value": "'@{concat(pipeline().parameters.SourceFileDirectory,'/',item().name)}'",
+											"type": "Expression"
+										}
 									}
 								},
 								"staging": {
