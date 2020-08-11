@@ -181,19 +181,19 @@
 		"parameters": {
 			"SourceFileFolder": {
 				"type": "string",
-				"defaultValue": "sourcefolder"
+				"defaultValue": "adls"
 			},
 			"SourceFileDirectory": {
 				"type": "string",
-				"defaultValue": "subfolder"
+				"defaultValue": "csv"
 			},
 			"DestinationFileFolder": {
 				"type": "string",
-				"defaultValue": "destinationfolder"
+				"defaultValue": "adls"
 			},
 			"DestinationFileDirectory": {
 				"type": "string",
-				"defaultValue": "subfolder"
+				"defaultValue": "parquet"
 			}
 		},
 		"annotations": []
