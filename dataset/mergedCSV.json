@@ -11,7 +11,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"folderPath": {
-					"value": "$recursiveOutputPath",
+					"value": "$recursiveInputPath",
 					"type": "Expression"
 				},
 				"fileSystem": "adls"
