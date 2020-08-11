@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "translated/csv/site/USR/FDC/Tools/ASH10653/2020-008-01",
+				"folderPath": "translated/csv",
 				"fileSystem": "adls"
 			},
 			"columnDelimiter": ";",
@@ -18,6 +18,10 @@
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": []
+		"schema": [
+			{
+				"type": "String"
+			}
+		]
 	}
 }
