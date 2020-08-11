@@ -36,6 +36,9 @@
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
 						"recursive": true
+					},
+					"formatSettings": {
+						"type": "BinaryReadSettings"
 					}
 				}
 			},
@@ -63,7 +66,14 @@
 							"name": "CopyOneContainer",
 							"description": "Copy each container from source storage store to destination store.",
 							"type": "Copy",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "DataFlowForCSVMergeToParquet",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"policy": {
 								"timeout": "7.00:00:00",
 								"retry": 0,
@@ -77,7 +87,13 @@
 									"type": "BinarySource",
 									"storeSettings": {
 										"type": "AzureBlobFSReadSettings",
-										"recursive": true
+										"recursive": true,
+										"wildcardFolderPath": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)",
+										"wildcardFileName": "*.parquet",
+										"deleteFilesAfterCompletion": false
+									},
+									"formatSettings": {
+										"type": "BinaryReadSettings"
 									}
 								},
 								"sink": {
@@ -121,6 +137,39 @@
 									}
 								}
 							]
+						},
+						{
+							"name": "DataFlowForCSVMergeToParquet",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "DataFlowForCSVMergeToParquet",
+									"type": "DataFlowReference",
+									"parameters": {
+										"recursiveInputPath": "'translated/csv/site/USR/FDC/Tools/ASH10653/2020-008-01/*.csv'",
+										"recursiveOutputPath": "'translated/parquet/site/USR/FDC/Tools/ASH10653/2020-008-01'"
+									}
+								},
+								"staging": {
+									"linkedService": {
+										"referenceName": "onsemidevmdlstoragelink",
+										"type": "LinkedServiceReference"
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								}
+							}
 						}
 					]
 				}
