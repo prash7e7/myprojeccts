@@ -163,7 +163,8 @@
 									"linkedService": {
 										"referenceName": "onsemidevmdlstoragelink",
 										"type": "LinkedServiceReference"
-									}
+									},
+									"folderPath": "adls/translated/staging"
 								},
 								"compute": {
 									"coreCount": 8,
