@@ -6,7 +6,7 @@
 		"pipelines": [
 			{
 				"pipelineReference": {
-					"referenceName": "NoteBookTest",
+					"referenceName": "Databricks_ETL_ASH",
 					"type": "PipelineReference"
 				}
 			}
