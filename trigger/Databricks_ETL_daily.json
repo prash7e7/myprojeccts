@@ -1,0 +1,24 @@
+{
+	"name": "Databricks_ETL_daily",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "NoteBookTest",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2020-08-13T09:00:00.000Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}
