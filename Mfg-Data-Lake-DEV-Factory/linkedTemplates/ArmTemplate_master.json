@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ADLSBlobStorage'"
 		},
+		"AzureDatabricks1_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks1'"
+		},
 		"AzureSynapseDLLink_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSynapseDLLink'"
@@ -109,20 +113,14 @@
 					"ADLSBlobStorage_connectionString": {
 						"value": "[parameters('ADLSBlobStorage_connectionString')]"
 					},
+					"AzureDatabricks1_accessToken": {
+						"value": "[parameters('AzureDatabricks1_accessToken')]"
+					},
 					"AzureSynapseDLLink_connectionString": {
 						"value": "[parameters('AzureSynapseDLLink_connectionString')]"
 					},
-					"ONPREMALLUSERS_password": {
-						"value": "[parameters('ONPREMALLUSERS_password')]"
-					},
 					"onsemidevmdlstoragelink_properties_typeProperties_url": {
 						"value": "[parameters('onsemidevmdlstoragelink_properties_typeProperties_url')]"
-					},
-					"ONPREMALLUSERS_properties_typeProperties_host": {
-						"value": "[parameters('ONPREMALLUSERS_properties_typeProperties_host')]"
-					},
-					"ONPREMALLUSERS_properties_typeProperties_userId": {
-						"value": "[parameters('ONPREMALLUSERS_properties_typeProperties_userId')]"
 					}
 				}
 			},
@@ -142,17 +140,46 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"ONPREMALLUSERS_password": {
+						"value": "[parameters('ONPREMALLUSERS_password')]"
+					},
 					"ONPREMVM_password": {
 						"value": "[parameters('ONPREMVM_password')]"
 					},
 					"fabtimesqlserver_connectionString": {
 						"value": "[parameters('fabtimesqlserver_connectionString')]"
 					},
+					"ONPREMALLUSERS_properties_typeProperties_host": {
+						"value": "[parameters('ONPREMALLUSERS_properties_typeProperties_host')]"
+					},
+					"ONPREMALLUSERS_properties_typeProperties_userId": {
+						"value": "[parameters('ONPREMALLUSERS_properties_typeProperties_userId')]"
+					},
 					"ONPREMVM_properties_typeProperties_host": {
 						"value": "[parameters('ONPREMVM_properties_typeProperties_host')]"
 					},
 					"ONPREMVM_properties_typeProperties_userId": {
 						"value": "[parameters('ONPREMVM_properties_typeProperties_userId')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
 						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder')]"
@@ -181,7 +208,7 @@
 				}
 			},
 			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_0')]"
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_1')]"
 			]
 		}
 	]

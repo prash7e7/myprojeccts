@@ -8,6 +8,9 @@
 		"ADLSBlobStorage_connectionString": {
 			"value": ""
 		},
+		"AzureDatabricks1_accessToken": {
+			"value": ""
+		},
 		"AzureSynapseDLLink_connectionString": {
 			"value": ""
 		},
