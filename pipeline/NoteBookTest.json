@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Notebook1",
+				"name": "ETL_USR_ASH",
 				"type": "DatabricksNotebook",
 				"dependsOn": [],
 				"policy": {
