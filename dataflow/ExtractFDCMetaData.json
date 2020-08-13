@@ -1,6 +1,9 @@
 {
 	"name": "ExtractFDCMetaData",
 	"properties": {
+		"folder": {
+			"name": "sandbox"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [

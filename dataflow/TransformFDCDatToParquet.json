@@ -1,6 +1,9 @@
 {
 	"name": "TransformFDCDatToParquet",
 	"properties": {
+		"folder": {
+			"name": "sandbox"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
