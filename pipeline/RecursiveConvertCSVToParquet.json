@@ -214,6 +214,10 @@
 								"items": {
 									"value": "@activity('EnumerateContainersList').output.childItems",
 									"type": "Expression"
+								},
+								"condition": {
+									"value": " @and(equals(item().type, 'Folder'), equals(item().name, '2020-008-02'))",
+									"type": "Expression"
 								}
 							}
 						}
