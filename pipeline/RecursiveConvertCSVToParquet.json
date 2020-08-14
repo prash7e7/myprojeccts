@@ -46,20 +46,9 @@
 				"name": "ForEachContainer",
 				"description": "Get the container list from Metadata activity and then iterates each of them to Copy activity.",
 				"type": "ForEach",
-				"dependsOn": [
-					{
-						"activity": "EnumerateContainersList",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
-					"items": {
-						"value": "[object Object]",
-						"type": "Expression"
-					},
 					"batchCount": 4,
 					"activities": [
 						{
@@ -168,6 +157,63 @@
 								"compute": {
 									"coreCount": 8,
 									"computeType": "General"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Filter1",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "EnumerateContainersList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('EnumerateContainersList').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@and(equals(item().type, 'Folder'), equals(item().name, '2020-008-02'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Filter1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('EnumerateContainersList').output.childItems",
+						"type": "Expression"
+					},
+					"batchCount": 4,
+					"activities": [
+						{
+							"name": "Filter2",
+							"type": "Filter",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"items": {
+									"value": "@activity('EnumerateContainersList').output.childItems",
+									"type": "Expression"
 								}
 							}
 						}
