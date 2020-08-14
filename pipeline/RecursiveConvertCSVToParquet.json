@@ -161,7 +161,8 @@
 										"recursiveInputPath": {
 											"value": "'@{concat(pipeline().parameters.SourceFileDirectory,'/',item().name)}'",
 											"type": "Expression"
-										}
+										},
+										"recursiveOutputPath": "'translated/parquet/site/USR/FDC/Tools/ASH10653/2020-008-01'"
 									}
 								},
 								"compute": {
@@ -181,7 +182,7 @@
 			},
 			"SourceFileDirectory": {
 				"type": "string",
-				"defaultValue": "translated\\csv\\site\\USR\\FDC\\Tools\\ASH10653\\2020-008-01"
+				"defaultValue": "translated\\csv\\site\\USR\\FDC\\Tools\\ASH10653"
 			},
 			"DestinationFileFolder": {
 				"type": "string",
@@ -189,7 +190,7 @@
 			},
 			"DestinationFileDirectory": {
 				"type": "string",
-				"defaultValue": "translated\\parquet\\site\\USR\\FDC\\Tools\\ASH10653\\2020-008-01"
+				"defaultValue": "translated\\parquet\\site\\USR\\FDC\\Tools\\ASH10653"
 			}
 		},
 		"annotations": []
