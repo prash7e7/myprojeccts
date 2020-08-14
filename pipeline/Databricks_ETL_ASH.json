@@ -18,7 +18,7 @@
 					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ASH_dev"
 				},
 				"linkedServiceName": {
-					"referenceName": "AzureDatabricks1",
+					"referenceName": "AzureDatabricks_rado",
 					"type": "LinkedServiceReference"
 				}
 			}
