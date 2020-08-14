@@ -23,6 +23,9 @@
 		"fabtimesqlserver_connectionString": {
 			"value": ""
 		},
+		"AzureDatabricks_rado_accessToken": {
+			"value": ""
+		},
 		"ONPREMALLUSERS_properties_typeProperties_host": {
 			"value": "\\\\USCO01WS0029\\adls"
 		},

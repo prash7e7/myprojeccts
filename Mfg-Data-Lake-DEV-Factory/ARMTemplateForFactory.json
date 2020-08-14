@@ -31,6 +31,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
 		},
+		"AzureDatabricks_rado_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_rado'"
+		},
 		"ONPREMALLUSERS_properties_typeProperties_host": {
 			"type": "string",
 			"defaultValue": "\\\\USCO01WS0029\\adls"
@@ -966,7 +970,7 @@
 							"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ASH_dev"
 						},
 						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
+							"referenceName": "AzureDatabricks_rado",
 							"type": "LinkedServiceReference"
 						}
 					}
@@ -974,7 +978,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks1')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado')]"
 			]
 		},
 		{
@@ -2507,6 +2511,29 @@
 				"[concat(variables('factoryId'), '/datasets/DelimitedText2')]",
 				"[concat(variables('factoryId'), '/datasets/ParquetDestinationStore')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDatabricks_rado')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-5020195826862837.17.azuredatabricks.net",
+					"accessToken": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDatabricks_rado_accessToken')]"
+					},
+					"newClusterNodeType": "Standard_DS3_v2",
+					"newClusterNumOfWorker": "1",
+					"newClusterSparkEnvVars": {
+						"PYSPARK_PYTHON": "/databricks/python3/bin/python3"
+					},
+					"newClusterVersion": "7.0.x-scala2.12"
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }

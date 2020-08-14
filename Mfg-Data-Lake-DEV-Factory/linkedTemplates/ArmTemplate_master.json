@@ -31,6 +31,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
 		},
+		"AzureDatabricks_rado_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_rado'"
+		},
 		"ONPREMALLUSERS_properties_typeProperties_host": {
 			"type": "string",
 			"defaultValue": "\\\\USCO01WS0029\\adls"
@@ -118,6 +122,9 @@
 					},
 					"AzureSynapseDLLink_connectionString": {
 						"value": "[parameters('AzureSynapseDLLink_connectionString')]"
+					},
+					"AzureDatabricks_rado_accessToken": {
+						"value": "[parameters('AzureDatabricks_rado_accessToken')]"
 					},
 					"onsemidevmdlstoragelink_properties_typeProperties_url": {
 						"value": "[parameters('onsemidevmdlstoragelink_properties_typeProperties_url')]"
