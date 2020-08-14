@@ -57,7 +57,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('EnumerateContainersList').output.childItems",
+						"value": "[object Object]",
 						"type": "Expression"
 					},
 					"batchCount": 4,
