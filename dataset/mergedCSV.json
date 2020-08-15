@@ -7,8 +7,7 @@
 		},
 		"parameters": {
 			"outputPath": {
-				"type": "string",
-				"defaultValue": "@concat(pipeline().parameters.DestinationFileDirectory,'/',item().name)"
+				"type": "string"
 			}
 		},
 		"annotations": [],
@@ -16,10 +15,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": {
-					"value": "$recursiveInputPath",
-					"type": "Expression"
-				},
+				"folderPath": "translated/parquet/site/USR/FDC/Tools/ASH10653",
 				"fileSystem": "adls"
 			},
 			"compressionCodec": "snappy"
