@@ -57,7 +57,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('FolderFilter').output.childItems",
+						"value": "@activity('FolderFilter').output.value",
 						"type": "Expression"
 					},
 					"batchCount": 4,
@@ -162,7 +162,10 @@
 											"value": "'@{concat(pipeline().parameters.SourceFileDirectory,'/',item().name)}'",
 											"type": "Expression"
 										},
-										"recursiveOutputPath": "'translated/parquet/site/USR/FDC/Tools/ASH10653/2020-008-01'"
+										"recursiveOutputPath": {
+											"value": "'@{concat(pipeline().parameters.DestinationFileDirectory,'/',item().name)}'",
+											"type": "Expression"
+										}
 									}
 								},
 								"compute": {
