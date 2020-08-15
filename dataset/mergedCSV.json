@@ -5,6 +5,12 @@
 			"referenceName": "onsemidevmdlstoragelink",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"outputPath": {
+				"type": "string",
+				"defaultValue": "@concat(pipeline().parameters.DestinationFileDirectory,'/',item().name)"
+			}
+		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
