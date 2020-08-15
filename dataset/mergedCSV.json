@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "translated/parquet/site/USR/FDC/Tools/ASH10653",
+				"folderPath": "translated/parquet/site/USR/FDC/Tools/ASH10653/",
 				"fileSystem": "adls"
 			},
 			"compressionCodec": "snappy"
