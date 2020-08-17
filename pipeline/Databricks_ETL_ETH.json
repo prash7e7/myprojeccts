@@ -23,8 +23,8 @@
 				}
 			},
 			{
-				"name": "csv_delta_parquet",
-				"type": "DatabricksNotebook",
+				"name": "cleanCSV_Delta_Parquet_ETH",
+				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
 						"activity": "ETL_USR_ETH",
@@ -42,11 +42,14 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ETH_csv_delta_parquet_dev"
-				},
-				"linkedServiceName": {
-					"referenceName": "AzureDatabricks_rado",
-					"type": "LinkedServiceReference"
+					"dataflow": {
+						"referenceName": "cleanCSV_Delta_Parquet_ETH",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					}
 				}
 			}
 		],
