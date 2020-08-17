@@ -1,9 +1,9 @@
 {
-	"name": "Databricks_ETL_ASH",
+	"name": "Databricks_ETL_ETH",
 	"properties": {
 		"activities": [
 			{
-				"name": "ETL_USR_ASH",
+				"name": "ETL_USR_ETH",
 				"type": "DatabricksNotebook",
 				"dependsOn": [],
 				"policy": {
@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ASH_dev"
+					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ETH_dev"
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks_rado",

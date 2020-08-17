@@ -9,6 +9,12 @@
 					"referenceName": "Databricks_ETL_ASH",
 					"type": "PipelineReference"
 				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "Databricks_ETL_ETH",
+					"type": "PipelineReference"
+				}
 			}
 		],
 		"type": "ScheduleTrigger",
