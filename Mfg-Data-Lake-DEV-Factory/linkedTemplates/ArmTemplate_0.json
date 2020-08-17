@@ -120,69 +120,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Databricks_ETL_ASH')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ETL_USR_ASH",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ASH_dev"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "csv_delta_parquet",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "ETL_USR_ASH",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ASH_csv_delta_parquet_dev"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"folder": {
-					"name": "Databricks_ETL"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/AzureBlobFSSourceDatasetEntity')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -612,6 +549,29 @@
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
 					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParquetDestinationStore')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation"
+					},
+					"compressionCodec": "snappy"
 				},
 				"schema": []
 			},
