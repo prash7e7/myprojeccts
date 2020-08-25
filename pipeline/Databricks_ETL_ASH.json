@@ -102,7 +102,7 @@
 					"notebookPath": "/Deployments/DEV/FDC_Batch_Detection/FDC_ASH_PIM_Batch_Detection"
 				},
 				"linkedServiceName": {
-					"referenceName": "AzureDatabricks_rado",
+					"referenceName": "AzureDatabricks_rado_ml_cluster",
 					"type": "LinkedServiceReference"
 				}
 			}
