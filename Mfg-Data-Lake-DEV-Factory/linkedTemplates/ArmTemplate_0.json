@@ -133,7 +133,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"folderPath": "translated/examples/ASH.parquet",
+						"folderPath": "translated/examples/ASH.parquet.df",
 						"fileSystem": "adls"
 					},
 					"compressionCodec": "snappy"
@@ -1044,7 +1044,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"folderPath": "translated/examples/ETH.parquet",
+						"folderPath": "translated/examples/ETH.parquet.df",
 						"fileSystem": "adls"
 					},
 					"compressionCodec": "snappy"
