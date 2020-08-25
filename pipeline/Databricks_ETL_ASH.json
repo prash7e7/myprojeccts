@@ -51,6 +51,60 @@
 						"computeType": "General"
 					}
 				}
+			},
+			{
+				"name": "ETL_USR_ASH_csv",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "cleanCSV_Delta_Parquet_ASH",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ASH_csv_delta_parquet_dev"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "FDC_ASH_PIM_Batch_Detection",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "ETL_USR_ASH_csv",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Deployments/DEV/FDC_Batch_Detection/FDC_ASH_PIM_Batch_Detection"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"folder": {
