@@ -35,6 +35,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
 		},
+		"AzureDatabricks_rado_ml_cluster_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_rado_ml_cluster'"
+		},
 		"ONPREMALLUSERS_properties_typeProperties_host": {
 			"type": "string",
 			"defaultValue": "\\\\USCO01WS0029\\adls"
@@ -1107,7 +1111,7 @@
 							"notebookPath": "/Deployments/DEV/FDC_Batch_Detection/FDC_ASH_PIM_Batch_Detection"
 						},
 						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado",
+							"referenceName": "AzureDatabricks_rado_ml_cluster",
 							"type": "LinkedServiceReference"
 						}
 					}
@@ -1119,7 +1123,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado')]",
-				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ASH')]"
+				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ASH')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado_ml_cluster')]"
 			]
 		},
 		{
@@ -3200,8 +3205,9 @@
 					"recurrence": {
 						"frequency": "Day",
 						"interval": 1,
-						"startTime": "2020-08-13T09:00:00.000Z",
-						"timeZone": "UTC"
+						"startTime": "2020-08-13T04:00:00.000Z",
+						"timeZone": "UTC",
+						"schedule": {}
 					}
 				}
 			},
@@ -3533,6 +3539,24 @@
 				"[concat(variables('factoryId'), '/datasets/ETH_Parquet')]",
 				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDatabricks_rado_ml_cluster')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-5020195826862837.17.azuredatabricks.net",
+					"accessToken": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDatabricks_rado_ml_cluster_accessToken')]"
+					},
+					"existingClusterId": "0416-124834-wrung770"
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }
