@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "ETL_USR_ASH",
+				"name": "ETL_USR_ASH_parsing",
 				"type": "DatabricksNotebook",
 				"dependsOn": [],
 				"policy": {
@@ -27,7 +27,7 @@
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "ETL_USR_ASH",
+						"activity": "ETL_USR_ASH_parsing",
 						"dependencyConditions": [
 							"Succeeded"
 						]
