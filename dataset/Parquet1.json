@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "translated/examples/ASH.parquet.df",
+				"folderPath": "translated/examples/ASH.delta.df",
 				"fileSystem": "adls"
 			},
 			"compressionCodec": "snappy"
