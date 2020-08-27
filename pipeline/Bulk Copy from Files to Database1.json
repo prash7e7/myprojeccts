@@ -110,10 +110,12 @@
 		],
 		"parameters": {
 			"SourceContainer": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "adls"
 			},
 			"SourceDirectory": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "translated/examples/ASH.delta.df"
 			}
 		},
 		"annotations": []
