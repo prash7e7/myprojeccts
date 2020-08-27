@@ -19,7 +19,9 @@
 						"type": "ParquetSource",
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
-							"fileListPath": "adls/translated/examples/ASH.delta.df"
+							"recursive": true,
+							"wildcardFolderPath": "translated/examples/ASH.delta.df",
+							"wildcardFileName": "*.parquet"
 						}
 					},
 					"sink": {
