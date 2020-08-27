@@ -60,7 +60,7 @@
 									"type": "ParquetSource",
 									"storeSettings": {
 										"type": "AzureBlobFSReadSettings",
-										"recursive": true
+										"fileListPath": "adls/translated/examples/ASH.parquet.df"
 									}
 								},
 								"sink": {
@@ -72,7 +72,14 @@
 										"useTypeDefault": true
 									}
 								},
-								"enableStaging": true
+								"enableStaging": true,
+								"stagingSettings": {
+									"linkedServiceName": {
+										"referenceName": "ADLSBlobStorage",
+										"type": "LinkedServiceReference"
+									},
+									"path": "adfsolutiontemplate/BulkCopyfromFilestoDB"
+								}
 							},
 							"inputs": [
 								{
