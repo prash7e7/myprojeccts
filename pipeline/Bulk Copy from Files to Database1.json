@@ -1467,6 +1467,10 @@
 								}
 							},
 							{
+								"source": {
+									"name": "Tool_Recipe_Step_Number_SVID196_[Tool's_Step]",
+									"type": "String"
+								},
 								"sink": {
 									"name": "Tool_Recipe_Step_Number_SVID196_[Tool's_Step] nvarchar(4000), [Tool_Wafer_-_Slot_Number_SVID222",
 									"type": "String"
