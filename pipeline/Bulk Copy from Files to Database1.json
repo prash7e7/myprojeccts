@@ -3,8 +3,8 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Get Files",
-				"type": "GetMetadata",
+				"name": "CopyFiles",
+				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
@@ -15,97 +15,51 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataset": {
-						"referenceName": "ASH_Parquet",
-						"type": "DatasetReference"
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"fileListPath": "adls/translated/examples/ASH.delta.df"
+						}
 					},
-					"fieldList": [
-						"childItems"
-					],
-					"storeSettings": {
-						"type": "AzureBlobFSReadSettings"
+					"sink": {
+						"type": "SqlDWSink",
+						"allowPolyBase": true,
+						"polyBaseSettings": {
+							"rejectValue": 0,
+							"rejectType": "value",
+							"useTypeDefault": true
+						},
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "ADLSBlobStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "adfsolutiontemplate",
+						"enableCompression": true
 					}
-				}
-			},
-			{
-				"name": "ForEachFile",
-				"type": "ForEach",
-				"dependsOn": [
+				},
+				"inputs": [
 					{
-						"activity": "Get Files",
-						"dependencyConditions": [
-							"Succeeded"
-						]
+						"referenceName": "Parquet1",
+						"type": "DatasetReference"
 					}
 				],
-				"userProperties": [],
-				"typeProperties": {
-					"items": {
-						"value": "@activity('Get Files').output.childItems",
-						"type": "Expression"
-					},
-					"activities": [
-						{
-							"name": "CopyFiles",
-							"type": "Copy",
-							"dependsOn": [],
-							"policy": {
-								"timeout": "7.00:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"source": {
-									"type": "ParquetSource",
-									"storeSettings": {
-										"type": "AzureBlobFSReadSettings",
-										"recursive": true
-									}
-								},
-								"sink": {
-									"type": "SqlDWSink",
-									"allowPolyBase": true,
-									"polyBaseSettings": {
-										"rejectValue": 0,
-										"rejectType": "value",
-										"useTypeDefault": true
-									},
-									"tableOption": "autoCreate"
-								},
-								"enableStaging": true,
-								"stagingSettings": {
-									"linkedServiceName": {
-										"referenceName": "ADLSBlobStorage",
-										"type": "LinkedServiceReference"
-									},
-									"path": "adfsolutiontemplate",
-									"enableCompression": true
-								}
-							},
-							"inputs": [
-								{
-									"referenceName": "Parquet1",
-									"type": "DatasetReference"
-								}
-							],
-							"outputs": [
-								{
-									"referenceName": "AzureSqlDWSinkDataset1",
-									"type": "DatasetReference",
-									"parameters": {
-										"sinkTableName": {
-											"value": "FABGUARDFEED",
-											"type": "Expression"
-										}
-									}
-								}
-							]
+				"outputs": [
+					{
+						"referenceName": "AzureSqlDWSinkDataset1",
+						"type": "DatasetReference",
+						"parameters": {
+							"sinkTableName": {
+								"value": "FABGUARDFEED",
+								"type": "Expression"
+							}
 						}
-					]
-				}
+					}
+				]
 			}
 		],
 		"parameters": {
