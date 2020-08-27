@@ -19,7 +19,9 @@
 						"referenceName": "ASH_Parquet",
 						"type": "DatasetReference"
 					},
-					"fieldList": [],
+					"fieldList": [
+						"childItems"
+					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings"
 					}
