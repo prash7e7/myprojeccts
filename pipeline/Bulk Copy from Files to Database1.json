@@ -992,8 +992,7 @@
 									"type": "Int16"
 								},
 								"sink": {
-									"name": "Tool_Rcp_Step_Num_SVID167813666_[Tool's_Step] smallint, [Tool_Rcp_Step_Time_sec_SVID167813667",
-									"type": "Single"
+									"name": "Tool_Rcp_Step_Num_SVID167813666_Tools_Step"
 								}
 							},
 							{
