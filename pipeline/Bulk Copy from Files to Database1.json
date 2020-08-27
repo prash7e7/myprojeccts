@@ -62,9 +62,7 @@
 									"type": "ParquetSource",
 									"storeSettings": {
 										"type": "AzureBlobFSReadSettings",
-										"recursive": true,
-										"wildcardFolderPath": "translated/examples/ASH.parquet.df",
-										"wildcardFileName": "*.parquet"
+										"fileListPath": "adls/translated/examples/ASH.parquet.df"
 									}
 								},
 								"sink": {
@@ -77,7 +75,15 @@
 									},
 									"tableOption": "autoCreate"
 								},
-								"enableStaging": false
+								"enableStaging": true,
+								"stagingSettings": {
+									"linkedServiceName": {
+										"referenceName": "ADLSBlobStorage",
+										"type": "LinkedServiceReference"
+									},
+									"path": "adfsolutiontemplate",
+									"enableCompression": true
+								}
 							},
 							"inputs": [
 								{
