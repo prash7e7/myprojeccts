@@ -14,6 +14,9 @@
 		"AzureDatabricks_rado_accessToken": {
 			"value": ""
 		},
+		"AzureDatabricks_rado_ml_cluster_accessToken": {
+			"value": ""
+		},
 		"AzureSynapseDLLink_connectionString": {
 			"value": ""
 		},
@@ -24,9 +27,6 @@
 			"value": ""
 		},
 		"fabtimesqlserver_connectionString": {
-			"value": ""
-		},
-		"AzureDatabricks_rado_ml_cluster_accessToken": {
 			"value": ""
 		},
 		"ONPREMALLUSERS_properties_typeProperties_host": {

@@ -19,6 +19,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_rado'"
 		},
+		"AzureDatabricks_rado_ml_cluster_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_rado_ml_cluster'"
+		},
 		"AzureSynapseDLLink_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSynapseDLLink'"
@@ -34,10 +38,6 @@
 		"fabtimesqlserver_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
-		},
-		"AzureDatabricks_rado_ml_cluster_accessToken": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_rado_ml_cluster'"
 		},
 		"ONPREMALLUSERS_properties_typeProperties_host": {
 			"type": "string",
@@ -127,11 +127,11 @@
 					"AzureDatabricks_rado_accessToken": {
 						"value": "[parameters('AzureDatabricks_rado_accessToken')]"
 					},
-					"AzureSynapseDLLink_connectionString": {
-						"value": "[parameters('AzureSynapseDLLink_connectionString')]"
-					},
 					"AzureDatabricks_rado_ml_cluster_accessToken": {
 						"value": "[parameters('AzureDatabricks_rado_ml_cluster_accessToken')]"
+					},
+					"AzureSynapseDLLink_connectionString": {
+						"value": "[parameters('AzureSynapseDLLink_connectionString')]"
 					},
 					"onsemidevmdlstoragelink_properties_typeProperties_url": {
 						"value": "[parameters('onsemidevmdlstoragelink_properties_typeProperties_url')]"
@@ -206,6 +206,26 @@
 					},
 					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
 						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'Mfg-Data-Lake-DEV-Factory_ArmTemplate_1')]"
+			]
+		},
+		{
+			"name": "Mfg-Data-Lake-DEV-Factory_ArmTemplate_3",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder": {
 						"value": "[parameters('trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder')]"
@@ -222,7 +242,7 @@
 				}
 			},
 			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'Mfg-Data-Lake-DEV-Factory_ArmTemplate_1')]"
+				"[resourceId('Microsoft.Resources/deployments', 'Mfg-Data-Lake-DEV-Factory_ArmTemplate_2')]"
 			]
 		}
 	]
