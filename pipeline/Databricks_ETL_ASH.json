@@ -57,7 +57,7 @@
 				"type": "DatabricksNotebook",
 				"dependsOn": [
 					{
-						"activity": "cleanCSV_Delta_Parquet_ASH",
+						"activity": "ETL_USR_ASH_parsing",
 						"dependencyConditions": [
 							"Succeeded"
 						]
