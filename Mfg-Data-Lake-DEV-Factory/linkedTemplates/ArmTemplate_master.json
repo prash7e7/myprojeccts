@@ -194,18 +194,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
-						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder')]"
-					},
-					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory": {
-						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory')]"
-					},
-					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder": {
-						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder')]"
-					},
-					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
-						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory')]"
 					}
 				}
 			},
@@ -226,6 +214,18 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
+						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder')]"
+					},
+					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory": {
+						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory')]"
+					},
+					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder": {
+						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder')]"
+					},
+					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
+						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory')]"
 					},
 					"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder": {
 						"value": "[parameters('trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder')]"
