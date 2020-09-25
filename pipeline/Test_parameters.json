@@ -25,6 +25,39 @@
 					"referenceName": "AzureDatabricks_rado_ml_cluster",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "Python1",
+				"type": "DatabricksSparkPython",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "TOOL_GROUP_IN",
+						"value": "ASH10653"
+					},
+					{
+						"name": "TOOL_GROUP_OUT",
+						"value": "ASH10653"
+					}
+				],
+				"typeProperties": {
+					"pythonFile": "dbfs:/deployments/dev/etl_usr/ETL_USR_parse.py",
+					"parameters": [
+						"TOOL_GROUP_IN",
+						"TOOL_GROUP_OUT"
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado_ml_cluster",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"folder": {
