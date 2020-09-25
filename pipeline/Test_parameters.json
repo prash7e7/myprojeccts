@@ -17,7 +17,8 @@
 				"typeProperties": {
 					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_parse",
 					"baseParameters": {
-						"TOOL_GROUP": "ASH10653"
+						"TOOL_GROUP_IN": "ASH10653",
+						"TOOL_GROUP_OUT": "ASH10653"
 					}
 				},
 				"linkedServiceName": {
