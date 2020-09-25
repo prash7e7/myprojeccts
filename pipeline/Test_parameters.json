@@ -20,10 +20,6 @@
 						"TOOL_GROUP_IN": "ASH10653",
 						"TOOL_GROUP_OUT": "ASH10653"
 					}
-				},
-				"linkedServiceName": {
-					"referenceName": "AzureDatabricks_rado_ml_cluster",
-					"type": "LinkedServiceReference"
 				}
 			},
 			{
