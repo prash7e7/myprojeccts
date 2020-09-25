@@ -17,8 +17,8 @@
 				"typeProperties": {
 					"pythonFile": "dbfs:/deployments/dev/etl_usr/ETL_USR_parse.py",
 					"parameters": [
-						"ASH10653",
-						"ASH10653"
+						"ETH36602",
+						"ETH36602"
 					]
 				},
 				"linkedServiceName": {
