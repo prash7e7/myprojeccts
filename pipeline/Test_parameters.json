@@ -13,21 +13,12 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": [
-					{
-						"name": "TOOL_GROUP_IN",
-						"value": "ASH10653"
-					},
-					{
-						"name": "TOOL_GROUP_OUT",
-						"value": "ASH10653"
-					}
-				],
+				"userProperties": [],
 				"typeProperties": {
 					"pythonFile": "dbfs:/deployments/dev/etl_usr/ETL_USR_parse.py",
 					"parameters": [
-						"TOOL_GROUP_IN",
-						"TOOL_GROUP_OUT"
+						"ASH10653",
+						"ASH10653"
 					]
 				},
 				"linkedServiceName": {
