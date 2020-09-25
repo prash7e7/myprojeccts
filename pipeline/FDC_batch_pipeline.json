@@ -273,7 +273,7 @@
 					"pythonFile": "dbfs:/deployments/dev/etl_usr/ETL_USR_parse.py",
 					"parameters": [
 						"CED09603",
-						"CED09603"
+						"CED"
 					]
 				},
 				"linkedServiceName": {
@@ -297,7 +297,7 @@
 					"pythonFile": "dbfs:/deployments/dev/etl_usr/ETL_USR_parse.py",
 					"parameters": [
 						"CED09607",
-						"CED09607"
+						"CED"
 					]
 				},
 				"linkedServiceName": {
