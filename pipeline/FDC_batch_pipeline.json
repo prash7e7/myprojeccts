@@ -3,26 +3,6 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "parse_CED09607",
-				"type": "DatabricksNotebook",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_CED09607_dev"
-				},
-				"linkedServiceName": {
-					"referenceName": "AzureDatabricks_rado_ml_cluster",
-					"type": "LinkedServiceReference"
-				}
-			},
-			{
 				"name": "merge_ASH",
 				"type": "DatabricksNotebook",
 				"dependsOn": [
@@ -81,13 +61,13 @@
 				"type": "DatabricksNotebook",
 				"dependsOn": [
 					{
-						"activity": "parse_CED09607",
+						"activity": "ETL_USR_parse_CED09603",
 						"dependencyConditions": [
 							"Succeeded"
 						]
 					},
 					{
-						"activity": "ETL_USR_parse_CED0963",
+						"activity": "ETL_USR_parse_CED09607",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -278,7 +258,7 @@
 				}
 			},
 			{
-				"name": "ETL_USR_parse_CED0963",
+				"name": "ETL_USR_parse_CED09603",
 				"type": "DatabricksSparkPython",
 				"dependsOn": [],
 				"policy": {
@@ -292,8 +272,32 @@
 				"typeProperties": {
 					"pythonFile": "dbfs:/deployments/dev/etl_usr/ETL_USR_parse.py",
 					"parameters": [
-						"CED0963",
-						"CED0963"
+						"CED09603",
+						"CED09603"
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado_ml_cluster",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "ETL_USR_parse_CED09607",
+				"type": "DatabricksSparkPython",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pythonFile": "dbfs:/deployments/dev/etl_usr/ETL_USR_parse.py",
+					"parameters": [
+						"CED09607",
+						"CED09607"
 					]
 				},
 				"linkedServiceName": {
