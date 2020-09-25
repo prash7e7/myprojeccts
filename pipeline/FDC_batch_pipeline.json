@@ -3,46 +3,6 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "parse_ASH",
-				"type": "DatabricksNotebook",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ASH_dev"
-				},
-				"linkedServiceName": {
-					"referenceName": "AzureDatabricks_rado_ml_cluster",
-					"type": "LinkedServiceReference"
-				}
-			},
-			{
-				"name": "parse_ETH",
-				"type": "DatabricksNotebook",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ETH_dev"
-				},
-				"linkedServiceName": {
-					"referenceName": "AzureDatabricks_rado_ml_cluster",
-					"type": "LinkedServiceReference"
-				}
-			},
-			{
 				"name": "parse_CED09603",
 				"type": "DatabricksNotebook",
 				"dependsOn": [],
@@ -87,7 +47,7 @@
 				"type": "DatabricksNotebook",
 				"dependsOn": [
 					{
-						"activity": "parse_ASH",
+						"activity": "ETL_USR_parse_ASH",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -114,7 +74,7 @@
 				"type": "DatabricksNotebook",
 				"dependsOn": [
 					{
-						"activity": "parse_ETH",
+						"activity": "ETL_USR_parse_ETH",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -283,6 +243,54 @@
 				"userProperties": [],
 				"typeProperties": {
 					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_merge_FDC_results"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado_ml_cluster",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "ETL_USR_parse_ETH",
+				"type": "DatabricksSparkPython",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pythonFile": "dbfs:/deployments/dev/etl_usr/ETL_USR_parse.py",
+					"parameters": [
+						"ETH36602",
+						"ETH36602"
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado_ml_cluster",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "ETL_USR_parse_ASH",
+				"type": "DatabricksSparkPython",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pythonFile": "dbfs:/deployments/dev/etl_usr/ETL_USR_parse.py",
+					"parameters": [
+						"ASH10653",
+						"ASH10653"
+					]
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks_rado_ml_cluster",
