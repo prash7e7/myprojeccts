@@ -3,27 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "FDC_USR_parse",
-				"type": "DatabricksNotebook",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_parse",
-					"baseParameters": {
-						"TOOL_GROUP_IN": "ASH10653",
-						"TOOL_GROUP_OUT": "ASH10653"
-					}
-				}
-			},
-			{
-				"name": "Python1",
+				"name": "ETL_USR_parse",
 				"type": "DatabricksSparkPython",
 				"dependsOn": [],
 				"policy": {
