@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"notebookPath": "/Users/radoslav.strba@onsemi.com/Examples/Notebook_with_parameters",
+					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_parse",
 					"baseParameters": {
 						"TOOL_GROUP": "ASH10653"
 					}
