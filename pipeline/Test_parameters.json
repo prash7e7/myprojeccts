@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Test_parameters",
+				"name": "FDC_USR_parse",
 				"type": "DatabricksNotebook",
 				"dependsOn": [],
 				"policy": {
@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"notebookPath": "/Users/radoslav.strba@onsemi.com/Examples/Notebook_with_parameters",
 					"baseParameters": {
-						"Tool": "ASH"
+						"TOOL_GROUP": "ASH10653"
 					}
 				},
 				"linkedServiceName": {
