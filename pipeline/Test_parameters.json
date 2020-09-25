@@ -17,8 +17,8 @@
 				"typeProperties": {
 					"pythonFile": "dbfs:/deployments/dev/etl_usr/ETL_USR_parse.py",
 					"parameters": [
-						"ETH36602",
-						"ETH36602"
+						"CED09607",
+						"CED-test"
 					]
 				},
 				"linkedServiceName": {
