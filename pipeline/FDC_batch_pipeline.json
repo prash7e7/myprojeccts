@@ -3,33 +3,6 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "merge_ASH",
-				"type": "DatabricksNotebook",
-				"dependsOn": [
-					{
-						"activity": "ETL_USR_parse_ASH",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ASH_csv_delta_parquet_dev"
-				},
-				"linkedServiceName": {
-					"referenceName": "AzureDatabricks_rado_ml_cluster",
-					"type": "LinkedServiceReference"
-				}
-			},
-			{
 				"name": "merge_ETH",
 				"type": "DatabricksNotebook",
 				"dependsOn": [
@@ -298,6 +271,36 @@
 					"parameters": [
 						"CED09607",
 						"CED"
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado_ml_cluster",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "merge_ASH",
+				"type": "DatabricksSparkPython",
+				"dependsOn": [
+					{
+						"activity": "ETL_USR_parse_ASH",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pythonFile": "dbfs:/deployments/dev/etl_usr/ETL_USR_merge.py",
+					"parameters": [
+						"ASH"
 					]
 				},
 				"linkedServiceName": {
