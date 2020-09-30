@@ -13,6 +13,38 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/BinarySourceFileStore')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your source data store.",
+				"linkedServiceName": {
+					"referenceName": "ONPREMALLUSERS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"folderPath": {
+						"type": "string"
+					},
+					"directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"folderPath": {
+							"value": "@concat(dataset().folderPath,'/',dataset().directory)",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/BinarySourceFileStore1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1309,118 +1341,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ASH')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/copyfromDBtoParquet')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "RecordID",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "RecordID",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "Lot",
-											"type": "String"
-										},
-										"sink": {
-											"name": "Lot",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "ActualShipDate",
-											"type": "DateTime"
-										},
-										"sink": {
-											"name": "ActualShipDate",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "MainQty",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "MainQty",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "ShipFixUp",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "ShipFixUp",
-											"type": "Int32"
-										}
-									}
-								]
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "fabtimshipment",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "mfgdlparquet",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "sandbox"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/fabtimshipment')]"
 			]
 		}
 	]
