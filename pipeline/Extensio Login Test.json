@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1",
+	"name": "Extensio Login Test",
 	"properties": {
 		"activities": [
 			{
@@ -22,11 +22,26 @@
 						"requestMethod": "POST",
 						"requestBody": "{\n   \"username\" : \"exn_dba\",\n   \"password\" : \"iNabd667\",\n   \"dbname\" : \"exnindb\",\n   \"dbschema\" : \"META_YMS\"\n}\n"
 					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
 					"enableStaging": false
 				},
 				"inputs": [
 					{
 						"referenceName": "Extension_API_REST",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Json1",
 						"type": "DatasetReference"
 					}
 				]
