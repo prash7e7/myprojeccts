@@ -1,5 +1,5 @@
 {
-	"name": "RestResource1",
+	"name": "Extension_API_REST",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ExtensioAPI",
