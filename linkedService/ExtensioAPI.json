@@ -1,12 +1,15 @@
 {
 	"name": "ExtensioAPI",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "RestService",
 		"typeProperties": {
-			"url": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1/session",
-			"enableServerCertificateValidation": true,
-			"authenticationType": "Anonymous"
+			"url": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1/session/login",
+			"enableServerCertificateValidation": false,
+			"authenticationType": "Basic",
+			"userName": "exn_dba",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJlZDlmODkwNi1kOTU1LTQ5ZGYtYWM2OC1hYmQxNWI0M2MzNTUiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "integrationRuntimeMfgDataLake",
