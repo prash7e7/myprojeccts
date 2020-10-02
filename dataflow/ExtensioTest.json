@@ -13,12 +13,8 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [
-				{
-					"name": "DerivedColumn1"
-				}
-			],
-			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> loginjason\nloginjason derive(token = 'token') ~> DerivedColumn1"
+			"transformations": [],
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> loginjason"
 		}
 	}
 }

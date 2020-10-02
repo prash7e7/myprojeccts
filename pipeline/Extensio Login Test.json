@@ -31,7 +31,17 @@
 							"type": "JsonWriteSettings"
 						}
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['Column_1']"
+								}
+							}
+						]
+					}
 				},
 				"inputs": [
 					{
@@ -75,12 +85,25 @@
 						"computeType": "General"
 					}
 				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Login",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": []
 			}
 		],
-		"parameters": {
+		"variables": {
 			"token": {
-				"type": "string",
-				"defaultValue": "change"
+				"type": "String",
+				"defaultValue": "'default'"
 			}
 		},
 		"annotations": []
