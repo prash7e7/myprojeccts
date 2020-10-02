@@ -26,7 +26,13 @@
 						"password": "iNabd667",
 						"dbname": "exnindb",
 						"dbschema": "META_YMS"
-					}
+					},
+					"linkedServices": [
+						{
+							"referenceName": "ExtensioAPI",
+							"type": "LinkedServiceReference"
+						}
+					]
 				}
 			}
 		],
