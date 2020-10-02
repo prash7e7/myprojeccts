@@ -34,8 +34,27 @@
 						}
 					]
 				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Web1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": []
 			}
 		],
+		"variables": {
+			"token": {
+				"type": "String",
+				"defaultValue": "'default'"
+			}
+		},
 		"annotations": []
 	}
 }
