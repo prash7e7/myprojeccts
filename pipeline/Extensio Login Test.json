@@ -76,11 +76,26 @@
 							"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDE2NzcwNzcsIk9yYUNvbm5JbmZvIjp7IlVzZXJuYW1lIjoiZXhuX2RiYSIsIlBhc3N3b3JkIjoiaU5hYmQ2NjciLCJIb3N0IjoiZXhuaW5kYiIsIlNjaGVtYSI6Ik1FVEFfWU1TIn19.Ds8OY_O9xcT7z0MnOYMFNKGdEnOrv_A4R7R-lI0s_LU"
 						}
 					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
 					"enableStaging": false
 				},
 				"inputs": [
 					{
 						"referenceName": "Extension_API_REST",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Json1",
 						"type": "DatasetReference"
 					}
 				]
