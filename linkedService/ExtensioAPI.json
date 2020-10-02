@@ -5,11 +5,11 @@
 		"annotations": [],
 		"type": "RestService",
 		"typeProperties": {
-			"url": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1/session/login",
+			"url": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1/session",
 			"enableServerCertificateValidation": false,
 			"authenticationType": "Basic",
 			"userName": "exn_dba",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI0ZTk2OGMzNS0wODY5LTRjZjMtYWFhOS00NmJjM2EyYTQzMzYiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI2YjgyOGQ2My0xNWJhLTRmMmUtODE5Mi00NGJmNmY3M2Q5MzEiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "integrationRuntimeMfgDataLake",
