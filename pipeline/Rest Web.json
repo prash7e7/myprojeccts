@@ -46,7 +46,11 @@
 						]
 					}
 				],
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "token",
+					"value": "@activity('Web1').output.token"
+				}
 			}
 		],
 		"variables": {
