@@ -79,7 +79,8 @@
 		],
 		"parameters": {
 			"token": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "change"
 			}
 		},
 		"annotations": []
