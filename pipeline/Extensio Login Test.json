@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "Login",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -42,6 +42,45 @@
 				"outputs": [
 					{
 						"referenceName": "Json1",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy data2",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Login",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "POST",
+						"requestBody": "{\n  \"pgc_keys\": [5]\n}\n",
+						"additionalHeaders": {
+							"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDE2NzcwNzcsIk9yYUNvbm5JbmZvIjp7IlVzZXJuYW1lIjoiZXhuX2RiYSIsIlBhc3N3b3JkIjoiaU5hYmQ2NjciLCJIb3N0IjoiZXhuaW5kYiIsIlNjaGVtYSI6Ik1FVEFfWU1TIn19.Ds8OY_O9xcT7z0MnOYMFNKGdEnOrv_A4R7R-lI0s_LU"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Extension_API_REST",
 						"type": "DatasetReference"
 					}
 				]
