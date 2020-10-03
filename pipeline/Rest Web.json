@@ -79,7 +79,7 @@
 					},
 					"method": "POST",
 					"headers": {
-						"token": {
+						"Authorization": {
 							"value": "@concat('Bearer ', string(variables('token')))",
 							"type": "Expression"
 						}
