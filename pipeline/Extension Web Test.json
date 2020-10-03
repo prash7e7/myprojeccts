@@ -1,5 +1,5 @@
 {
-	"name": "Rest Web",
+	"name": "Extension Web Test",
 	"properties": {
 		"activities": [
 			{
@@ -97,6 +97,9 @@
 				"type": "String",
 				"defaultValue": "'default'"
 			}
+		},
+		"folder": {
+			"name": "Extensio Web"
 		},
 		"annotations": []
 	}
