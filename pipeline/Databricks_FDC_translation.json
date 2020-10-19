@@ -1,0 +1,51 @@
+{
+	"name": "Databricks_FDC_translation",
+	"properties": {
+		"activities": [
+			{
+				"name": "ASH_Translation",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_all_to_delta_dev (ASH)"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "ETH_Translation",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_all_to_delta_dev (ETH)"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "Databricks_ETL"
+		},
+		"annotations": []
+	}
+}
