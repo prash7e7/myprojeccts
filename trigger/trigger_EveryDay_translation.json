@@ -1,0 +1,24 @@
+{
+	"name": "trigger_EveryDay_translation",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Databricks_FDC_translation",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2020-10-20T12:28:00.000Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}
