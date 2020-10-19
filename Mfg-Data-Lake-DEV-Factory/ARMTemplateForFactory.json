@@ -7003,6 +7003,37 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger_EveryDay_translation')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Databricks_FDC_translation",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2020-10-20T12:28:00.000Z",
+						"timeZone": "UTC",
+						"schedule": {}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Databricks_FDC_translation')]"
+			]
 		}
 	]
 }

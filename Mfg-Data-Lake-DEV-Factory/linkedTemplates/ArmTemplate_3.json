@@ -45,6 +45,131 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/Databricks_ETL_ASH')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ETL_USR_ASH_parsing",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ASH_dev"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "cleanCSV_Delta_Parquet_ASH",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "ETL_USR_ASH_parsing",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "cleanCSV_Delta_Parquet_ASH",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {},
+									"sink2": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							}
+						}
+					},
+					{
+						"name": "ETL_USR_ASH_csv",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "ETL_USR_ASH_parsing",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ASH_csv_delta_parquet_dev"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "FDC_ASH_PIM_Batch_Detection",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "ETL_USR_ASH_csv",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Deployments/DEV/FDC_Batch_Detection/FDC_ASH_PIM_Batch_Detection"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado_ml_cluster",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"folder": {
+					"name": "Databricks_ETL"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Databricks_ETL_ETH')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
