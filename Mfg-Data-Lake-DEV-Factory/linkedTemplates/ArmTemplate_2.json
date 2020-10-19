@@ -13,6 +13,2654 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/Bulk Copy from Files to Database')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Files",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "GetMetadataDataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"SourceContainer": {
+										"value": "@pipeline().parameters.SourceContainer",
+										"type": "Expression"
+									},
+									"SourceDirectory": {
+										"value": "@pipeline().parameters.SourceDirectory",
+										"type": "Expression"
+									}
+								}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEachFile",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get Files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Files').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "CopyFiles",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "DelimitedTextSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"wildcardFolderPath": "ffyn9j",
+												"wildcardFileName": "student-mat.csv",
+												"enablePartitionDiscovery": false
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										},
+										"sink": {
+											"type": "SqlDWSink",
+											"allowPolyBase": true,
+											"polyBaseSettings": {
+												"rejectValue": 0,
+												"rejectType": "value",
+												"useTypeDefault": true
+											}
+										},
+										"enableStaging": true,
+										"stagingSettings": {
+											"linkedServiceName": {
+												"referenceName": "ADLSBlobStorage",
+												"type": "LinkedServiceReference"
+											},
+											"path": "adfsolutiontemplate/BulkCopyfromFilestoDB"
+										},
+										"translator": {
+											"type": "TabularTranslator",
+											"mappings": [
+												{
+													"source": {
+														"name": "school",
+														"type": "String"
+													},
+													"sink": {
+														"name": "school",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "sex",
+														"type": "String"
+													},
+													"sink": {
+														"name": "sex",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "age",
+														"type": "String"
+													},
+													"sink": {
+														"name": "age",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "address",
+														"type": "String"
+													},
+													"sink": {
+														"name": "address",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "famsize",
+														"type": "String"
+													},
+													"sink": {
+														"name": "famsize",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "Pstatus",
+														"type": "String"
+													},
+													"sink": {
+														"name": "Pstatus",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "Medu",
+														"type": "String"
+													},
+													"sink": {
+														"name": "Medu",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "Fedu",
+														"type": "String"
+													},
+													"sink": {
+														"name": "Fedu",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "Mjob",
+														"type": "String"
+													},
+													"sink": {
+														"name": "Mjob",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "Fjob",
+														"type": "String"
+													},
+													"sink": {
+														"name": "Fjob",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "reason",
+														"type": "String"
+													},
+													"sink": {
+														"name": "reason",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "guardian",
+														"type": "String"
+													},
+													"sink": {
+														"name": "guardian",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "traveltime",
+														"type": "String"
+													},
+													"sink": {
+														"name": "traveltime",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "studytime",
+														"type": "String"
+													},
+													"sink": {
+														"name": "studytime",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "failures",
+														"type": "String"
+													},
+													"sink": {
+														"name": "failures",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "schoolsup",
+														"type": "String"
+													},
+													"sink": {
+														"name": "schoolsup",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "famsup",
+														"type": "String"
+													},
+													"sink": {
+														"name": "famsup",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "paid",
+														"type": "String"
+													},
+													"sink": {
+														"name": "paid",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "activities",
+														"type": "String"
+													},
+													"sink": {
+														"name": "activities",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "nursery",
+														"type": "String"
+													},
+													"sink": {
+														"name": "nursery",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "higher",
+														"type": "String"
+													},
+													"sink": {
+														"name": "higher",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "internet",
+														"type": "String"
+													},
+													"sink": {
+														"name": "internet",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "romantic",
+														"type": "String"
+													},
+													"sink": {
+														"name": "romantic",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "famrel",
+														"type": "String"
+													},
+													"sink": {
+														"name": "famrel",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "freetime",
+														"type": "String"
+													},
+													"sink": {
+														"name": "freetime",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "goout",
+														"type": "String"
+													},
+													"sink": {
+														"name": "goout",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "Dalc",
+														"type": "String"
+													},
+													"sink": {
+														"name": "Dalc",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "Walc",
+														"type": "String"
+													},
+													"sink": {
+														"name": "Walc",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "health",
+														"type": "String"
+													},
+													"sink": {
+														"name": "health",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "absences",
+														"type": "String"
+													},
+													"sink": {
+														"name": "absences",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "G1",
+														"type": "String"
+													},
+													"sink": {
+														"name": "G1",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "G2",
+														"type": "String"
+													},
+													"sink": {
+														"name": "G2",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"name": "G3",
+														"type": "String"
+													},
+													"sink": {
+														"name": "G3",
+														"type": "String"
+													}
+												}
+											]
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "SourceDataset",
+											"type": "DatasetReference",
+											"parameters": {
+												"fileName": {
+													"value": "@item().name",
+													"type": "Expression"
+												},
+												"SourceContainer": {
+													"value": "@pipeline().parameters.SourceContainer",
+													"type": "Expression"
+												},
+												"SourceDirectory": {
+													"value": "@pipeline().parameters.SourceDirectory",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "AzureSqlDWSinkDataset",
+											"type": "DatasetReference",
+											"parameters": {
+												"sinkTableName": {
+													"value": "@item().name",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"SourceContainer": {
+						"type": "string",
+						"defaultValue": "adls\\inbound\\user"
+					},
+					"SourceDirectory": {
+						"type": "string",
+						"defaultValue": "ffyn9j"
+					}
+				},
+				"folder": {
+					"name": "sandbox"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Bulk Copy from Files to Database1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyFiles",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "translated/examples/ASH.delta.df",
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "SqlDWSink",
+								"allowPolyBase": true,
+								"polyBaseSettings": {
+									"rejectValue": 0,
+									"rejectType": "value",
+									"useTypeDefault": true
+								},
+								"tableOption": "autoCreate"
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "ADLSBlobStorage",
+									"type": "LinkedServiceReference"
+								},
+								"path": "adfsolutiontemplate",
+								"enableCompression": true
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "_c0",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "_c0",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Filename_Translated",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Filename_Translated",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Filename_Original",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Filename_Original",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "FabGuard_Version",
+											"type": "String"
+										},
+										"sink": {
+											"name": "FabGuard_Version",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Run_Path_and_Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Run_Path_and_Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Recipe_Path_and_Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Recipe_Path_and_Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SensorID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "SensorID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Version",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Version",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Acquired_with_Version",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Acquired_with_Version",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Tool_Group",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Tool_Group",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Tool_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Tool_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Tool_Description",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Tool_Description",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Tool_Area",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Tool_Area",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Tool_Type",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Tool_Type",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Chamber_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Chamber_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Chamber_Description",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Chamber_Description",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Chamber_Type",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_Chamber_Type",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Equipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Substrate_Information_Lot_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Substrate_Information_Lot_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Substrate_Information_Cassette_ID",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Substrate_Information_Cassette_ID",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Substrate_Information_Slot_ID",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Substrate_Information_Slot_ID",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Substrate_Information_Substrate_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Substrate_Information_Substrate_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Substrate_Information_Part_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Substrate_Information_Part_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Substrate_Information_Layer_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Substrate_Information_Layer_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Substrate_Information_Technology_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Substrate_Information_Technology_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Substrate_Information_Substrate_Start_Time_local",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "Substrate_Information_Substrate_Start_Time_local",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "Substrate_Information_Substrate_Start_Time_GMT",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "Substrate_Information_Substrate_Start_Time_GMT",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "Process_Information_Operator_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Process_Information_Operator_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Process_Information_Sequence_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Process_Information_Sequence_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Process_Information_Recipe_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Process_Information_Recipe_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Process_Information_Control_Job_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Process_Information_Control_Job_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Process_Information_Process_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Process_Information_Process_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Extra_Information_Extra_1_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Extra_Information_Extra_1_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Extra_Information_Extra_2_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Extra_Information_Extra_2_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Extra_Information_Extra_3_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Extra_Information_Extra_3_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Extra_Information_Extra_4_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Extra_Information_Extra_4_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Extra_Information_Extra_5_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Extra_Information_Extra_5_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Extra_Information_Extra_6_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Extra_Information_Extra_6_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Extra_Information_Extra_7_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Extra_Information_Extra_7_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Extra_Information_Extra_8_ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Extra_Information_Extra_8_ID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "General_Info_Start_Time",
+											"type": "String"
+										},
+										"sink": {
+											"name": "General_Info_Start_Time",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "General_Info_Start_Time_at_the_acquisition_location",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "General_Info_Start_Time_at_the_acquisition_location",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "General_Info_FabGuards_Recipe_Path_and_Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "General_Info_FabGuards_Recipe_Path_and_Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "General_Info_FabGuards_Recipe_Revision",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "General_Info_FabGuards_Recipe_Revision",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "General_Info_FabGuards_Recipe_last_modified_by",
+											"type": "String"
+										},
+										"sink": {
+											"name": "General_Info_FabGuards_Recipe_last_modified_by",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "General_Info_FabGuards_Recipe_last_modified_Time_local",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "General_Info_FabGuards_Recipe_last_modified_Time_local",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "General_Info_Start_Time_at_the_acquisition_GMT",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "General_Info_Start_Time_at_the_acquisition_GMT",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "General_Info_Run_Path_and_Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "General_Info_Run_Path_and_Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "General_Info_Duration_s",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "General_Info_Duration_s",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "General_Info_Number_of_Data_Points",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "General_Info_Number_of_Data_Points",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "General_Info_Number_of_Scans",
+											"type": "Boolean"
+										},
+										"sink": {
+											"name": "General_Info_Number_of_Scans",
+											"type": "Boolean"
+										}
+									},
+									{
+										"source": {
+											"name": "General_Info_Number_of_Bins",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "General_Info_Number_of_Bins",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Bins",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Bins",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "TimePoints",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "TimePoints",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "TimeRelativesec",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "TimeRelativesec",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "TimeAbsoluteUTC",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "TimeAbsoluteUTC",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "TimeAbsoluteDate_Time",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TimeAbsoluteDate_Time",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Step",
+											"type": "Boolean"
+										},
+										"sink": {
+											"name": "Step",
+											"type": "Boolean"
+										}
+									},
+									{
+										"source": {
+											"name": "Status",
+											"type": "Boolean"
+										},
+										"sink": {
+											"name": "Status",
+											"type": "Boolean"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Pres_CM_mTorr_SVID167813621",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Tool_Pres_CM_mTorr_SVID167813621",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Pwr_Bot_RF_Fwd_W_SVID167813623",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Tool_Pwr_Bot_RF_Fwd_W_SVID167813623",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Pwr_Bot_RF_Refl_W_SVID167813625",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Tool_Pwr_Bot_RF_Refl_W_SVID167813625",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Pwr_Bot_RF_VPP_V_SVID167813627",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Tool_Pwr_Bot_RF_VPP_V_SVID167813627",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Pwr_Bot_RF_VDC_V_SVID167813629",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Tool_Pwr_Bot_RF_VDC_V_SVID167813629",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_C4F8_Flow_sccm_SVID167813630",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Gas_C4F8_Flow_sccm_SVID167813630",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_C5F8_Flow_sccm_SVID167813631",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Gas_C5F8_Flow_sccm_SVID167813631",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_CO_Flow_sccm_SVID167813632",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Gas_CO_Flow_sccm_SVID167813632",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_Ar_Flow_sccm_SVID167813633",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Gas_Ar_Flow_sccm_SVID167813633",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_O2_30_sccm_Flow_sccm_SVID167813634",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Gas_O2_30_sccm_Flow_sccm_SVID167813634",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_CHF3_Flow_sccm_SVID167813635",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Gas_CHF3_Flow_sccm_SVID167813635",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_CF4_Flow_sccm_SVID167813636",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Gas_CF4_Flow_sccm_SVID167813636",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_O2_1_SLM_Flow_sccm_SVID167813637",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Gas_O2_1_SLM_Flow_sccm_SVID167813637",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Temp_Elec_Top_degC_SVID167813638",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Temp_Elec_Top_degC_SVID167813638",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Temp_Wall_Side_degC_SVID167813639",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Temp_Wall_Side_degC_SVID167813639",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Temp_Elec_Bot_degC_SVID167813640",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Temp_Elec_Bot_degC_SVID167813640",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_He_Pres_Back_1_Torr_SVID167813641",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_He_Pres_Back_1_Torr_SVID167813641",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_He_Pres_Back_2_Torr_SVID167813642",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_He_Pres_Back_2_Torr_SVID167813642",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_He_Flow_1_sccm_SVID167813643",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_He_Flow_1_sccm_SVID167813643",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_He_Flow_2_sccm_SVID167813644",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_He_Flow_2_sccm_SVID167813644",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_ESC_Voltage_V_SVID167813645",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Tool_ESC_Voltage_V_SVID167813645",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_ESC_Current_uA_SVID167813646",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Tool_ESC_Current_uA_SVID167813646",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Pres_APC_Pos_deg_SVID167813647",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Pres_APC_Pos_deg_SVID167813647",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gap_Dist_mm_SVID167813648",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Gap_Dist_mm_SVID167813648",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Cap_C1_Bot_Pos_SVID167813651",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Tool_Cap_C1_Bot_Pos_SVID167813651",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Cap_C2_Bot_Pos_SVID167813652",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Tool_Cap_C2_Bot_Pos_SVID167813652",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Imped_R_Top_ohm_SVID167813653",
+											"type": "Boolean"
+										},
+										"sink": {
+											"name": "Tool_Imped_R_Top_ohm_SVID167813653",
+											"type": "Boolean"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Imped_Jx_Top_ohm_SVID167813654",
+											"type": "Boolean"
+										},
+										"sink": {
+											"name": "Tool_Imped_Jx_Top_ohm_SVID167813654",
+											"type": "Boolean"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Imped_R_Bot_ohm_SVID167813655",
+											"type": "Boolean"
+										},
+										"sink": {
+											"name": "Tool_Imped_R_Bot_ohm_SVID167813655",
+											"type": "Boolean"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Imped_Jx_Bot_ohm_SVID167813656",
+											"type": "Boolean"
+										},
+										"sink": {
+											"name": "Tool_Imped_Jx_Bot_ohm_SVID167813656",
+											"type": "Boolean"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Phase_SVID167813658",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Tool_Phase_SVID167813658",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Magnitude_SVID167813659",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Tool_Magnitude_SVID167813659",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Rcp_Step_Num_SVID167813666_[Tool's_Step]",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Tool_Rcp_Step_Num_SVID167813666_Tools_Step"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_CH2F2_Flow_sccm_SVID167813678",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Gas_CH2F2_Flow_sccm_SVID167813678",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_N2_Flow_sccm_SVID167813679",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Gas_N2_Flow_sccm_SVID167813679",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_He_Flow_sccm_SVID167813680",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "Tool_Gas_He_Flow_sccm_SVID167813680",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_H2_Flow_sccm_SVID167813681",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Gas_H2_Flow_sccm_SVID167813681",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_CHF3_2_Flow",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Gas_CHF3_2_Flow",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Bin_Polling_Latency",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Bin_Polling_Latency",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Bin_Data_Age",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Bin_Data_Age",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Bin_Data_Age_SECS",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Tool_Bin_Data_Age_SECS",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Bot_RF_On",
+											"type": "Boolean"
+										},
+										"sink": {
+											"name": "Sig_Bot_RF_On",
+											"type": "Boolean"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Edge_He_Backside_Pressure_RF_On",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Edge_He_Backside_Pressure_RF_On",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Center_He_Backside_Pressure_RF_On",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Center_He_Backside_Pressure_RF_On",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Center_He_Backside_Flow_RF_On",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Center_He_Backside_Flow_RF_On",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Edge_He_Backside_Flow_RF_On",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Edge_He_Backside_Flow_RF_On",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Upper_Temperature_RF_On",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Upper_Temperature_RF_On",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Side_Temperature_RF_On",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Side_Temperature_RF_On",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Lower_Temperature_RF_On",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Lower_Temperature_RF_On",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_ElectroStatic_Chuck_Voltage_RF_On",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_ElectroStatic_Chuck_Voltage_RF_On",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_ElectroStatic_Chuck_Current_RF_On",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_ElectroStatic_Chuck_Current_RF_On",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Chamber_Pressure_RF_On_Steady_State_post_Run",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Chamber_Pressure_RF_On_Steady_State_post_Run",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_CH2F2_Flow_RF_On",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_CH2F2_Flow_RF_On",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Vpp_Arc_Counter_1450_W",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Vpp_Arc_Counter_1450_W",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_No_arc__0",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_No_arc__0",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Vpp_Arc_Counter_1200-1450_W",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Vpp_Arc_Counter_1200-1450_W",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Vpp_Arc_Counter_1450_W_v2_post_Run",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Vpp_Arc_Counter_1450_W_v2_post_Run",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Reflected_Power_of_Stady_State_post_Run",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Reflected_Power_of_Stady_State_post_Run",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Filter_Acceptable_Data_Age",
+											"type": "Boolean"
+										},
+										"sink": {
+											"name": "Sig_Filter_Acceptable_Data_Age",
+											"type": "Boolean"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Pwr_Bot_RF_Fwd_DevAvg_Steady_State_5-60",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Pwr_Bot_RF_Fwd_DevAvg_Steady_State_5-60",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Gas_Ar_Steady_State_5-60_RF_On_post_Run",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Gas_Ar_Steady_State_5-60_RF_On_post_Run",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Gas_Ar_DevAvg_Steady_State_5-60_RF_On_post_Run",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_Gas_Ar_DevAvg_Steady_State_5-60_RF_On_post_Run",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_VPP_TRIM_Step_4_post_Run",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_VPP_TRIM_Step_4_post_Run",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_C4F8_TRIM_Step_4_post_Run",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_C4F8_TRIM_Step_4_post_Run",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_VPP_TRIM_Step_2_post_Run",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "Sig_VPP_TRIM_Step_2_post_Run",
+											"type": "Single"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_-_CF4_Flow_sccm_SVID180",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Gas_-_CF4_Flow_sccm_SVID180",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_-_O2_Large_Flow_sccm_SVID181",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Gas_-_O2_Large_Flow_sccm_SVID181",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_-_NF3_Flow_sccm_SVID182",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Gas_-_NF3_Flow_sccm_SVID182",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_-_N2H2_Flow_sccm_SVID183",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Gas_-_N2H2_Flow_sccm_SVID183",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_-_Argon_Flow_sccm_SVID184",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Gas_-_Argon_Flow_sccm_SVID184",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Pres-_Chamber_Pressure_torr_SVID186",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Pres-_Chamber_Pressure_torr_SVID186",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Temp_-_Hot_Plate_C_SVID187",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Temp_-_Hot_Plate_C_SVID187",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_EP_-_Photo_Multiplier_Vout_v_SVID188",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_EP_-_Photo_Multiplier_Vout_v_SVID188",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_RF_Bias_SVID189",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_RF_Bias_SVID189",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_RF_Match_C1_Pos_%_SVID190",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_RF_Match_C1_Pos_%_SVID190",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_RF_Match_C2_Pos_%_SVID191",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_RF_Match_C2_Pos_%_SVID191",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_RF_Forward_Power_Watts_SVID192",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_RF_Forward_Power_Watts_SVID192",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_RF_Reflected_Power_Watts_SVID193",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_RF_Reflected_Power_Watts_SVID193",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_MW_Forward_Power_Watts_SVID194",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_MW_Forward_Power_Watts_SVID194",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_MW_Reflected_Power_Watts_SVID195",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_MW_Reflected_Power_Watts_SVID195",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Recipe_Step_Number_SVID196_[Tool's_Step]",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Recipe_Step_Number_SVID196_[Tool's_Step] nvarchar(4000), [Tool_Wafer_-_Slot_Number_SVID222",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_EP_-_End_Point_Time_SVID266",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_EP_-_End_Point_Time_SVID266",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_RF_Power_Set_Point_Watts_SVID288",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_RF_Power_Set_Point_Watts_SVID288",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_MW_Set_Point_Watts_SVID289",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_MW_Set_Point_Watts_SVID289",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Pres-_Chamber_Pressure_Set_Point_torr_SVID290",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Pres-_Chamber_Pressure_Set_Point_torr_SVID290",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Temp_-_Hot_Plate_SetPoint_C_SVID291",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Temp_-_Hot_Plate_SetPoint_C_SVID291",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_-_CF4_Set_Point_sccm_SVID292",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Gas_-_CF4_Set_Point_sccm_SVID292",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_-_O2_Large_Set_Point_sccm_SVID293",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Gas_-_O2_Large_Set_Point_sccm_SVID293",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_-_NF3_Set_Point_sccm_SVID294",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Gas_-_NF3_Set_Point_sccm_SVID294",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_-_N2H2_Set_Point_sccm_SVID295",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Gas_-_N2H2_Set_Point_sccm_SVID295",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_-_Argon_Set_Point_sccm_SVID296",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Gas_-_Argon_Set_Point_sccm_SVID296",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_EP_-_Photo_Multiplier_End_Point_HiV_v_SVID316",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_EP_-_Photo_Multiplier_End_Point_HiV_v_SVID316",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Pin_Height_Set_Point_SVID317",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Pin_Height_Set_Point_SVID317",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_-_O2_Small_Flow",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Gas_-_O2_Small_Flow",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Tool_Gas_-_O2_Small_Set_Point",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tool_Gas_-_O2_Small_Set_Point",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Temp_-_Hot_Plate_-_Filtered_No_RF_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Temp_-_Hot_Plate_-_Filtered_No_RF_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Ash_Total_Time",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Ash_Total_Time",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Overash_Time",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Overash_Time",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Ash_EP_Time",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Ash_EP_Time",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Overash_Percentage",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Overash_Percentage",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Filter_Max_Data_Age",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Filter_Max_Data_Age",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Overash_Percentage_filtered_for_Data_Age",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Overash_Percentage_filtered_for_Data_Age",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_MW_-_Power_Deviation_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_MW_-_Power_Deviation_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_RF_-_Power_Deviation_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_RF_-_Power_Deviation_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Gas_-_Large_O2_Flow_Deviation_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Gas_-_Large_O2_Flow_Deviation_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Gas_-_Small_O2_Flow_Deviation_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Gas_-_Small_O2_Flow_Deviation_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Gas_-_CF4_Flow_Deviation_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Gas_-_CF4_Flow_Deviation_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Gas_-_NF3_Flow_Deviation_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Gas_-_NF3_Flow_Deviation_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Gas_-_Argon_Flow_Deviation_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Gas_-_Argon_Flow_Deviation_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Gas_-_N2H2_Flow_Deviation_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Gas_-_N2H2_Flow_Deviation_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_MW_-_Reflected_Power_Steady_state_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_MW_-_Reflected_Power_Steady_state_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_RF_-_Reflected_Power_Steady_state_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_RF_-_Reflected_Power_Steady_state_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Pres_-_Pressure_Deviation_High_PressureSteady_State_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Pres_-_Pressure_Deviation_High_PressureSteady_State_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_EP_-_EP_Intensity_after_resist_removal_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_EP_-_EP_Intensity_after_resist_removal_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Temp_-_Hot_Plate_Deviation_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Temp_-_Hot_Plate_Deviation_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_EP_-_EP_Max_Intensity_with_no_RF",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_EP_-_EP_Max_Intensity_with_no_RF",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Pres_-_Pressure_Deviation_Low_PressureSteady_State_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Pres_-_Pressure_Deviation_Low_PressureSteady_State_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Filter_Slot_Number_Correction__25",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Filter_Slot_Number_Correction__25",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Filter_Slot_Number_Corrected_Value",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Filter_Slot_Number_Corrected_Value",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_RF_-_Bias_Power_on_post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_RF_-_Bias_Power_on_post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Overash_Time_7V",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Overash_Time_7V",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Overash_Percentage_7V",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Overash_Percentage_7V",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Overash_Percentage_filtered_for_Data_Age_7V",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Overash_Percentage_filtered_for_Data_Age_7V",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_EP_-_End_Point_voltage_above_trigger._post_Run",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_EP_-_End_Point_voltage_above_trigger._post_Run",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Gas_O2_Large_Usage_liters",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Gas_O2_Large_Usage_liters",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Gas_O2_Small_Usage_liters",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Gas_O2_Small_Usage_liters",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Gas_NF3_Usage_liters",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Gas_NF3_Usage_liters",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Gas_CF4_Usage_liters",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Gas_CF4_Usage_liters",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Gas_N2H2_Usage_liters",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Gas_N2H2_Usage_liters",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sig_Gas_Argon_Usage_liters",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Sig_Gas_Argon_Usage_liters",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Parquet1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSqlDWSinkDataset1",
+								"type": "DatasetReference",
+								"parameters": {
+									"sinkTableName": {
+										"value": "FABGUARDFEED",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"SourceContainer": {
+						"type": "string",
+						"defaultValue": "adls"
+					},
+					"SourceDirectory": {
+						"type": "string",
+						"defaultValue": "translated/examples/ASH.delta.df"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Extensio Web Test')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Login",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1/session/login",
+							"connectVia": {
+								"referenceName": "integrationRuntimeMfgDataLake",
+								"type": "IntegrationRuntimeReference"
+							},
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"username": "exn_dba",
+								"password": "iNabd667",
+								"dbname": "exnindb",
+								"dbschema": "META_YMS"
+							},
+							"linkedServices": [
+								{
+									"referenceName": "ExtensioAPI",
+									"type": "LinkedServiceReference"
+								}
+							]
+						}
+					},
+					{
+						"name": "getToken",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Login",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "token",
+							"value": {
+								"value": "@activity('Login').output.token",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "key-Program-5",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "getToken",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1/key/programs",
+							"connectVia": {
+								"referenceName": "integrationRuntimeMfgDataLake",
+								"type": "IntegrationRuntimeReference"
+							},
+							"method": "POST",
+							"headers": {
+								"Authorization": {
+									"value": "@concat('Bearer ', string(variables('token')))",
+									"type": "Expression"
+								}
+							},
+							"body": {
+								"pgc_keys": [
+									5
+								]
+							}
+						}
+					}
+				],
+				"variables": {
+					"token": {
+						"type": "String",
+						"defaultValue": "'default'"
+					}
+				},
+				"folder": {
+					"name": "Extensio Web"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BinarySinkFileStore2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your destination data store.",
+				"linkedServiceName": {
+					"referenceName": "ONPREMALLUSERS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"folderPath": {
+						"type": "string"
+					},
+					"directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"folderPath": {
+							"value": "@concat(dataset().folderPath,'/',dataset().directory)",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/BinarySourceFileStore')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -73,6 +2721,40 @@
 						}
 					}
 				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ExtensioRestLoginDS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ExtensioAPI",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": "session/login"
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RestResource1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ExtensioAPI",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {},
+				"schema": []
 			},
 			"dependsOn": []
 		},
@@ -553,7 +3235,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/BinarySinkFileStore2')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/CopyFilesfromMultipleContainers')]",
@@ -872,559 +3556,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ASH')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Databricks_ETL_ETH')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ETL_USR_ETH",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ETH_dev"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "cleanCSV_Delta_Parquet_ETH",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "ETL_USR_ETH",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "cleanCSV_Delta_Parquet_ETH",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {},
-									"sink2": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							}
-						}
-					}
-				],
-				"folder": {
-					"name": "Databricks_ETL"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ETH')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ETH_test')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "cleanCSV_Delta_Parquet_ETH",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "cleanCSV_Delta_Parquet_ETH",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {},
-									"sink2": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							}
-						}
-					}
-				],
-				"folder": {
-					"name": "sandbox"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ETH')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MergeCSVToParquet')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "MergeCSV_to_Parquet",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "MergeCSV_to_Parquet",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							}
-						}
-					}
-				],
-				"folder": {
-					"name": "sandbox"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/MergeCSV_to_Parquet')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/RecursiveConvertCSVToParquet')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Scan the file path on your source storage store and get the container list.",
-				"activities": [
-					{
-						"name": "EnumerateContainersList",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "BinarySourceFileStore3",
-								"type": "DatasetReference",
-								"parameters": {
-									"container": {
-										"value": "@pipeline().parameters.SourceFileFolder",
-										"type": "Expression"
-									},
-									"directory": {
-										"value": "@pipeline().parameters.SourceFileDirectory",
-										"type": "Expression"
-									}
-								}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true
-							},
-							"formatSettings": {
-								"type": "BinaryReadSettings"
-							}
-						}
-					},
-					{
-						"name": "ForEachContainer",
-						"description": "Get the container list from Metadata activity and then iterates each of them to Copy activity.",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "FolderFilter",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('FolderFilter').output.value",
-								"type": "Expression"
-							},
-							"batchCount": 4,
-							"activities": [
-								{
-									"name": "CopyOneContainer",
-									"description": "Copy each container from source storage store to destination store.",
-									"type": "Copy",
-									"dependsOn": [
-										{
-											"activity": "DataFlowForCSVMergeToParquet",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "BinarySource",
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": true,
-												"wildcardFolderPath": {
-													"value": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)",
-													"type": "Expression"
-												},
-												"wildcardFileName": "*.parquet",
-												"deleteFilesAfterCompletion": false
-											},
-											"formatSettings": {
-												"type": "BinaryReadSettings"
-											}
-										},
-										"sink": {
-											"type": "BinarySink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings",
-												"copyBehavior": "PreserveHierarchy"
-											}
-										},
-										"enableStaging": false
-									},
-									"inputs": [
-										{
-											"referenceName": "BinarySourceFileStore3",
-											"type": "DatasetReference",
-											"parameters": {
-												"container": {
-													"value": "@pipeline().parameters.SourceFileFolder",
-													"type": "Expression"
-												},
-												"directory": {
-													"value": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "BinarySinkFileStore3",
-											"type": "DatasetReference",
-											"parameters": {
-												"container": {
-													"value": "@pipeline().parameters.DestinationFileFolder",
-													"type": "Expression"
-												},
-												"directory": {
-													"value": "@concat(pipeline().parameters.DestinationFileDirectory,'/',item().name)",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								},
-								{
-									"name": "DataFlowForCSVMergeToParquet",
-									"type": "ExecuteDataFlow",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"dataflow": {
-											"referenceName": "DataFlowForCSVMergeToParquet",
-											"type": "DataFlowReference",
-											"parameters": {
-												"recursiveInputPath": {
-													"value": "'@{concat(pipeline().parameters.SourceFileDirectory,'/',item().name)}'",
-													"type": "Expression"
-												},
-												"recursiveOutputPath": {
-													"value": "'@{concat(pipeline().parameters.DestinationFileDirectory,'/',item().name)}'",
-													"type": "Expression"
-												}
-											},
-											"datasetParameters": {
-												"source1": {},
-												"sink1": {}
-											}
-										},
-										"staging": {},
-										"compute": {
-											"coreCount": 8,
-											"computeType": "General"
-										}
-									}
-								}
-							]
-						}
-					},
-					{
-						"name": "FolderFilter",
-						"type": "Filter",
-						"dependsOn": [
-							{
-								"activity": "EnumerateContainersList",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('EnumerateContainersList').output.childItems",
-								"type": "Expression"
-							},
-							"condition": {
-								"value": "@and(equals(item().type, 'Folder'), equals(item().name, '2020-008-01'))",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"parameters": {
-					"SourceFileFolder": {
-						"type": "string",
-						"defaultValue": "adls"
-					},
-					"SourceFileDirectory": {
-						"type": "string",
-						"defaultValue": "translated/csv/site/USR/FDC/Tools/ASH10653"
-					},
-					"DestinationFileFolder": {
-						"type": "string",
-						"defaultValue": "adls"
-					},
-					"DestinationFileDirectory": {
-						"type": "string",
-						"defaultValue": "translated/parquet/site/USR/FDC/Tools/ASH10653"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DataFlowForCSVMergeToParquet')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/cleanCSV_test')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "cleanCSV_Delta_Parquet_ASH",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "cleanCSV_Delta_Parquet_ASH",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {},
-									"sink2": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							}
-						}
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ASH')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/copyfromDBtoParquet')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "RecordID",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "RecordID",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "Lot",
-											"type": "String"
-										},
-										"sink": {
-											"name": "Lot",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "ActualShipDate",
-											"type": "DateTime"
-										},
-										"sink": {
-											"name": "ActualShipDate",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "MainQty",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "MainQty",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "ShipFixUp",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "ShipFixUp",
-											"type": "Int32"
-										}
-									}
-								]
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "fabtimshipment",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "mfgdlparquet",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "sandbox"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/fabtimshipment')]"
 			]
 		}
 	]

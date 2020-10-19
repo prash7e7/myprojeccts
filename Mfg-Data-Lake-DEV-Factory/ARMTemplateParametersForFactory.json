@@ -20,6 +20,9 @@
 		"AzureSynapseDLLink_connectionString": {
 			"value": ""
 		},
+		"ExtensioAPI_password": {
+			"value": ""
+		},
 		"ONPREMALLUSERS_password": {
 			"value": ""
 		},
@@ -28,6 +31,12 @@
 		},
 		"fabtimesqlserver_connectionString": {
 			"value": ""
+		},
+		"ExtensioAPI_properties_typeProperties_url": {
+			"value": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1"
+		},
+		"ExtensioAPI_properties_typeProperties_userName": {
+			"value": "exn_dba"
 		},
 		"ONPREMALLUSERS_properties_typeProperties_host": {
 			"value": "\\\\USCO01WS0029\\adls"

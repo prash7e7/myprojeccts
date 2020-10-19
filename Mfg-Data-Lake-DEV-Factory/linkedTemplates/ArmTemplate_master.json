@@ -27,6 +27,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSynapseDLLink'"
 		},
+		"ExtensioAPI_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ExtensioAPI'"
+		},
 		"ONPREMALLUSERS_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ONPREMALLUSERS'"
@@ -38,6 +42,14 @@
 		"fabtimesqlserver_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
+		},
+		"ExtensioAPI_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1"
+		},
+		"ExtensioAPI_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "exn_dba"
 		},
 		"ONPREMALLUSERS_properties_typeProperties_host": {
 			"type": "string",
@@ -154,6 +166,9 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"ExtensioAPI_password": {
+						"value": "[parameters('ExtensioAPI_password')]"
+					},
 					"ONPREMALLUSERS_password": {
 						"value": "[parameters('ONPREMALLUSERS_password')]"
 					},
@@ -162,6 +177,12 @@
 					},
 					"fabtimesqlserver_connectionString": {
 						"value": "[parameters('fabtimesqlserver_connectionString')]"
+					},
+					"ExtensioAPI_properties_typeProperties_url": {
+						"value": "[parameters('ExtensioAPI_properties_typeProperties_url')]"
+					},
+					"ExtensioAPI_properties_typeProperties_userName": {
+						"value": "[parameters('ExtensioAPI_properties_typeProperties_userName')]"
 					},
 					"ONPREMALLUSERS_properties_typeProperties_host": {
 						"value": "[parameters('ONPREMALLUSERS_properties_typeProperties_host')]"
