@@ -41,6 +41,26 @@
 					"referenceName": "AzureDatabricks_rado",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "CED_Translation",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_all_to_delta_dev (CED)"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"folder": {
