@@ -1,0 +1,20 @@
+{
+	"name": "USRWEH_ParquetDelta",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "onsemidevmdlstoragelink",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "translated/delta/site/USR/WEH",
+				"fileSystem": "adls"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
