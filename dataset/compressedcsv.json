@@ -1,0 +1,31 @@
+{
+	"name": "compressedcsv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "onsemidevmdlstoragelink",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "C5.2020.10.08.10.0.7.sub-T6-D3-40V20V-STM.sub.weh.gz",
+				"folderPath": "inbound/site/USR/WEH",
+				"fileSystem": "adls"
+			},
+			"columnDelimiter": "|",
+			"compressionCodec": "gzip",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			}
+		]
+	}
+}
