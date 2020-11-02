@@ -1,0 +1,24 @@
+{
+	"name": "WEH_Parquet_Delta_trigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "unzip_plus_transformcsv",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Hour",
+				"interval": 4,
+				"startTime": "2020-11-03T04:00:00",
+				"timeZone": "Mountain Standard Time"
+			}
+		}
+	}
+}
