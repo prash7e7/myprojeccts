@@ -53,15 +53,15 @@
 		"parameters": {
 			"SourceFolder": {
 				"type": "string",
-				"defaultValue": "sourcefolder"
+				"defaultValue": "adls"
 			},
 			"SourceDirectory": {
 				"type": "string",
-				"defaultValue": "subfolder"
+				"defaultValue": "inbound/site/USR/WEH"
 			},
 			"LoggingPath": {
 				"type": "string",
-				"defaultValue": "loggingfolder/subfolder"
+				"defaultValue": "inbound/site/USR/WEH/deletelogs"
 			}
 		},
 		"folder": {
