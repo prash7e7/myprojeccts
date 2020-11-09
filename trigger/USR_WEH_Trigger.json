@@ -1,0 +1,29 @@
+{
+	"name": "USR_WEH_Trigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "unzip_plus_transformcsv",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"SourceFolder": "adls",
+					"SourceDirectory": "inbound/site/USR/WEH",
+					"LoggingPath": "inbound/site/USR/WEH/deletelogs"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Hour",
+				"interval": 4,
+				"startTime": "2020-11-10T04:00:00Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}
