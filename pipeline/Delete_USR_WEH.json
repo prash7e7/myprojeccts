@@ -45,11 +45,7 @@
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
 						"recursive": true,
-						"modifiedDatetimeEnd": {
-							"value": "@{adddays(pipeline().TriggerTime, -30)}",
-							"type": "Expression"
-						},
-						"wildcardFileName": "*"
+						"wildcardFileName": "*.gz"
 					}
 				}
 			}
