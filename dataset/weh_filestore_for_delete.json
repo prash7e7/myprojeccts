@@ -12,6 +12,9 @@
 				"type": "AzureBlobFSLocation",
 				"folderPath": "inbound/site/USR/WEH",
 				"fileSystem": "adls"
+			},
+			"compression": {
+				"type": "gzip"
 			}
 		}
 	}
