@@ -46,13 +46,14 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "compressedcsv",
+						"referenceName": "weh_filestore_for_delete",
 						"type": "DatasetReference"
 					},
 					"enableLogging": false,
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
-						"recursive": true
+						"recursive": true,
+						"wildcardFileName": "*,gz"
 					}
 				}
 			}
