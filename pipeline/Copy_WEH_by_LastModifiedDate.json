@@ -84,11 +84,11 @@
 		"parameters": {
 			"FolderPath_Source": {
 				"type": "String",
-				"defaultValue": "sourcefolder"
+				"defaultValue": "adls"
 			},
 			"Directory_Source": {
 				"type": "String",
-				"defaultValue": "subfolder"
+				"defaultValue": "inbound/site/USR/WEH"
 			},
 			"FolderPath_Destination": {
 				"type": "String",
