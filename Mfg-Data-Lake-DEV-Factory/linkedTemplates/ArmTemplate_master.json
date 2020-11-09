@@ -87,6 +87,18 @@
 			"type": "string",
 			"defaultValue": "inbound"
 		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder": {
+			"type": "string",
+			"defaultValue": "adls"
+		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory": {
+			"type": "string",
+			"defaultValue": "inbound/site/USR/WEH"
+		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath": {
+			"type": "string",
+			"defaultValue": "inbound/site/USR/WEH/deletelogs"
+		},
 		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder": {
 			"type": "string",
 			"defaultValue": "adls"
@@ -102,18 +114,6 @@
 		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileDirectory": {
 			"type": "string",
 			"defaultValue": "staged"
-		},
-		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder": {
-			"type": "string",
-			"defaultValue": "adls"
-		},
-		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory": {
-			"type": "string",
-			"defaultValue": "inbound/site/USR/WEH"
-		},
-		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath": {
-			"type": "string",
-			"defaultValue": "inbound/site/USR/WEH/deletelogs"
 		},
 		"containerUri": {
 			"type": "string",
@@ -260,6 +260,15 @@
 					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
 						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory')]"
 					},
+					"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder": {
+						"value": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder')]"
+					},
+					"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory": {
+						"value": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory')]"
+					},
+					"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath": {
+						"value": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath')]"
+					},
 					"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder": {
 						"value": "[parameters('trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder')]"
 					},
@@ -271,15 +280,6 @@
 					},
 					"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileDirectory": {
 						"value": "[parameters('trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileDirectory')]"
-					},
-					"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder": {
-						"value": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder')]"
-					},
-					"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory": {
-						"value": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory')]"
-					},
-					"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath": {
-						"value": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath')]"
 					}
 				}
 			},

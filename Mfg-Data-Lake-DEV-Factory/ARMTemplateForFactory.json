@@ -87,6 +87,18 @@
 			"type": "string",
 			"defaultValue": "inbound"
 		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder": {
+			"type": "string",
+			"defaultValue": "adls"
+		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory": {
+			"type": "string",
+			"defaultValue": "inbound/site/USR/WEH"
+		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath": {
+			"type": "string",
+			"defaultValue": "inbound/site/USR/WEH/deletelogs"
+		},
 		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder": {
 			"type": "string",
 			"defaultValue": "adls"
@@ -102,18 +114,6 @@
 		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileDirectory": {
 			"type": "string",
 			"defaultValue": "staged"
-		},
-		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder": {
-			"type": "string",
-			"defaultValue": "adls"
-		},
-		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory": {
-			"type": "string",
-			"defaultValue": "inbound/site/USR/WEH"
-		},
-		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath": {
-			"type": "string",
-			"defaultValue": "inbound/site/USR/WEH/deletelogs"
 		}
 	},
 	"variables": {
@@ -822,6 +822,9 @@
 						"defaultValue": "staged"
 					}
 				},
+				"folder": {
+					"name": "Copy Jobs"
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -1017,6 +1020,9 @@
 						"type": "string",
 						"defaultValue": "inbound"
 					}
+				},
+				"folder": {
+					"name": "Copy Jobs"
 				},
 				"annotations": []
 			},
@@ -2068,6 +2074,9 @@
 						"defaultValue": "translated/parquet/site/USR/FDC/Tools/ASH10653"
 					}
 				},
+				"folder": {
+					"name": "sandbox"
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -2984,6 +2993,120 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureSynapseDLLink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BinaryDataDestinationStore')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your data destination store.  ",
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Container": {
+						"type": "string"
+					},
+					"Directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().Directory",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().Container",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BinaryDataSourceStore')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your data source store. ",
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Container": {
+						"type": "string"
+					},
+					"Directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().Directory",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().Container",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BinaryDatasetForDeleteActivity')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connect to your source store to delete files.",
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderPath": {
+						"type": "string"
+					},
+					"Directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().Directory",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().FolderPath",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
 			]
 		},
 		{
@@ -5943,6 +6066,32 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/weh_filestore_for_delete')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "inbound/site/USR/WEH",
+						"fileSystem": "adls"
+					},
+					"compression": {
+						"type": "gzip"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ADLSBlobStorage')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -6163,6 +6312,40 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/CopyFilesfromMultipleContainers')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/USR_WEH_Trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "unzip_plus_transformcsv",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"SourceFolder": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder')]",
+							"SourceDirectory": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory')]",
+							"LoggingPath": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Hour",
+						"interval": 4,
+						"startTime": "2020-11-10T04:00:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/unzip_plus_transformcsv')]"
 			]
 		},
 		{
@@ -6563,180 +6746,6 @@
 				"[concat(variables('factoryId'), '/datasets/compressedcsv')]",
 				"[concat(variables('factoryId'), '/datasets/USRWEH_Parquet')]",
 				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BinaryDataSourceStore')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your data source store. ",
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Container": {
-						"type": "string"
-					},
-					"Directory": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": {
-							"value": "@dataset().Directory",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().Container",
-							"type": "Expression"
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BinaryDataDestinationStore')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your data destination store.  ",
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Container": {
-						"type": "string"
-					},
-					"Directory": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": {
-							"value": "@dataset().Directory",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().Container",
-							"type": "Expression"
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/weh_filestore_for_delete')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "inbound/site/USR/WEH",
-						"fileSystem": "adls"
-					},
-					"compression": {
-						"type": "gzip"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BinaryDatasetForDeleteActivity')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connect to your source store to delete files.",
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"FolderPath": {
-						"type": "string"
-					},
-					"Directory": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": {
-							"value": "@dataset().Directory",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().FolderPath",
-							"type": "Expression"
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/USR_WEH_Trigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "unzip_plus_transformcsv",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"SourceFolder": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder')]",
-							"SourceDirectory": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory')]",
-							"LoggingPath": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Hour",
-						"interval": 4,
-						"startTime": "2020-11-10T04:00:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/unzip_plus_transformcsv')]"
 			]
 		}
 	]
