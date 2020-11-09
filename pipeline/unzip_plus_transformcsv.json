@@ -52,8 +52,7 @@
 					"enableLogging": false,
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
-						"recursive": true,
-						"wildcardFileName": "*,gz"
+						"recursive": true
 					}
 				}
 			}
