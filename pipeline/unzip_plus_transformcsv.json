@@ -17,17 +17,7 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "unzip_copy_csv_delta",
-						"type": "DataFlowReference",
-						"parameters": {
-							"lastmodifieddate_f": {
-								"value": "'@{pipeline().parameters.LastModified_From}'",
-								"type": "Expression"
-							},
-							"lastmodifieddate_t": {
-								"value": "'@{pipeline().parameters.LastModified_To}'",
-								"type": "Expression"
-							}
-						}
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
@@ -38,7 +28,14 @@
 			{
 				"name": "Delete1",
 				"type": "Delete",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "unzip_copy_csv_delta",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
