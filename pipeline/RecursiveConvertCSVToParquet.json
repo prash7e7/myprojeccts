@@ -219,6 +219,9 @@
 				"defaultValue": "translated/parquet/site/USR/FDC/Tools/ASH10653"
 			}
 		},
+		"folder": {
+			"name": "sandbox"
+		},
 		"annotations": []
 	}
 }

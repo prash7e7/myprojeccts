@@ -151,6 +151,9 @@
 				"defaultValue": "staged"
 			}
 		},
+		"folder": {
+			"name": "Copy Jobs"
+		},
 		"annotations": []
 	}
 }

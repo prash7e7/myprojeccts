@@ -78,6 +78,9 @@
 									"storeSettings": {
 										"type": "FileServerReadSettings",
 										"recursive": true
+									},
+									"formatSettings": {
+										"type": "BinaryReadSettings"
 									}
 								},
 								"sink": {
@@ -181,6 +184,9 @@
 				"type": "string",
 				"defaultValue": "inbound"
 			}
+		},
+		"folder": {
+			"name": "Copy Jobs"
 		},
 		"annotations": []
 	}
