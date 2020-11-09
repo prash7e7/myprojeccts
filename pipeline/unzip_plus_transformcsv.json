@@ -5,14 +5,7 @@
 			{
 				"name": "unzip_copy_csv_delta",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [
-					{
-						"activity": "DeleteFiles",
-						"dependencyConditions": [
-							"Failed"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -36,7 +29,14 @@
 				"name": "DeleteFiles",
 				"description": "Connect to your storage account to save the log file.",
 				"type": "Delete",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "unzip_copy_csv_delta",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
