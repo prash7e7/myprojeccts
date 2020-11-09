@@ -38,6 +38,18 @@
 		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileDirectory": {
 			"type": "string",
 			"defaultValue": "staged"
+		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder": {
+			"type": "string",
+			"defaultValue": "adls"
+		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory": {
+			"type": "string",
+			"defaultValue": "inbound/site/USR/WEH"
+		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath": {
+			"type": "string",
+			"defaultValue": "inbound/site/USR/WEH/deletelogs"
 		}
 	},
 	"variables": {
@@ -1449,36 +1461,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/WEH_Parquet_Delta_trigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "unzip_plus_transformcsv",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Hour",
-						"interval": 4,
-						"startTime": "2020-11-03T04:00:00",
-						"timeZone": "Mountain Standard Time"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/unzip_plus_transformcsv')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/trigger_copyadlstoonprem')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -1511,6 +1493,40 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/CopyFiles_from_adls_toprem')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/USR_WEH_Trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "unzip_plus_transformcsv",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"SourceFolder": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder')]",
+							"SourceDirectory": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory')]",
+							"LoggingPath": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Hour",
+						"interval": 4,
+						"startTime": "2020-11-10T04:00:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/unzip_plus_transformcsv')]"
 			]
 		}
 	]

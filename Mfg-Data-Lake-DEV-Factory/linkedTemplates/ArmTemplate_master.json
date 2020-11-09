@@ -103,6 +103,18 @@
 			"type": "string",
 			"defaultValue": "staged"
 		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder": {
+			"type": "string",
+			"defaultValue": "adls"
+		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory": {
+			"type": "string",
+			"defaultValue": "inbound/site/USR/WEH"
+		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath": {
+			"type": "string",
+			"defaultValue": "inbound/site/USR/WEH/deletelogs"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -259,6 +271,15 @@
 					},
 					"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileDirectory": {
 						"value": "[parameters('trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileDirectory')]"
+					},
+					"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder": {
+						"value": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder')]"
+					},
+					"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory": {
+						"value": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory')]"
+					},
+					"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath": {
+						"value": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath')]"
 					}
 				}
 			},
