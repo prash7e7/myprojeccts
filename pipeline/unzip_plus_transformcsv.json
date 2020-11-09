@@ -7,7 +7,7 @@
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "Delete1",
+						"activity": "DeleteFiles",
 						"dependencyConditions": [
 							"Failed"
 						]
@@ -33,7 +33,8 @@
 				}
 			},
 			{
-				"name": "Delete1",
+				"name": "DeleteFiles",
+				"description": "Connect to your storage account to save the log file.",
 				"type": "Delete",
 				"dependsOn": [],
 				"policy": {
@@ -46,17 +47,52 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "weh_filestore_for_delete",
-						"type": "DatasetReference"
+						"referenceName": "BinaryDatasetForDeleteActivity",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath": {
+								"value": "@pipeline().parameters.SourceFolder",
+								"type": "Expression"
+							},
+							"Directory": {
+								"value": "@pipeline().parameters.SourceDirectory",
+								"type": "Expression"
+							}
+						}
 					},
-					"enableLogging": false,
+					"logStorageSettings": {
+						"linkedServiceName": {
+							"referenceName": "onsemidevmdlstoragelink",
+							"type": "LinkedServiceReference"
+						},
+						"path": {
+							"value": "@pipeline().parameters.LoggingPath",
+							"type": "Expression"
+						}
+					},
+					"enableLogging": true,
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
-						"fileListPath": "adls/inbound/site/USR/WEH"
+						"recursive": true,
+						"wildcardFileName": "*.gz"
 					}
 				}
 			}
 		],
+		"parameters": {
+			"SourceFolder": {
+				"type": "string",
+				"defaultValue": "adls"
+			},
+			"SourceDirectory": {
+				"type": "string",
+				"defaultValue": "inbound/site/USR/WEH"
+			},
+			"LoggingPath": {
+				"type": "string",
+				"defaultValue": "inbound/site/USR/WEH/deletelogs"
+			}
+		},
 		"folder": {
 			"name": "USR_WEH"
 		},
