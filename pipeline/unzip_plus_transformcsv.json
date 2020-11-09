@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "unzip_copy_csv_delta",
+				"name": "csv_delta_parquet",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -31,7 +31,7 @@
 				"type": "Delete",
 				"dependsOn": [
 					{
-						"activity": "unzip_copy_csv_delta",
+						"activity": "csv_delta_parquet",
 						"dependencyConditions": [
 							"Succeeded"
 						]
