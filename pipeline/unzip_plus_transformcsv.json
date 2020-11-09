@@ -5,7 +5,14 @@
 			{
 				"name": "unzip_copy_csv_delta",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Delete1",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -28,14 +35,7 @@
 			{
 				"name": "Delete1",
 				"type": "Delete",
-				"dependsOn": [
-					{
-						"activity": "unzip_copy_csv_delta",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -52,8 +52,7 @@
 					"enableLogging": false,
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
-						"recursive": true,
-						"wildcardFileName": "*,*"
+						"fileListPath": "adls/inbound/site/USR/WEH"
 					}
 				}
 			}
