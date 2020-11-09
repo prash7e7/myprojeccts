@@ -899,6 +899,9 @@
 											"storeSettings": {
 												"type": "FileServerReadSettings",
 												"recursive": true
+											},
+											"formatSettings": {
+												"type": "BinaryReadSettings"
 											}
 										},
 										"sink": {
@@ -2221,16 +2224,9 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "dataflow1",
+						"name": "unzip_copy_csv_delta",
 						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "Copy data1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
+						"dependsOn": [],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -2245,8 +2241,9 @@
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
+									"source2": {},
+									"sink2": {},
+									"sink4": {}
 								}
 							},
 							"staging": {},
@@ -2257,9 +2254,17 @@
 						}
 					},
 					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
+						"name": "DeleteFiles",
+						"description": "Connect to your storage account to save the log file.",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "unzip_copy_csv_delta",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -2269,55 +2274,53 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"wildcardFolderPath": "inbound/site/USR/WEH",
-									"wildcardFileName": "*.gz"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings",
-									"skipLineCount": 1
+							"dataset": {
+								"referenceName": "BinaryDatasetForDeleteActivity",
+								"type": "DatasetReference",
+								"parameters": {
+									"FolderPath": {
+										"value": "@pipeline().parameters.SourceFolder",
+										"type": "Expression"
+									},
+									"Directory": {
+										"value": "@pipeline().parameters.SourceDirectory",
+										"type": "Expression"
+									}
 								}
 							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings",
-									"copyBehavior": "MergeFiles"
+							"logStorageSettings": {
+								"linkedServiceName": {
+									"referenceName": "onsemidevmdlstoragelink",
+									"type": "LinkedServiceReference"
 								},
-								"formatSettings": {
-									"type": "ParquetWriteSettings"
+								"path": {
+									"value": "@pipeline().parameters.LoggingPath",
+									"type": "Expression"
 								}
 							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
+							"enableLogging": true,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"wildcardFileName": "*.gz"
 							}
-						},
-						"inputs": [
-							{
-								"referenceName": "compressedcsv",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "USRWEH_Parquet",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+						}
 					}
 				],
+				"parameters": {
+					"SourceFolder": {
+						"type": "string",
+						"defaultValue": "adls"
+					},
+					"SourceDirectory": {
+						"type": "string",
+						"defaultValue": "inbound/site/USR/WEH"
+					},
+					"LoggingPath": {
+						"type": "string",
+						"defaultValue": "inbound/site/USR/WEH/deletelogs"
+					}
+				},
 				"folder": {
 					"name": "USR_WEH"
 				},
@@ -2325,8 +2328,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/unzip_copy_csv_delta')]",
-				"[concat(variables('factoryId'), '/datasets/compressedcsv')]",
-				"[concat(variables('factoryId'), '/datasets/USRWEH_Parquet')]"
+				"[concat(variables('factoryId'), '/datasets/BinaryDatasetForDeleteActivity')]",
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
 			]
 		},
 		{
@@ -6547,24 +6550,176 @@
 								"referenceName": "compressedcsv",
 								"type": "DatasetReference"
 							},
-							"name": "source1"
+							"name": "source2"
 						}
 					],
 					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "USRWEH_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						},
 						{
 							"linkedService": {
 								"referenceName": "onsemidevmdlstoragelink",
 								"type": "LinkedServiceReference"
 							},
-							"name": "sink1"
+							"name": "sink4"
 						}
 					],
-					"transformations": [],
-					"script": "source(output(\n\t\tLotId as string,\n\t\tFab as string,\n\t\tFamily as string,\n\t\tTechnology as string,\n\t\tPlan as string,\n\t\tDevice as string,\n\t\tSourceLot as string,\n\t\tLotClass as string,\n\t\twf_num as short,\n\t\twf_id as string,\n\t\tSequence as string,\n\t\tProcStep as string,\n\t\tStage as string,\n\t\torig_slot as short,\n\t\tfinal_slot as short,\n\t\torig_cass as short,\n\t\tfinal_cass as short,\n\t\tzone as string,\n\t\tzone_seat as string,\n\t\tboat_seat as string,\n\t\tsubtool as string,\n\t\tequipment as string,\n\t\ttrackInTime as timestamp,\n\t\ttrackOutTime as timestamp,\n\t\trecipe as string,\n\t\tOperator as string,\n\t\tTooling as string,\n\t\tReworkCount as boolean\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpurgeFiles: true,\n\tskipLines: 1,\n\twildcardPaths:['inbound/site/USR/WEH/*.gz']) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tfileSystem: 'adls',\n\tfolderPath: 'translated/delta/site/USR/WEH',\n\ttruncate: false,\n\tmergeSchema: true,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+					"transformations": [
+						{
+							"name": "DerivedColumn1"
+						}
+					],
+					"script": "source(output(\n\t\tLotId as string,\n\t\tFab as string,\n\t\tFamily as string,\n\t\tTechnology as string,\n\t\tPlan as string,\n\t\tDevice as string,\n\t\tSourceLot as string,\n\t\tLotClass as string,\n\t\twf_num as short,\n\t\twf_id as string,\n\t\tSequence as string,\n\t\tProcStep as string,\n\t\tStage as string,\n\t\torig_slot as short,\n\t\tfinal_slot as short,\n\t\torig_cass as short,\n\t\tfinal_cass as short,\n\t\tzone as string,\n\t\tzone_seat as string,\n\t\tboat_seat as string,\n\t\tsubtool as string,\n\t\tequipment as string,\n\t\ttrackInTime as string,\n\t\ttrackOutTime as string,\n\t\trecipe as string,\n\t\tOperator as string,\n\t\tTooling as string,\n\t\tReworkCount as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tskipLines: 1,\n\twildcardPaths:['inbound/site/USR/WEH/*.gz']) ~> source2\nsource2 derive(trackInTime_formated = toTimestamp(trackInTime, 'yyyyMMddHHmmss'),\n\t\ttrackOutTime_formated = toTimestamp(trackOutTime, 'yyyyMMddHHmmss')) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'adls',\n\tfolderPath: 'translated/parquet/site/USR/WEH',\n\ttruncate: false,\n\tmergeSchema: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink4"
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/compressedcsv')]",
+				"[concat(variables('factoryId'), '/datasets/USRWEH_Parquet')]",
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BinaryDataSourceStore')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your data source store. ",
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Container": {
+						"type": "string"
+					},
+					"Directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().Directory",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().Container",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BinaryDataDestinationStore')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your data destination store.  ",
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Container": {
+						"type": "string"
+					},
+					"Directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().Directory",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().Container",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/weh_filestore_for_delete')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "inbound/site/USR/WEH",
+						"fileSystem": "adls"
+					},
+					"compression": {
+						"type": "gzip"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BinaryDatasetForDeleteActivity')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connect to your source store to delete files.",
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderPath": {
+						"type": "string"
+					},
+					"Directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().Directory",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().FolderPath",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
 			]
 		}
