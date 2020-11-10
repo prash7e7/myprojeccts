@@ -2246,6 +2246,7 @@
 				"activities": [
 					{
 						"name": "csv_delta_parquet",
+						"description": "csv_delta_parquet",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
