@@ -10,7 +10,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "ONC25*.gz",
 				"folderPath": "inbound/site/USR/WEH",
 				"fileSystem": "adls"
 			}
