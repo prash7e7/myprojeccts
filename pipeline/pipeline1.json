@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "compressedcsv",
+						"referenceName": "WEH_Binary",
 						"type": "DatasetReference"
 					},
 					"fieldList": [
@@ -26,7 +26,7 @@
 						"type": "AzureBlobFSReadSettings"
 					},
 					"formatSettings": {
-						"type": "DelimitedTextReadSettings"
+						"type": "BinaryReadSettings"
 					}
 				}
 			}
