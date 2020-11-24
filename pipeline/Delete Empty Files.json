@@ -1,0 +1,9 @@
+{
+	"name": "Delete Empty Files",
+	"properties": {
+		"folder": {
+			"name": "USR_WEH"
+		},
+		"annotations": []
+	}
+}
