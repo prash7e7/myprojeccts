@@ -68,7 +68,10 @@
 										"FileName": "@item().name"
 									}
 								},
-								"fieldList": [],
+								"fieldList": [
+									"itemName",
+									"size"
+								],
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings"
 								},
