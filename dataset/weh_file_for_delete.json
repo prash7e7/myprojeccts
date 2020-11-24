@@ -15,8 +15,11 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "@dataset().FileName",
-				"folderPath": "inbound/site/USR/WEH",
+				"fileName": {
+					"value": "@dataset().FileName",
+					"type": "Expression"
+				},
+				"folderPath": "inbound/site/USR/WEH_1",
 				"fileSystem": "adls"
 			}
 		}
