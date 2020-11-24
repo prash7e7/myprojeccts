@@ -79,6 +79,25 @@
 									"type": "BinaryReadSettings"
 								}
 							}
+						},
+						{
+							"name": "if_0_filesize",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "Get File Metadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity(\"Get File Metadata\").output.",
+									"type": "Expression"
+								}
+							}
 						}
 					]
 				}
