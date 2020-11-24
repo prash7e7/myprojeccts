@@ -1,0 +1,23 @@
+{
+	"name": "weh_file_for_delete",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "onsemidevmdlstoragelink",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "inbound/site/USR/WEH",
+				"fileSystem": "adls"
+			}
+		}
+	}
+}
