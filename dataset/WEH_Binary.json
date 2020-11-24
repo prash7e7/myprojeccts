@@ -10,8 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "ONC25.2020.11.03.2.1.0.sub-ONC25-DW-L-SG-5V-PR-4LM-30T.sub.weh.gz",
-				"folderPath": "inbound/site/USR/WEH",
+				"folderPath": "inbound/site/USR/WEH_1",
 				"fileSystem": "adls"
 			}
 		}
