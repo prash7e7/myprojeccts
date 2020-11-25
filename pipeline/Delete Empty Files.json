@@ -115,7 +115,13 @@
 										"typeProperties": {
 											"dataset": {
 												"referenceName": "WEH_Binary",
-												"type": "DatasetReference"
+												"type": "DatasetReference",
+												"parameters": {
+													"FileName": {
+														"value": "@activity('Get File Metadata').output.ItemName",
+														"type": "Expression"
+													}
+												}
 											},
 											"enableLogging": false,
 											"storeSettings": {
