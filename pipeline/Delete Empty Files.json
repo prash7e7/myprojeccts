@@ -101,8 +101,8 @@
 								},
 								"ifTrueActivities": [
 									{
-										"name": "Copy data2",
-										"type": "Copy",
+										"name": "Delete1",
+										"type": "Delete",
 										"dependsOn": [],
 										"policy": {
 											"timeout": "7.00:00:00",
@@ -113,36 +113,16 @@
 										},
 										"userProperties": [],
 										"typeProperties": {
-											"source": {
-												"type": "BinarySource",
-												"storeSettings": {
-													"type": "AzureBlobFSReadSettings",
-													"recursive": true
-												},
-												"formatSettings": {
-													"type": "BinaryReadSettings"
-												}
-											},
-											"sink": {
-												"type": "BinarySink",
-												"storeSettings": {
-													"type": "AzureBlobFSWriteSettings"
-												}
-											},
-											"enableStaging": false
-										},
-										"inputs": [
-											{
-												"referenceName": "weh_file_for_delete",
-												"type": "DatasetReference"
-											}
-										],
-										"outputs": [
-											{
+											"dataset": {
 												"referenceName": "WEH_Binary",
 												"type": "DatasetReference"
+											},
+											"enableLogging": false,
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true
 											}
-										]
+										}
 									}
 								]
 							}
