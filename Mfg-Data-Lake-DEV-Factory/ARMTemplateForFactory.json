@@ -6682,7 +6682,7 @@
 				"typeProperties": {
 					"recurrence": {
 						"frequency": "Hour",
-						"interval": 1,
+						"interval": 4,
 						"startTime": "2020-11-10T04:00:00",
 						"timeZone": "Mountain Standard Time"
 					}
