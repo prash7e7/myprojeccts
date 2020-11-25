@@ -10,8 +10,11 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "@activity('Get File Metadata').output.itemName",
-				"folderPath": "inbound/site/USR/WEH_1",
+				"fileName": {
+					"value": "@activity('Get File Metadata').output.itemName",
+					"type": "Expression"
+				},
+				"folderPath": "inbound/site/USR/WEH",
 				"fileSystem": "adls"
 			}
 		}
