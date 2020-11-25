@@ -11,7 +11,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": "@activity('Get File Metadata').output.itemName",
-				"folderPath": "inbound/site/USR/WEH_2",
+				"folderPath": "inbound/site/USR/WEH_1",
 				"fileSystem": "adls"
 			}
 		}
