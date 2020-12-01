@@ -22,13 +22,16 @@
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
-					}
+					},
+					"traceLevel": "Fine"
 				}
 			}
 		],
 		"folder": {
 			"name": "sandbox"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2020-08-18T08:34:14Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }

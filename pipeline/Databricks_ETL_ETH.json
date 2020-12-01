@@ -49,13 +49,16 @@
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
-					}
+					},
+					"traceLevel": "Fine"
 				}
 			}
 		],
 		"folder": {
 			"name": "Databricks_ETL"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2020-08-17T20:44:23Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }

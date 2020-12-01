@@ -100,6 +100,8 @@
 		"folder": {
 			"name": "sandbox"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2020-08-13T17:42:38Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }

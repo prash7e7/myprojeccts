@@ -14,6 +14,8 @@
 				"folderPath": "sandbox/user/ffyn9j",
 				"fileSystem": "adls"
 			}
-		}
-	}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
 }

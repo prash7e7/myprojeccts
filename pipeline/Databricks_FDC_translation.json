@@ -66,6 +66,8 @@
 		"folder": {
 			"name": "Databricks_ETL"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2020-11-08T20:53:29Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }

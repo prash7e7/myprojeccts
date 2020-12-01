@@ -12,5 +12,6 @@
 				"type": "AzureBlobFSLocation"
 			}
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
 }

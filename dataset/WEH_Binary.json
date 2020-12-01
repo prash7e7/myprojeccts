@@ -23,5 +23,6 @@
 				"fileSystem": "adls"
 			}
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
 }

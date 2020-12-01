@@ -318,6 +318,8 @@
 		"folder": {
 			"name": "FDC_Pipeline"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2020-09-30T16:19:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }

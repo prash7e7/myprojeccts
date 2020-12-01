@@ -171,7 +171,8 @@
 								"compute": {
 									"coreCount": 8,
 									"computeType": "General"
-								}
+								},
+								"traceLevel": "Fine"
 							}
 						}
 					]
@@ -222,6 +223,8 @@
 		"folder": {
 			"name": "sandbox"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2020-11-09T18:54:10Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }

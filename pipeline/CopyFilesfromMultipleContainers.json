@@ -188,6 +188,8 @@
 		"folder": {
 			"name": "Copy Jobs"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2020-11-09T18:54:10Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }
