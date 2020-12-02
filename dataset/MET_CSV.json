@@ -1,0 +1,29 @@
+{
+	"name": "MET_CSV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLSBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "GAT02925.2_20211111155502_20211111155502_20201124050122.smet.gz",
+				"folderPath": "inbound/site/USR/MET",
+				"container": "adls"
+			},
+			"columnDelimiter": ",",
+			"compressionCodec": "gzip",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"type": "String"
+			}
+		]
+	}
+}
