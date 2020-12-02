@@ -1,0 +1,19 @@
+{
+	"name": "MET_XML",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLSBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Xml",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "GAU25910.9_20210711035501_20210711035501_20201119170128.smet",
+				"folderPath": "inbound/user/fg69gy",
+				"container": "adls"
+			}
+		}
+	}
+}
