@@ -14,7 +14,6 @@
 				"fileSystem": "adls"
 			},
 			"columnDelimiter": ",",
-			"compressionCodec": "gzip",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
