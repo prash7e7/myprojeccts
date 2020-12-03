@@ -16,8 +16,14 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "unzip_copy_MET",
-						"type": "DataFlowReference"
+						"referenceName": "met_with_skipped_lines",
+						"type": "DataFlowReference",
+						"parameters": {
+							"skiplines": {
+								"value": "'@{activity('Lookup1').output.firstRow.firstline}'",
+								"type": "Expression"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
