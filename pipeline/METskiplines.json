@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "wheretostart",
+				"name": "MET",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -31,7 +31,7 @@
 				"type": "Lookup",
 				"dependsOn": [
 					{
-						"activity": "wheretostart",
+						"activity": "MET",
 						"dependencyConditions": [
 							"Succeeded"
 						]
