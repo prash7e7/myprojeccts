@@ -9,7 +9,7 @@
 						"referenceName": "MET_CSV",
 						"type": "DatasetReference"
 					},
-					"name": "MET_skiplines"
+					"name": "METskiplines"
 				}
 			],
 			"sinks": [
@@ -22,7 +22,7 @@
 				}
 			],
 			"transformations": [],
-			"script": "parameters{\n\tskiplines as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tskipLines: (toInteger($skiplines))) ~> MET_skiplines\nMET_skiplines sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\temptyLinesAsHeader: (toInteger($skiplines)),\n\tpartitionFileNames:['skippedrows.csv'],\n\tpartitionBy('hash', 1)) ~> sink1"
+			"script": "parameters{\n\tskiplines as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tskipLines: (toInteger($skiplines))) ~> METskiplines\nMETskiplines sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\temptyLinesAsHeader: (toInteger($skiplines)),\n\tpartitionFileNames:['skippedrows.csv'],\n\tpartitionBy('hash', 1)) ~> sink1"
 		}
 	}
 }
