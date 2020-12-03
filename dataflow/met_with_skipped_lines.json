@@ -1,0 +1,28 @@
+{
+	"name": "met_with_skipped_lines",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "MET_CSV",
+						"type": "DatasetReference"
+					},
+					"name": "skiplines"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "MET_CSV_output",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"script": "parameters{\n\tskiplines as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tskipLines: (toInteger($skiplines))) ~> skiplines\nskiplines sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\temptyLinesAsHeader: (toInteger($skiplines)),\n\tpartitionFileNames:['skippedrows.csv'],\n\tpartitionBy('hash', 1)) ~> sink1"
+		}
+	}
+}
