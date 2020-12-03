@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "USR_MET_Parquet",
+						"referenceName": "MET_CSV_output",
 						"type": "DatasetReference"
 					},
 					"name": "sink2"
@@ -23,10 +23,16 @@
 			],
 			"transformations": [
 				{
-					"name": "Pivot1"
+					"name": "AddRowNrs"
+				},
+				{
+					"name": "DefineDataLines"
+				},
+				{
+					"name": "FindFirstLine"
 				}
 			],
-			"script": "source(output(\n\t\tLOTID as string,\n\t\tSRC_LOT as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tdateFormats: ['yyyy-MM-dd'],\n\ttimestampFormats: ['MM/dd/yyyy HH:mm:ss','yyyy.MM.dd HH:mm:ss'],\n\tpreferredIntegralType: 'integer',\n\tpreferredFractionalType: 'double',\n\twildcardPaths:['inbound/user/fg69gy/*.gz']) ~> source2\nsource2 pivot(columnNaming: '$N$V',\n\tlateral: true) ~> Pivot1\nPivot1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2"
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tdateFormats: ['yyyy-MM-dd'],\n\ttimestampFormats: ['MM/dd/yyyy HH:mm:ss','yyyy.MM.dd HH:mm:ss'],\n\tpreferredIntegralType: 'integer',\n\tpreferredFractionalType: 'double',\n\twildcardPaths:['inbound/user/fg69gy/*.gz']) ~> source2\nsource2 keyGenerate(output(rownum as long),\n\tstartAt: 1L) ~> AddRowNrs\nAddRowNrs derive(datalines = iif(!isNull(toInteger(left(toString(byPosition(1)),1))),toInteger(rownum),toInteger(0))) ~> DefineDataLines\nDefineDataLines aggregate(firstline = minIf(datalines!=0,datalines)) ~> FindFirstLine\nFindFirstLine sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2"
 		}
 	}
 }
