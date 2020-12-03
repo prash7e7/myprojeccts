@@ -13,7 +13,7 @@
 				"folderPath": "inbound/site/USR/MET",
 				"fileSystem": "adls"
 			},
-			"columnDelimiter": "",
+			"columnDelimiter": ",",
 			"compressionCodec": "gzip",
 			"escapeChar": "\\",
 			"firstRowAsHeader": false,
