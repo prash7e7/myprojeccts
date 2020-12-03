@@ -61,7 +61,8 @@
 					"dataset": {
 						"referenceName": "MET_CSV_output",
 						"type": "DatasetReference"
-					}
+					},
+					"firstRowOnly": false
 				}
 			},
 			{
