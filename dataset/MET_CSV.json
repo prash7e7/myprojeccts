@@ -19,7 +19,7 @@
 			"compressionCodec": "gzip",
 			"escapeChar": "",
 			"firstRowAsHeader": false,
-			"quoteChar": "\""
+			"quoteChar": ""
 		},
 		"schema": []
 	}
