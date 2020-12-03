@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "MET_CSV",
+						"referenceName": "MET_readskipped",
 						"type": "DatasetReference"
 					},
 					"name": "METskiplines"
