@@ -10,9 +10,12 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "GAT02925.2_20210711045502_20210711045502_20201119180315.smet",
+				"fileName": "GAT02925.2_20210711045502_20210711045502_20201119180315.smet.gz",
 				"folderPath": "inbound/user/fg69gy",
 				"container": "adls"
+			},
+			"compression": {
+				"type": "gzip"
 			}
 		}
 	}
