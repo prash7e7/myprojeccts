@@ -59,7 +59,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"variableName": "line",
-								"value": "@item().Prop_0"
+								"value": "@item().Prop_1"
 							}
 						}
 					]
