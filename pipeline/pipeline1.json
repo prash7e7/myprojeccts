@@ -28,7 +28,8 @@
 					"dataset": {
 						"referenceName": "MET_CSV",
 						"type": "DatasetReference"
-					}
+					},
+					"firstRowOnly": false
 				}
 			},
 			{
@@ -51,16 +52,25 @@
 					"isSequential": true,
 					"activities": [
 						{
-							"name": "Line",
-							"description": "@item().Prop_0",
+							"name": "Variable",
+							"description": "",
 							"type": "SetVariable",
 							"dependsOn": [],
-							"userProperties": []
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "line",
+								"value": "@item().Prop_0"
+							}
 						}
 					]
 				}
 			}
 		],
+		"variables": {
+			"line": {
+				"type": "String"
+			}
+		},
 		"folder": {
 			"name": "USR_WEH"
 		},
