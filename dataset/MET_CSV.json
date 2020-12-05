@@ -14,12 +14,12 @@
 				"folderPath": "inbound/user/fg69gy",
 				"fileSystem": "adls"
 			},
-			"columnDelimiter": ">",
-			"rowDelimiter": "\r",
+			"columnDelimiter": "",
+			"rowDelimiter": "",
 			"compressionCodec": "gzip",
-			"escapeChar": "\\",
+			"escapeChar": "",
 			"firstRowAsHeader": false,
-			"quoteChar": "\""
+			"quoteChar": ""
 		},
 		"schema": [
 			{
