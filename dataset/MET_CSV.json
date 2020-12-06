@@ -14,8 +14,8 @@
 				"folderPath": "inbound/user/fg69gy",
 				"fileSystem": "adls"
 			},
-			"columnDelimiter": "",
-			"rowDelimiter": "",
+			"columnDelimiter": ">",
+			"rowDelimiter": "\r",
 			"compressionCodec": "gzip",
 			"escapeChar": "",
 			"firstRowAsHeader": false,
