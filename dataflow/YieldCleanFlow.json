@@ -29,10 +29,10 @@
 					"name": "SelectExtraction"
 				},
 				{
-					"name": "AlterRow1"
+					"name": "CleanProgram"
 				}
 			],
-			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['sandbox/user/zbmhpw/source/*test1.csv']) ~> YieldSource\nAlterRow1 select(mapColumn(\n\t\teach(match(true()),\n\t\t\tregexReplace($$,\" \",\"_\") = $$),\n\t\teach(match(name != \"lot_key\"))\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction\nYieldSource alterRow(updateIf(regexReplace(`$$`, `,(\\d+C), `, \":$1\"))) ~> AlterRow1\nSelectExtraction sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> YieldSink"
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['sandbox/user/zbmhpw/source/*test1.csv']) ~> YieldSource\nCleanProgram select(mapColumn(\n\t\teach(match(true()),\n\t\t\tregexReplace($$,\" \",\"_\") = $$),\n\t\teach(match(name != \"lot_key\"))\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction\nYieldSource derive(Clean_Program = regexReplace(end_date, `,(\\d+C), `, \":$1\")) ~> CleanProgram\nSelectExtraction sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> YieldSink"
 		}
 	}
 }
