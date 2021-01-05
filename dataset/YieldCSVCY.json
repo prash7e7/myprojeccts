@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "test1.csv",
+				"fileName": "test3.csv",
 				"folderPath": "sandbox/user/zbmhpw/source",
 				"fileSystem": "adls"
 			},
