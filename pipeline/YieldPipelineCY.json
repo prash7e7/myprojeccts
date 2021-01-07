@@ -3,8 +3,8 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "YieldCleanFlow",
-				"type": "ExecuteDataFlow",
+				"name": "GetFileNames",
+				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
@@ -15,15 +15,20 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataflow": {
-						"referenceName": "YieldCleanFlow",
-						"type": "DataFlowReference"
+					"dataset": {
+						"referenceName": "YieldCSVCY",
+						"type": "DatasetReference"
 					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
 					},
-					"traceLevel": "Fine"
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
 				}
 			}
 		],
