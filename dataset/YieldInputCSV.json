@@ -1,5 +1,5 @@
 {
-	"name": "YieldInputCSv",
+	"name": "YieldInputCSV",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ADLSBlobStorage",
