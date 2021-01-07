@@ -1,0 +1,24 @@
+{
+	"name": "USR_MET_Trigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "pipeline3",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Hour",
+				"interval": 2,
+				"startTime": "2021-01-07T16:00:00",
+				"timeZone": "Mountain Standard Time"
+			}
+		}
+	}
+}
