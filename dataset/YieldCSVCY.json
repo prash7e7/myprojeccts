@@ -5,12 +5,6 @@
 			"referenceName": "onsemidevmdlstoragelink",
 			"type": "LinkedServiceReference"
 		},
-		"parameters": {
-			"FileName": {
-				"type": "string",
-				"defaultValue": "Unamed_File"
-			}
-		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
