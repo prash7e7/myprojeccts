@@ -10,10 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": {
-					"value": "@dataset().FileName",
-					"type": "Expression"
-				},
+				"fileName": "ADAS_Reduced.csv",
 				"folderPath": "sandbox/user/zbmhpw/source",
 				"container": "adls"
 			},
