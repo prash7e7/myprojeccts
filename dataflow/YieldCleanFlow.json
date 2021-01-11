@@ -9,7 +9,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "YieldCSVCY",
+						"referenceName": "YieldInputCSV",
 						"type": "DatasetReference"
 					},
 					"name": "YieldSource"
