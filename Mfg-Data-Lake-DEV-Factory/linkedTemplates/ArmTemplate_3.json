@@ -13,6 +13,384 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/Delete Empty Files')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get folder metadata",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "weh_filestore_for_delete",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true
+							},
+							"formatSettings": {
+								"type": "BinaryReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get folder metadata",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get folder metadata').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Get File Metadata",
+									"type": "GetMetadata",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "weh_file_for_delete",
+											"type": "DatasetReference",
+											"parameters": {
+												"FileName": "@item().name"
+											}
+										},
+										"fieldList": [
+											"itemName",
+											"size"
+										],
+										"storeSettings": {
+											"type": "AzureBlobFSReadSettings",
+											"recursive": true
+										},
+										"formatSettings": {
+											"type": "BinaryReadSettings"
+										}
+									}
+								},
+								{
+									"name": "if_0_filesize",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "Get File Metadata",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(activity('Get File Metadata').output.size, 0)",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "Delete1",
+												"type": "Delete",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"dataset": {
+														"referenceName": "WEH_Binary",
+														"type": "DatasetReference",
+														"parameters": {
+															"FileName": {
+																"value": "@activity('Get File Metadata').output.ItemName",
+																"type": "Expression"
+															}
+														}
+													},
+													"enableLogging": false,
+													"storeSettings": {
+														"type": "AzureBlobFSReadSettings",
+														"recursive": true
+													}
+												}
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				],
+				"folder": {
+					"name": "USR_WEH"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-11-25T02:04:13Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Extensio Web Test')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Login",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1/session/login",
+							"connectVia": {
+								"referenceName": "integrationRuntimeMfgDataLake",
+								"type": "IntegrationRuntimeReference"
+							},
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"username": "exn_dba",
+								"password": "iNabd667",
+								"dbname": "exnindb",
+								"dbschema": "META_YMS"
+							},
+							"linkedServices": [
+								{
+									"referenceName": "ExtensioAPI",
+									"type": "LinkedServiceReference"
+								}
+							]
+						}
+					},
+					{
+						"name": "getToken",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Login",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "token",
+							"value": {
+								"value": "@activity('Login').output.token",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "key-Program-5",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "getToken",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1/key/programs",
+							"connectVia": {
+								"referenceName": "integrationRuntimeMfgDataLake",
+								"type": "IntegrationRuntimeReference"
+							},
+							"method": "POST",
+							"headers": {
+								"Authorization": {
+									"value": "@concat('Bearer ', string(variables('token')))",
+									"type": "Expression"
+								}
+							},
+							"body": {
+								"pgc_keys": [
+									5
+								]
+							}
+						}
+					}
+				],
+				"variables": {
+					"token": {
+						"type": "String",
+						"defaultValue": "'default'"
+					}
+				},
+				"folder": {
+					"name": "Extensio Web"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-19T12:27:14Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BinarySinkFileStore2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your destination data store.",
+				"linkedServiceName": {
+					"referenceName": "ONPREMALLUSERS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"folderPath": {
+						"type": "string"
+					},
+					"directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"folderPath": {
+							"value": "@concat(dataset().folderPath,'/',dataset().directory)",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BinarySourceFileStore')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your source data store.",
+				"linkedServiceName": {
+					"referenceName": "ONPREMALLUSERS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"folderPath": {
+						"type": "string"
+					},
+					"directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"folderPath": {
+							"value": "@concat(dataset().folderPath,'/',dataset().directory)",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BinarySourceFileStore1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your source data store.",
+				"linkedServiceName": {
+					"referenceName": "ONPREMALLUSERS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"folderPath": {
+						"type": "string"
+					},
+					"directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"folderPath": {
+							"value": "@concat(dataset().folderPath,'/',dataset().directory)",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ExtensioRestLoginDS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ExtensioAPI",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": "session/login"
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/RestResource1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -43,6 +421,34 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "tblShipment"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/USR_MET_Trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "USR_MET2Parquet",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Hour",
+						"interval": 2,
+						"startTime": "2021-01-12T16:00:00",
+						"timeZone": "Mountain Standard Time"
+					}
 				}
 			},
 			"dependsOn": []
@@ -285,9 +691,74 @@
 					"transformations": [
 						{
 							"name": "SelectExtraction"
+						},
+						{
+							"name": "DerivedColumn1"
+						},
+						{
+							"name": "SelectExtraction2"
+						},
+						{
+							"name": "SelectExtraction3"
+						},
+						{
+							"name": "SelectionExtraction4"
+						},
+						{
+							"name": "ECIDTestPassRank"
+						},
+						{
+							"name": "ECIDReworkRank"
+						},
+						{
+							"name": "FTLotInsertionRank"
 						}
 					],
-					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['sandbox/user/zbmhpw/source/*test1.csv']) ~> YieldSource\nYieldSource select(mapColumn(\n\t\teach(match(true()),\n\t\t\tregexReplace($$,\" \",\"_\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction\nSelectExtraction sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> YieldSink"
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['sandbox/user/zbmhpw/source/']) ~> YieldSource\nECIDReworkRank select(mapColumn(\n\t\teach(match(name!=\"lot_key\"&&name!=\"rework_flag\"),\n\t\t\tregexReplace($$,\" \",\"_\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction\nYieldSource derive(ECID = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", \r\n                        concat(right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2), \r\n                            concat(\":\", \r\n                                concat(toString(byName('DLT_X TAG')),\r\n                                    concat(\":\", toString(byName('DLT_Y TAG'))))))))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", \r\n                        concat(right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2), \r\n                            concat(\":\", \r\n                                concat(toString(byName('DLT_X TAG')),\r\n                                    concat(\":\", toString(byName('DLT_Y TAG')))))))))))\r\n),\n\t\tFab_Wafer = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2)))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2))))))\r\n),\n\t\tFab_Lot = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\".\", \"S\"))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\".\", \"S\")))))\r\n),\n\t\tFTLot = case(\r\n    right(toString(byName('Lot')), 2) == \"SS\", left(toString(byName('Lot')), length(toString(byName('Lot'))) - 2),\r\n    right(toString(byName('Lot')), 1) == \"S\", left(toString(byName('Lot')), length(toString(byName('Lot'))) - 1),\r\n    toString(byName('Lot'))\r\n    ),\n\t\tECID_Timestamp = add(toTimestamp(byName('start_time'), 'MM/dd/yyy HH:mm'), seconds(toInteger(byName('serial')))),\n\t\tPassDie = iif(toInteger(byName('STDF_SwBin'))==1, 1, 0)) ~> DerivedColumn1\nSelectExtraction select(mapColumn(\n\t\tECID,\n\t\tFTLot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\teach(match(true()),\n\t\t\treplace($$,\"(\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction2\nSelectExtraction2 select(mapColumn(\n\t\tECID,\n\t\tFTLot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\teach(match(true()),\n\t\t\treplace($$,\")\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction3\nSelectExtraction3 select(mapColumn(\n\t\tECID,\n\t\tFab_Wafer,\n\t\tFab_Lot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\tFTLot,\n\t\tFTLotInsertion,\n\t\tPassDie,\n\t\teach(match(true()),\n\t\t\treplace($$,\"=\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectionExtraction4\nFTLotInsertionRank rank(asc(ECID_Timestamp, true),\n\toutput(ECID_Test_Pass as long),\n\tdense: true) ~> ECIDTestPassRank\nECIDTestPassRank rank(desc(ECID_Timestamp, true),\n\toutput(ECID_Rework as long),\n\tdense: true) ~> ECIDReworkRank\nDerivedColumn1 rank(asc(FTLot, true),\n\toutput(FTLotInsertion as long),\n\tdense: true) ~> FTLotInsertionRank\nSelectionExtraction4 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'outputParquetFile[n].parquet',\n\tpartitionBy('key',\n\t\t0,\n\t\tECID,\n\t\tECID_Timestamp\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> YieldSink"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/YieldCleanFlow2')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "sandbox"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "YieldCSVCY",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "YieldParquetCY",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Select1"
+						},
+						{
+							"name": "Select2"
+						},
+						{
+							"name": "Select3"
+						}
+					],
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tinferDriftedColumnTypes: true) ~> source1\nsource1 select(mapColumn(\n\t\teach(match(name!=\"lot_key\"&&name!=\"rework_flag\"),\n\t\t\tregexReplace($$,\" \",\"_\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 select(mapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,\"(\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 select(mapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,\")\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select3\nSelect3 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
 				}
 			},
 			"dependsOn": []
@@ -409,944 +880,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ASH_test')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "cleanCSV_Delta_Parquet_ASH",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "cleanCSV_Delta_Parquet_ASH",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {},
-									"sink2": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"folder": {
-					"name": "sandbox"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ASH')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CopyFiles_from_adls_toprem')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Scan the file path on your source storage store and get the container list.",
-				"activities": [
-					{
-						"name": "EnumerateContainersList",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "BinarySourceFileStore2",
-								"type": "DatasetReference",
-								"parameters": {
-									"container": {
-										"value": "@pipeline().parameters.SourceFileFolder",
-										"type": "Expression"
-									},
-									"directory": {
-										"value": "@pipeline().parameters.SourceFileDirectory",
-										"type": "Expression"
-									}
-								}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true
-							},
-							"formatSettings": {
-								"type": "BinaryReadSettings"
-							}
-						}
-					},
-					{
-						"name": "ForEachContainer",
-						"description": "Get the container list from Metadata activity and then iterates each of them to Copy activity.",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "EnumerateContainersList",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('EnumerateContainersList').output.childItems",
-								"type": "Expression"
-							},
-							"batchCount": 4,
-							"activities": [
-								{
-									"name": "CopyOneContainer",
-									"description": "Copy each container from source storage store to destination store.",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "BinarySource",
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": true,
-												"deleteFilesAfterCompletion": true
-											},
-											"formatSettings": {
-												"type": "BinaryReadSettings"
-											}
-										},
-										"sink": {
-											"type": "BinarySink",
-											"storeSettings": {
-												"type": "FileServerWriteSettings",
-												"copyBehavior": "PreserveHierarchy"
-											}
-										},
-										"enableStaging": false
-									},
-									"inputs": [
-										{
-											"referenceName": "BinarySourceFileStore2",
-											"type": "DatasetReference",
-											"parameters": {
-												"container": {
-													"value": "@pipeline().parameters.SourceFileFolder",
-													"type": "Expression"
-												},
-												"directory": {
-													"value": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "BinarySinkFileStore2",
-											"type": "DatasetReference",
-											"parameters": {
-												"folderPath": {
-													"value": "@pipeline().parameters.DestinationFileFolder",
-													"type": "Expression"
-												},
-												"directory": {
-													"value": "@concat(pipeline().parameters.DestinationFileDirectory,'/',item().name)",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
-						}
-					}
-				],
-				"parameters": {
-					"SourceFileFolder": {
-						"type": "string",
-						"defaultValue": "adls"
-					},
-					"SourceFileDirectory": {
-						"type": "string",
-						"defaultValue": "outbound"
-					},
-					"DestinationFileFolder": {
-						"type": "string",
-						"defaultValue": "outbound"
-					},
-					"DestinationFileDirectory": {
-						"type": "string",
-						"defaultValue": "staged"
-					}
-				},
-				"folder": {
-					"name": "Copy Jobs"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CopyFilesfromMultipleContainers')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Scan the file path on your source storage store and get the container list.",
-				"activities": [
-					{
-						"name": "EnumerateContainersList",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "BinarySourceFileStore1",
-								"type": "DatasetReference",
-								"parameters": {
-									"folderPath": {
-										"value": "@pipeline().parameters.SourceFileFolder",
-										"type": "Expression"
-									},
-									"directory": "@pipeline().parameters.SourceFileDirectory"
-								}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "FileServerReadSettings",
-								"recursive": true
-							},
-							"formatSettings": {
-								"type": "BinaryReadSettings"
-							}
-						}
-					},
-					{
-						"name": "ForEachContainer",
-						"description": "Get the container list from Metadata activity and then iterates each of them to Copy activity.",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "EnumerateContainersList",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('EnumerateContainersList').output.childItems",
-								"type": "Expression"
-							},
-							"batchCount": 4,
-							"activities": [
-								{
-									"name": "CopyOneContainer",
-									"description": "Copy each container from source storage store to destination store.",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "BinarySource",
-											"storeSettings": {
-												"type": "FileServerReadSettings",
-												"recursive": true
-											},
-											"formatSettings": {
-												"type": "BinaryReadSettings"
-											}
-										},
-										"sink": {
-											"type": "BinarySink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings",
-												"copyBehavior": "PreserveHierarchy"
-											}
-										},
-										"enableStaging": false,
-										"validateDataConsistency": false
-									},
-									"inputs": [
-										{
-											"referenceName": "BinarySourceFileStore1",
-											"type": "DatasetReference",
-											"parameters": {
-												"folderPath": "@pipeline().parameters.SourceFileFolder",
-												"directory": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)"
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "BinarySinkFileStore",
-											"type": "DatasetReference",
-											"parameters": {
-												"container": {
-													"value": "@pipeline().parameters.DestinationFileFolder",
-													"type": "Expression"
-												},
-												"directory": {
-													"value": "@concat(pipeline().parameters.DestinationFileDirectory,'/',item().name)",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								},
-								{
-									"name": "DeleteActivity",
-									"type": "Delete",
-									"dependsOn": [
-										{
-											"activity": "CopyOneContainer",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"dataset": {
-											"referenceName": "BinarySourceFileStore1",
-											"type": "DatasetReference",
-											"parameters": {
-												"folderPath": "@pipeline().parameters.SourceFileFolder",
-												"directory": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)"
-											}
-										},
-										"logStorageSettings": {
-											"linkedServiceName": {
-												"referenceName": "onsemidevmdlstoragelink",
-												"type": "LinkedServiceReference"
-											},
-											"path": "adls/inbound/logs"
-										},
-										"enableLogging": true,
-										"storeSettings": {
-											"type": "FileServerReadSettings",
-											"recursive": true,
-											"wildcardFileName": "*.*"
-										}
-									}
-								}
-							]
-						}
-					}
-				],
-				"parameters": {
-					"SourceFileFolder": {
-						"type": "string",
-						"defaultValue": "inbound"
-					},
-					"SourceFileDirectory": {
-						"type": "string",
-						"defaultValue": "staged"
-					},
-					"DestinationFileFolder": {
-						"type": "string",
-						"defaultValue": "adls"
-					},
-					"DestinationFileDirectory": {
-						"type": "string",
-						"defaultValue": "inbound"
-					}
-				},
-				"folder": {
-					"name": "Copy Jobs"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Databricks_ETL_ASH')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ETL_USR_ASH_parsing",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ASH_dev"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "cleanCSV_Delta_Parquet_ASH",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "ETL_USR_ASH_parsing",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "cleanCSV_Delta_Parquet_ASH",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {},
-									"sink2": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "ETL_USR_ASH_csv",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "ETL_USR_ASH_parsing",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ASH_csv_delta_parquet_dev"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "FDC_ASH_PIM_Batch_Detection",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "ETL_USR_ASH_csv",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Deployments/DEV/FDC_Batch_Detection/FDC_ASH_PIM_Batch_Detection"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado_ml_cluster",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"folder": {
-					"name": "Databricks_ETL"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ASH')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Databricks_ETL_ETH')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ETL_USR_ETH",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ETH_dev"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "cleanCSV_Delta_Parquet_ETH",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "ETL_USR_ETH",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "cleanCSV_Delta_Parquet_ETH",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {},
-									"sink2": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"folder": {
-					"name": "Databricks_ETL"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ETH')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ETH_test')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "cleanCSV_Delta_Parquet_ETH",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "cleanCSV_Delta_Parquet_ETH",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {},
-									"sink2": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"folder": {
-					"name": "sandbox"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ETH')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MergeCSVToParquet')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "MergeCSV_to_Parquet",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "MergeCSV_to_Parquet",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"folder": {
-					"name": "sandbox"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/MergeCSV_to_Parquet')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/RecursiveConvertCSVToParquet')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Scan the file path on your source storage store and get the container list.",
-				"activities": [
-					{
-						"name": "EnumerateContainersList",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "BinarySourceFileStore3",
-								"type": "DatasetReference",
-								"parameters": {
-									"container": {
-										"value": "@pipeline().parameters.SourceFileFolder",
-										"type": "Expression"
-									},
-									"directory": {
-										"value": "@pipeline().parameters.SourceFileDirectory",
-										"type": "Expression"
-									}
-								}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true
-							},
-							"formatSettings": {
-								"type": "BinaryReadSettings"
-							}
-						}
-					},
-					{
-						"name": "ForEachContainer",
-						"description": "Get the container list from Metadata activity and then iterates each of them to Copy activity.",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "FolderFilter",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('FolderFilter').output.value",
-								"type": "Expression"
-							},
-							"batchCount": 4,
-							"activities": [
-								{
-									"name": "CopyOneContainer",
-									"description": "Copy each container from source storage store to destination store.",
-									"type": "Copy",
-									"dependsOn": [
-										{
-											"activity": "DataFlowForCSVMergeToParquet",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "BinarySource",
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": true,
-												"wildcardFolderPath": {
-													"value": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)",
-													"type": "Expression"
-												},
-												"wildcardFileName": "*.parquet",
-												"deleteFilesAfterCompletion": false
-											},
-											"formatSettings": {
-												"type": "BinaryReadSettings"
-											}
-										},
-										"sink": {
-											"type": "BinarySink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings",
-												"copyBehavior": "PreserveHierarchy"
-											}
-										},
-										"enableStaging": false
-									},
-									"inputs": [
-										{
-											"referenceName": "BinarySourceFileStore3",
-											"type": "DatasetReference",
-											"parameters": {
-												"container": {
-													"value": "@pipeline().parameters.SourceFileFolder",
-													"type": "Expression"
-												},
-												"directory": {
-													"value": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "BinarySinkFileStore3",
-											"type": "DatasetReference",
-											"parameters": {
-												"container": {
-													"value": "@pipeline().parameters.DestinationFileFolder",
-													"type": "Expression"
-												},
-												"directory": {
-													"value": "@concat(pipeline().parameters.DestinationFileDirectory,'/',item().name)",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								},
-								{
-									"name": "DataFlowForCSVMergeToParquet",
-									"type": "ExecuteDataFlow",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"dataflow": {
-											"referenceName": "DataFlowForCSVMergeToParquet",
-											"type": "DataFlowReference",
-											"parameters": {
-												"recursiveInputPath": {
-													"value": "'@{concat(pipeline().parameters.SourceFileDirectory,'/',item().name)}'",
-													"type": "Expression"
-												},
-												"recursiveOutputPath": {
-													"value": "'@{concat(pipeline().parameters.DestinationFileDirectory,'/',item().name)}'",
-													"type": "Expression"
-												}
-											},
-											"datasetParameters": {
-												"source1": {},
-												"sink1": {}
-											}
-										},
-										"staging": {},
-										"compute": {
-											"coreCount": 8,
-											"computeType": "General"
-										},
-										"traceLevel": "Fine"
-									}
-								}
-							]
-						}
-					},
-					{
-						"name": "FolderFilter",
-						"type": "Filter",
-						"dependsOn": [
-							{
-								"activity": "EnumerateContainersList",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('EnumerateContainersList').output.childItems",
-								"type": "Expression"
-							},
-							"condition": {
-								"value": "@and(equals(item().type, 'Folder'), equals(item().name, '2020-008-01'))",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"parameters": {
-					"SourceFileFolder": {
-						"type": "string",
-						"defaultValue": "adls"
-					},
-					"SourceFileDirectory": {
-						"type": "string",
-						"defaultValue": "translated/csv/site/USR/FDC/Tools/ASH10653"
-					},
-					"DestinationFileFolder": {
-						"type": "string",
-						"defaultValue": "adls"
-					},
-					"DestinationFileDirectory": {
-						"type": "string",
-						"defaultValue": "translated/parquet/site/USR/FDC/Tools/ASH10653"
-					}
-				},
-				"folder": {
-					"name": "sandbox"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DataFlowForCSVMergeToParquet')]"
-			]
 		}
 	]
 }

@@ -6,46 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "Mfg-Data-Lake-DEV-Factory"
-		},
-		"ExtensioAPI_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'ExtensioAPI'"
-		},
-		"ONPREMALLUSERS_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'ONPREMALLUSERS'"
-		},
-		"ONPREMVM_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'ONPREMVM'"
-		},
-		"fabtimesqlserver_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
-		},
-		"ExtensioAPI_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1"
-		},
-		"ExtensioAPI_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "exn_dba"
-		},
-		"ONPREMALLUSERS_properties_typeProperties_host": {
-			"type": "string",
-			"defaultValue": "\\\\USCO01WS0029\\adls"
-		},
-		"ONPREMALLUSERS_properties_typeProperties_userId": {
-			"type": "string",
-			"defaultValue": "onsemi\\fabtimesys"
-		},
-		"ONPREMVM_properties_typeProperties_host": {
-			"type": "string",
-			"defaultValue": "\\\\USCO01WS0029.ad.onsemi.com\\MLArtifacts"
-		},
-		"ONPREMVM_properties_typeProperties_userId": {
-			"type": "string",
-			"defaultValue": "onsemi\\fabtimesys"
 		}
 	},
 	"variables": {
@@ -53,78 +13,195 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/USRWEH_Parquet')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/USR_MET2Parquet')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "translated/parquet/site/USR/WEH",
-						"fileSystem": "adls"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/USRWEH_ParquetDelta')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "translated/delta/site/USR/WEH",
-						"fileSystem": "adls"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/WEH_Binary')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"FileName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().FileName",
-							"type": "Expression"
+				"activities": [
+					{
+						"name": "USR_MET2Parquet",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
 						},
-						"folderPath": "inbound/site/USR/WEH",
-						"fileSystem": "adls"
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/daniela.bordencea@onsemi.com/MET2Parquet"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado_ml_cluster",
+							"type": "LinkedServiceReference"
+						}
 					}
-				}
+				],
+				"folder": {
+					"name": "USR_MET"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/YieldPipelineCY')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetFileNames",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "YieldCSVCY",
+								"type": "DatasetReference"
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEachFile",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetFileNames",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetFileNames').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "YieldCleanFlow",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "YieldCleanFlow",
+											"type": "DataFlowReference"
+										},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					}
+				],
+				"folder": {
+					"name": "sandbox"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-11-25T02:04:14Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/YieldCSVCY')]",
+				"[concat(variables('factoryId'), '/dataflows/YieldCleanFlow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/YieldPipelineSingleFile')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "YieldCleanFlow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "YieldCleanFlow",
+								"type": "DataFlowReference"
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"folder": {
+					"name": "sandbox"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/YieldCleanFlow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Json2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "GAT02925.2_20210711045502_20210711045502_20201119180315.smet.gz",
+						"folderPath": "inbound/user/fg69gy",
+						"fileSystem": "adls"
+					},
+					"compression": {
+						"type": "gzip"
+					}
+				},
+				"schema": {}
 			},
 			"dependsOn": []
 		},
@@ -21834,63 +21911,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/YieldParquetCY')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "sandbox/user/zbmhpw/output",
-						"fileSystem": "adls"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/compressedcsv')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "inbound/site/USR/WEH",
-						"fileSystem": "adls"
-					},
-					"columnDelimiter": "|",
-					"compressionCodec": "gzip",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/folderout1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -21917,727 +21937,140 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/mdloutbound')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/mergedCSV')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "translated/parquet/site/USR/FDC/Tools/ASH10653",
-						"fileSystem": "adls"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/mergedCSVToParquet')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "translated/parquet",
-						"fileSystem": "adls"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/mfgdlparquet')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "shipment.parquet",
-						"folderPath": "inbound/user/ffyn9j",
-						"fileSystem": "adls"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/weh_file_for_delete')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"FileName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().FileName",
-							"type": "Expression"
-						},
-						"folderPath": "inbound/site/USR/WEH",
-						"fileSystem": "adls"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/weh_filestore_for_delete')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "inbound/site/USR/WEH",
-						"fileSystem": "adls"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ExtensioAPI')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"name": "[concat(parameters('factoryName'), '/USR_MET_Trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"type": "RestService",
-				"typeProperties": {
-					"url": "[parameters('ExtensioAPI_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": false,
-					"authenticationType": "Basic",
-					"userName": "[parameters('ExtensioAPI_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('ExtensioAPI_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntimeMfgDataLake",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ONPREMALLUSERS')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "FileServer",
-				"typeProperties": {
-					"host": "[parameters('ONPREMALLUSERS_properties_typeProperties_host')]",
-					"userId": "[parameters('ONPREMALLUSERS_properties_typeProperties_userId')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('ONPREMALLUSERS_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntimeMfgDataLake",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ONPREMVM')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "onpremvm",
-				"annotations": [],
-				"type": "FileServer",
-				"typeProperties": {
-					"host": "[parameters('ONPREMVM_properties_typeProperties_host')]",
-					"userId": "[parameters('ONPREMVM_properties_typeProperties_userId')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('ONPREMVM_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntimeMfgDataLake",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/fabtimesqlserver')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('fabtimesqlserver_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntimeMfgDataLake",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Bulk Copy from Files to Database')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
+				"runtimeState": "Started",
+				"pipelines": [
 					{
-						"name": "Get Files",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "GetMetadataDataset",
-								"type": "DatasetReference",
-								"parameters": {
-									"SourceContainer": {
-										"value": "@pipeline().parameters.SourceContainer",
-										"type": "Expression"
-									},
-									"SourceDirectory": {
-										"value": "@pipeline().parameters.SourceDirectory",
-										"type": "Expression"
-									}
-								}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true
-							},
-							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
-							}
-						}
-					},
-					{
-						"name": "ForEachFile",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "Get Files",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Get Files').output.childItems",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "CopyFiles",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": true,
-												"wildcardFolderPath": "ffyn9j",
-												"wildcardFileName": "student-mat.csv",
-												"enablePartitionDiscovery": false
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
-										},
-										"sink": {
-											"type": "SqlDWSink",
-											"allowPolyBase": true,
-											"polyBaseSettings": {
-												"rejectValue": 0,
-												"rejectType": "value",
-												"useTypeDefault": true
-											}
-										},
-										"enableStaging": true,
-										"stagingSettings": {
-											"linkedServiceName": {
-												"referenceName": "ADLSBlobStorage",
-												"type": "LinkedServiceReference"
-											},
-											"path": "adfsolutiontemplate/BulkCopyfromFilestoDB"
-										},
-										"translator": {
-											"type": "TabularTranslator",
-											"mappings": [
-												{
-													"source": {
-														"name": "school",
-														"type": "String"
-													},
-													"sink": {
-														"name": "school",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "sex",
-														"type": "String"
-													},
-													"sink": {
-														"name": "sex",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "age",
-														"type": "String"
-													},
-													"sink": {
-														"name": "age",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "address",
-														"type": "String"
-													},
-													"sink": {
-														"name": "address",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "famsize",
-														"type": "String"
-													},
-													"sink": {
-														"name": "famsize",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "Pstatus",
-														"type": "String"
-													},
-													"sink": {
-														"name": "Pstatus",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "Medu",
-														"type": "String"
-													},
-													"sink": {
-														"name": "Medu",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "Fedu",
-														"type": "String"
-													},
-													"sink": {
-														"name": "Fedu",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "Mjob",
-														"type": "String"
-													},
-													"sink": {
-														"name": "Mjob",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "Fjob",
-														"type": "String"
-													},
-													"sink": {
-														"name": "Fjob",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "reason",
-														"type": "String"
-													},
-													"sink": {
-														"name": "reason",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "guardian",
-														"type": "String"
-													},
-													"sink": {
-														"name": "guardian",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "traveltime",
-														"type": "String"
-													},
-													"sink": {
-														"name": "traveltime",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "studytime",
-														"type": "String"
-													},
-													"sink": {
-														"name": "studytime",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "failures",
-														"type": "String"
-													},
-													"sink": {
-														"name": "failures",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "schoolsup",
-														"type": "String"
-													},
-													"sink": {
-														"name": "schoolsup",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "famsup",
-														"type": "String"
-													},
-													"sink": {
-														"name": "famsup",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "paid",
-														"type": "String"
-													},
-													"sink": {
-														"name": "paid",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "activities",
-														"type": "String"
-													},
-													"sink": {
-														"name": "activities",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "nursery",
-														"type": "String"
-													},
-													"sink": {
-														"name": "nursery",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "higher",
-														"type": "String"
-													},
-													"sink": {
-														"name": "higher",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "internet",
-														"type": "String"
-													},
-													"sink": {
-														"name": "internet",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "romantic",
-														"type": "String"
-													},
-													"sink": {
-														"name": "romantic",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "famrel",
-														"type": "String"
-													},
-													"sink": {
-														"name": "famrel",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "freetime",
-														"type": "String"
-													},
-													"sink": {
-														"name": "freetime",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "goout",
-														"type": "String"
-													},
-													"sink": {
-														"name": "goout",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "Dalc",
-														"type": "String"
-													},
-													"sink": {
-														"name": "Dalc",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "Walc",
-														"type": "String"
-													},
-													"sink": {
-														"name": "Walc",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "health",
-														"type": "String"
-													},
-													"sink": {
-														"name": "health",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "absences",
-														"type": "String"
-													},
-													"sink": {
-														"name": "absences",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "G1",
-														"type": "String"
-													},
-													"sink": {
-														"name": "G1",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "G2",
-														"type": "String"
-													},
-													"sink": {
-														"name": "G2",
-														"type": "String"
-													}
-												},
-												{
-													"source": {
-														"name": "G3",
-														"type": "String"
-													},
-													"sink": {
-														"name": "G3",
-														"type": "String"
-													}
-												}
-											]
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "SourceDataset",
-											"type": "DatasetReference",
-											"parameters": {
-												"fileName": {
-													"value": "@item().name",
-													"type": "Expression"
-												},
-												"SourceContainer": {
-													"value": "@pipeline().parameters.SourceContainer",
-													"type": "Expression"
-												},
-												"SourceDirectory": {
-													"value": "@pipeline().parameters.SourceDirectory",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "AzureSqlDWSinkDataset",
-											"type": "DatasetReference",
-											"parameters": {
-												"sinkTableName": {
-													"value": "@item().name",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
+						"pipelineReference": {
+							"referenceName": "USR_MET2Parquet",
+							"type": "PipelineReference"
 						}
 					}
 				],
-				"parameters": {
-					"SourceContainer": {
-						"type": "string",
-						"defaultValue": "adls\\inbound\\user"
-					},
-					"SourceDirectory": {
-						"type": "string",
-						"defaultValue": "ffyn9j"
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Hour",
+						"interval": 2,
+						"startTime": "2021-01-12T16:00:00",
+						"timeZone": "Mountain Standard Time"
 					}
-				},
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/USR_MET2Parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/YieldCleanFlow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
 				"folder": {
 					"name": "sandbox"
 				},
-				"annotations": [],
-				"lastPublishTime": "2020-08-13T17:42:38Z"
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "YieldCSVCY",
+								"type": "DatasetReference"
+							},
+							"name": "YieldSource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "YieldParquetCY",
+								"type": "DatasetReference"
+							},
+							"name": "YieldSink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SelectExtraction"
+						},
+						{
+							"name": "DerivedColumn1"
+						},
+						{
+							"name": "SelectExtraction2"
+						},
+						{
+							"name": "SelectExtraction3"
+						},
+						{
+							"name": "SelectionExtraction4"
+						},
+						{
+							"name": "ECIDTestPassRank"
+						},
+						{
+							"name": "ECIDReworkRank"
+						},
+						{
+							"name": "FTLotInsertionRank"
+						}
+					],
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['sandbox/user/zbmhpw/source/']) ~> YieldSource\nECIDReworkRank select(mapColumn(\n\t\teach(match(name!=\"lot_key\"&&name!=\"rework_flag\"),\n\t\t\tregexReplace($$,\" \",\"_\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction\nYieldSource derive(ECID = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", \r\n                        concat(right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2), \r\n                            concat(\":\", \r\n                                concat(toString(byName('DLT_X TAG')),\r\n                                    concat(\":\", toString(byName('DLT_Y TAG'))))))))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", \r\n                        concat(right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2), \r\n                            concat(\":\", \r\n                                concat(toString(byName('DLT_X TAG')),\r\n                                    concat(\":\", toString(byName('DLT_Y TAG')))))))))))\r\n),\n\t\tFab_Wafer = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2)))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2))))))\r\n),\n\t\tFab_Lot = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\".\", \"S\"))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\".\", \"S\")))))\r\n),\n\t\tFTLot = case(\r\n    right(toString(byName('Lot')), 2) == \"SS\", left(toString(byName('Lot')), length(toString(byName('Lot'))) - 2),\r\n    right(toString(byName('Lot')), 1) == \"S\", left(toString(byName('Lot')), length(toString(byName('Lot'))) - 1),\r\n    toString(byName('Lot'))\r\n    ),\n\t\tECID_Timestamp = add(toTimestamp(byName('start_time'), 'MM/dd/yyy HH:mm'), seconds(toInteger(byName('serial')))),\n\t\tPassDie = iif(toInteger(byName('STDF_SwBin'))==1, 1, 0)) ~> DerivedColumn1\nSelectExtraction select(mapColumn(\n\t\tECID,\n\t\tFTLot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\teach(match(true()),\n\t\t\treplace($$,\"(\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction2\nSelectExtraction2 select(mapColumn(\n\t\tECID,\n\t\tFTLot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\teach(match(true()),\n\t\t\treplace($$,\")\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction3\nSelectExtraction3 select(mapColumn(\n\t\tECID,\n\t\tFab_Wafer,\n\t\tFab_Lot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\tFTLot,\n\t\tFTLotInsertion,\n\t\tPassDie,\n\t\teach(match(true()),\n\t\t\treplace($$,\"=\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectionExtraction4\nFTLotInsertionRank rank(asc(ECID_Timestamp, true),\n\toutput(ECID_Test_Pass as long),\n\tdense: true) ~> ECIDTestPassRank\nECIDTestPassRank rank(desc(ECID_Timestamp, true),\n\toutput(ECID_Rework as long),\n\tdense: true) ~> ECIDReworkRank\nDerivedColumn1 rank(asc(FTLot, true),\n\toutput(FTLotInsertion as long),\n\tdense: true) ~> FTLotInsertionRank\nSelectionExtraction4 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'outputParquetFile[n].parquet',\n\tpartitionBy('key',\n\t\t0,\n\t\tECID,\n\t\tECID_Timestamp\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> YieldSink"
+				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/YieldCSVCY')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/YieldCleanFlow2')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "sandbox"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "YieldCSVCY",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "YieldParquetCY",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Select1"
+						},
+						{
+							"name": "Select2"
+						},
+						{
+							"name": "Select3"
+						}
+					],
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tinferDriftedColumnTypes: true) ~> source1\nsource1 select(mapColumn(\n\t\teach(match(name!=\"lot_key\"&&name!=\"rework_flag\"),\n\t\t\tregexReplace($$,\" \",\"_\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 select(mapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,\"(\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 select(mapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,\")\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select3\nSelect3 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/YieldCSVCY')]"
+			]
 		}
 	]
 }
