@@ -5,6 +5,12 @@
 			"referenceName": "onsemidevmdlstoragelink",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"fileName": {
+				"type": "string",
+				"defaultValue": "ADAS_Reduced.csv"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
