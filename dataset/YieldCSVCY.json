@@ -5,17 +5,12 @@
 			"referenceName": "onsemidevmdlstoragelink",
 			"type": "LinkedServiceReference"
 		},
-		"parameters": {
-			"fileName": {
-				"type": "string",
-				"defaultValue": "ADAS_Reduced.csv"
-			}
-		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "ADAS_Reduced.csv",
 				"folderPath": "sandbox/user/zbmhpw/source",
 				"fileSystem": "adls"
 			},
