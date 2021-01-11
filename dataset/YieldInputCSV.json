@@ -5,12 +5,20 @@
 			"referenceName": "ADLSBlobStorage",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"fileName": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "ADAS_Reduced.csv",
+				"fileName": {
+					"value": "@dataset().fileName",
+					"type": "Expression"
+				},
 				"folderPath": "sandbox/user/zbmhpw/source",
 				"container": "adls"
 			},
