@@ -12,7 +12,7 @@
 				"parameters": {
 					"windowStart": {
 						"type": "Expression",
-						"value": "@{addminutes(trigger().scheduledTime, -5)}"
+						"value": "@{addminutes(trigger().scheduledTime, -2)}"
 					},
 					"windowEnd": {
 						"type": "Expression",
@@ -25,7 +25,7 @@
 		"typeProperties": {
 			"recurrence": {
 				"frequency": "Minute",
-				"interval": 5,
+				"interval": 2,
 				"startTime": "2021-01-15T09:47:00Z",
 				"timeZone": "UTC"
 			}
