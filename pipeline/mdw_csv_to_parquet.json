@@ -108,8 +108,7 @@
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "FileSize (KB)",
-									"type": "String",
+									"name": "FileSize",
 									"physicalType": "UTF8"
 								}
 							},
