@@ -1,0 +1,20 @@
+{
+	"name": "mdw_logs_parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "onsemidevmdlstoragelink",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "translated/parquet/app/middleware-prod",
+				"fileSystem": "adls"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}

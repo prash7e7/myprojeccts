@@ -1,9 +1,9 @@
 {
-	"name": "pipeline1",
+	"name": "mdw_csv_to_parquet",
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "mdw_csv_to_parquet",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -26,11 +26,182 @@
 							"type": "DelimitedTextReadSettings"
 						}
 					},
-					"enableStaging": false
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles",
+							"blockSizeInMB": 50
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "InterfaceName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "InterfaceName",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "InterfaceFolder",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "InterfaceFolder",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "DirSource",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "DirSource",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "DirDestination",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "DirDestination",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "FileName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "FileName",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "FileSize (KB)",
+									"type": "Int16",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "FileSize (KB)",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "RunId",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "RunId",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "StartTime",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "StartTime",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "EndTime",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EndTime",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "ElapsedTime (s)",
+									"type": "Int16",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ElapsedTime (s)",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Status",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Status",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Message",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Message",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
 				},
 				"inputs": [
 					{
 						"referenceName": "mdw_logs",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "mdw_logs_parquet",
 						"type": "DatasetReference"
 					}
 				]
