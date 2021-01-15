@@ -29,7 +29,10 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
-							"modifiedDatetimeStart": "2021-01-14T00:00:00.000Z",
+							"modifiedDatetimeStart": {
+								"value": "@pipeline().parameters.windowStart",
+								"type": "Expression"
+							},
 							"modifiedDatetimeEnd": "2021-01-16T00:00:00.000Z",
 							"wildcardFileName": "*",
 							"enablePartitionDiscovery": false
