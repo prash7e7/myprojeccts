@@ -53,7 +53,8 @@
 									"type": "ParquetSink",
 									"storeSettings": {
 										"type": "AzureBlobFSWriteSettings",
-										"copyBehavior": "MergeFiles"
+										"copyBehavior": "MergeFiles",
+										"blockSizeInMB": 50
 									},
 									"formatSettings": {
 										"type": "ParquetWriteSettings"
