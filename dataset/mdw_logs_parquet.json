@@ -10,7 +10,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "*.parquet",
 				"folderPath": "translated/parquet/app/middleware-prod",
 				"fileSystem": "adls"
 			},
