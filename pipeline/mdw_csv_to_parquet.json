@@ -3,11 +3,11 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "ForEach1",
+				"name": "ForEach csv file",
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Get Metadata inbound",
+						"activity": "Get List of csv files",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -230,7 +230,7 @@
 				}
 			},
 			{
-				"name": "Get Metadata inbound",
+				"name": "Get List of csv files",
 				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
