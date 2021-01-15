@@ -1,0 +1,73 @@
+{
+	"name": "SourceDataset_ebs",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "onsemidevmdlstoragelink",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "inbound/app/middleware-test",
+				"fileSystem": "adls"
+			},
+			"columnDelimiter": ",",
+			"rowDelimiter": "\n",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "InterfaceName",
+				"type": "String"
+			},
+			{
+				"name": "InterfaceFolder",
+				"type": "String"
+			},
+			{
+				"name": "DirSource",
+				"type": "String"
+			},
+			{
+				"name": "DirDestination",
+				"type": "String"
+			},
+			{
+				"name": "FileName",
+				"type": "String"
+			},
+			{
+				"name": "FileSize (KB)",
+				"type": "String"
+			},
+			{
+				"name": "RunId",
+				"type": "String"
+			},
+			{
+				"name": "StartTime",
+				"type": "String"
+			},
+			{
+				"name": "EndTime",
+				"type": "String"
+			},
+			{
+				"name": "ElapsedTime (s)",
+				"type": "String"
+			},
+			{
+				"name": "Status",
+				"type": "String"
+			},
+			{
+				"name": "Message",
+				"type": "String"
+			}
+		]
+	}
+}
