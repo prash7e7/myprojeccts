@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "*csv",
+				"fileName": "*.csv",
 				"folderPath": "inbound/app/middleware-test",
 				"fileSystem": "adls"
 			},
