@@ -65,6 +65,12 @@
 		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
 			"value": "inbound"
 		},
+		"Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowStart": {
+			"value": "@{addminutes(trigger().scheduledTime, -5)}"
+		},
+		"Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowEnd": {
+			"value": "@trigger().scheduledTime"
+		},
 		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder": {
 			"value": "adls"
 		},

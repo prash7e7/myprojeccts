@@ -1,0 +1,878 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "Mfg-Data-Lake-DEV-Factory"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyPipeline_exensio_mdw')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy_ebs",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "adls/inbound/app/middleware-test/"
+							},
+							{
+								"name": "Destination",
+								"value": "translated/parquet/app/middleware-prod/"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"modifiedDatetimeStart": {
+										"value": "@pipeline().parameters.windowStart",
+										"type": "Expression"
+									},
+									"modifiedDatetimeEnd": {
+										"value": "@pipeline().parameters.windowEnd",
+										"type": "Expression"
+									},
+									"wildcardFileName": "*",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings",
+									"skipLineCount": 0
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "MergeFiles"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"validateDataConsistency": false
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_ebs",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_ebs",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"parameters": {
+					"windowStart": {
+						"type": "String"
+					},
+					"windowEnd": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "MDW"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceDataset_ebs')]",
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_ebs')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/YieldPipelineCY')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetFileNames",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "YieldCSVCY",
+								"type": "DatasetReference"
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEachFile",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetFileNames",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetFileNames').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "YieldCleanFlow",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "YieldCleanFlow",
+											"type": "DataFlowReference",
+											"datasetParameters": {
+												"YieldSource": {
+													"fileName": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					}
+				],
+				"folder": {
+					"name": "sandbox"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-11-25T02:04:14Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/YieldCSVCY')]",
+				"[concat(variables('factoryId'), '/dataflows/YieldCleanFlow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/YieldPipelineSingleFile')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "YieldCleanFlow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "YieldCleanFlow",
+								"type": "DataFlowReference",
+								"datasetParameters": {
+									"YieldSource": {
+										"fileName": "fileName"
+									}
+								}
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"folder": {
+					"name": "sandbox"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/YieldCleanFlow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/mdw_csv_to_parquet')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach csv file",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get List of csv files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get List of csv files').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "copy csv to parquet",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "DelimitedTextSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"wildcardFolderPath": "inbound/app/middleware-test/",
+												"wildcardFileName": {
+													"value": "@item().name",
+													"type": "Expression"
+												},
+												"enablePartitionDiscovery": false
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings",
+												"copyBehavior": "MergeFiles",
+												"blockSizeInMB": 50
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"mappings": [
+												{
+													"source": {
+														"name": "InterfaceName",
+														"type": "String",
+														"physicalType": "String"
+													},
+													"sink": {
+														"name": "InterfaceName",
+														"type": "String",
+														"physicalType": "UTF8"
+													}
+												},
+												{
+													"source": {
+														"name": "InterfaceFolder",
+														"type": "String",
+														"physicalType": "String"
+													},
+													"sink": {
+														"name": "InterfaceFolder",
+														"type": "String",
+														"physicalType": "UTF8"
+													}
+												},
+												{
+													"source": {
+														"name": "DirSource",
+														"type": "String",
+														"physicalType": "String"
+													},
+													"sink": {
+														"name": "DirSource",
+														"type": "String",
+														"physicalType": "UTF8"
+													}
+												},
+												{
+													"source": {
+														"name": "DirDestination",
+														"type": "String",
+														"physicalType": "String"
+													},
+													"sink": {
+														"name": "DirDestination",
+														"type": "String",
+														"physicalType": "UTF8"
+													}
+												},
+												{
+													"source": {
+														"name": "FileName",
+														"type": "String",
+														"physicalType": "String"
+													},
+													"sink": {
+														"name": "FileName",
+														"type": "String",
+														"physicalType": "UTF8"
+													}
+												},
+												{
+													"source": {
+														"name": "FileSize (KB)",
+														"type": "String",
+														"physicalType": "String"
+													},
+													"sink": {
+														"name": "FileSize",
+														"physicalType": "UTF8"
+													}
+												},
+												{
+													"source": {
+														"name": "RunId",
+														"type": "String",
+														"physicalType": "String"
+													},
+													"sink": {
+														"name": "RunId",
+														"type": "String",
+														"physicalType": "UTF8"
+													}
+												},
+												{
+													"source": {
+														"name": "StartTime",
+														"type": "String",
+														"physicalType": "String"
+													},
+													"sink": {
+														"name": "StartTime",
+														"type": "String",
+														"physicalType": "UTF8"
+													}
+												},
+												{
+													"source": {
+														"name": "EndTime",
+														"type": "String",
+														"physicalType": "String"
+													},
+													"sink": {
+														"name": "EndTime",
+														"type": "String",
+														"physicalType": "UTF8"
+													}
+												},
+												{
+													"source": {
+														"name": "ElapsedTime (s)",
+														"type": "String",
+														"physicalType": "String"
+													},
+													"sink": {
+														"name": "ElapsedTime",
+														"physicalType": "UTF8"
+													}
+												},
+												{
+													"source": {
+														"name": "Status",
+														"type": "String",
+														"physicalType": "String"
+													},
+													"sink": {
+														"name": "Status",
+														"type": "String",
+														"physicalType": "UTF8"
+													}
+												},
+												{
+													"source": {
+														"name": "Message",
+														"type": "String",
+														"physicalType": "String"
+													},
+													"sink": {
+														"name": "Message",
+														"type": "String",
+														"physicalType": "UTF8"
+													}
+												}
+											],
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "mdw_logs",
+											"type": "DatasetReference"
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "mdw_logs_parquet",
+											"type": "DatasetReference"
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "Get List of csv files",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "mdw_logs",
+								"type": "DatasetReference"
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					}
+				],
+				"folder": {
+					"name": "MDW"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/mdw_logs')]",
+				"[concat(variables('factoryId'), '/datasets/mdw_logs_parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DestinationDataset_ebs')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "parquet/app/middleware-prod",
+						"fileSystem": "translated"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_ebs')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "inbound/app/middleware-test",
+						"fileSystem": "adls"
+					},
+					"columnDelimiter": ",",
+					"rowDelimiter": "\n",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "InterfaceName",
+						"type": "String"
+					},
+					{
+						"name": "InterfaceFolder",
+						"type": "String"
+					},
+					{
+						"name": "DirSource",
+						"type": "String"
+					},
+					{
+						"name": "DirDestination",
+						"type": "String"
+					},
+					{
+						"name": "FileName",
+						"type": "String"
+					},
+					{
+						"name": "FileSize (KB)",
+						"type": "String"
+					},
+					{
+						"name": "RunId",
+						"type": "String"
+					},
+					{
+						"name": "StartTime",
+						"type": "String"
+					},
+					{
+						"name": "EndTime",
+						"type": "String"
+					},
+					{
+						"name": "ElapsedTime (s)",
+						"type": "String"
+					},
+					{
+						"name": "Status",
+						"type": "String"
+					},
+					{
+						"name": "Message",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/YieldCSVCY')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "sandbox/user/zbmhpw/source",
+						"fileSystem": "adls"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/YieldInputCSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLSBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"fileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().fileName",
+							"type": "Expression"
+						},
+						"folderPath": "sandbox/user/zbmhpw/source",
+						"container": "adls"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/mdw_logs')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "inbound/app/middleware-test",
+						"fileSystem": "adls"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/mdw_logs_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "exensop_mdw_logs.parquet",
+						"folderPath": "translated/parquet/app/middleware-prod",
+						"fileSystem": "adls"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Trigger_ebs')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "CopyPipeline_exensio_mdw",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"windowStart": {
+								"type": "Expression",
+								"value": "@{addminutes(trigger().scheduledTime, -5)}"
+							},
+							"windowEnd": {
+								"type": "Expression",
+								"value": "@trigger().scheduledTime"
+							}
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 5,
+						"startTime": "2021-01-15T09:47:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/CopyPipeline_exensio_mdw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/YieldCleanFlow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "sandbox"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "YieldInputCSV",
+								"type": "DatasetReference"
+							},
+							"name": "YieldSource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "YieldParquetCY",
+								"type": "DatasetReference"
+							},
+							"name": "YieldSink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SelectExtraction"
+						},
+						{
+							"name": "DerivedColumn1"
+						},
+						{
+							"name": "SelectExtraction2"
+						},
+						{
+							"name": "SelectExtraction3"
+						},
+						{
+							"name": "SelectionExtraction4"
+						},
+						{
+							"name": "FTLotInsertionRank"
+						},
+						{
+							"name": "ECIDTestPassRank"
+						},
+						{
+							"name": "ECIDReworkRank"
+						}
+					],
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['sandbox/user/zbmhpw/source/']) ~> YieldSource\nECIDReworkRank select(mapColumn(\n\t\teach(match(name!=\"lot_key\"&&name!=\"rework_flag\"),\n\t\t\tregexReplace($$,\" \",\"_\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction\nYieldSource derive(ECID = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", \r\n                        concat(right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2), \r\n                            concat(\":\", \r\n                                concat(toString(byName('DLT_X TAG')),\r\n                                    concat(\":\", toString(byName('DLT_Y TAG'))))))))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", \r\n                        concat(right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2), \r\n                            concat(\":\", \r\n                                concat(toString(byName('DLT_X TAG')),\r\n                                    concat(\":\", toString(byName('DLT_Y TAG')))))))))))\r\n),\n\t\tFab_Wafer = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2)))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2))))))\r\n),\n\t\tFab_Lot = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\".\", \"S\"))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\".\", \"S\")))))\r\n),\n\t\tFTLot = case(\r\n    right(toString(byName('Lot')), 2) == \"SS\", left(toString(byName('Lot')), length(toString(byName('Lot'))) - 2),\r\n    right(toString(byName('Lot')), 1) == \"S\", left(toString(byName('Lot')), length(toString(byName('Lot'))) - 1),\r\n    toString(byName('Lot'))\r\n    ),\n\t\tECID_Timestamp = add(toTimestamp(byName('start_time'), 'MM/dd/yyy HH:mm'), seconds(toInteger(byName('serial')))),\n\t\tPassDie = iif(toInteger(byName('STDF_SwBin'))==1, 1, 0)) ~> DerivedColumn1\nSelectExtraction select(mapColumn(\n\t\tECID,\n\t\tFTLot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\teach(match(true()),\n\t\t\treplace($$,\"(\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction2\nSelectExtraction2 select(mapColumn(\n\t\tECID,\n\t\tFTLot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\teach(match(true()),\n\t\t\treplace($$,\")\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction3\nSelectExtraction3 select(mapColumn(\n\t\tECID,\n\t\tFab_Wafer,\n\t\tFab_Lot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\tFTLot,\n\t\tFTLotInsertion,\n\t\tPassDie,\n\t\teach(match(true()),\n\t\t\treplace($$,\"=\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectionExtraction4\nDerivedColumn1 rank(asc(FTLot, true),\n\toutput(FTLotInsertion as long),\n\tdense: true) ~> FTLotInsertionRank\nFTLotInsertionRank window(over(ECID),\n\tasc(ECID_Timestamp, true),\n\tECID_Test_Pass = denseRank()) ~> ECIDTestPassRank\nECIDTestPassRank window(over(ECID),\n\tdesc(ECID_Timestamp, true),\n\tECID_Rework = denseRank()) ~> ECIDReworkRank\nSelectionExtraction4 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'outputParquetFile[n].parquet',\n\tpartitionBy('key',\n\t\t0,\n\t\tECID\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> YieldSink"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/YieldInputCSV')]"
+			]
+		}
+	]
+}

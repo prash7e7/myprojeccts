@@ -1,0 +1,109 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "Mfg-Data-Lake-DEV-Factory"
+		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder": {
+			"type": "string",
+			"defaultValue": "adls"
+		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory": {
+			"type": "string",
+			"defaultValue": "inbound/site/USR/WEH"
+		},
+		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath": {
+			"type": "string",
+			"defaultValue": "inbound/site/USR/WEH/deletelogs"
+		},
+		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder": {
+			"type": "string",
+			"defaultValue": "adls"
+		},
+		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileDirectory": {
+			"type": "string",
+			"defaultValue": "outbound"
+		},
+		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileFolder": {
+			"type": "string",
+			"defaultValue": "outbound"
+		},
+		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileDirectory": {
+			"type": "string",
+			"defaultValue": "staged"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/USR_WEH_Trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "unzip_plus_transformcsv",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"SourceFolder": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder')]",
+							"SourceDirectory": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory')]",
+							"LoggingPath": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Hour",
+						"interval": 4,
+						"startTime": "2020-11-10T04:00:00",
+						"timeZone": "Mountain Standard Time"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger_copyadlstoonprem')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "CopyFiles_from_adls_toprem",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"SourceFileFolder": "[parameters('trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder')]",
+							"SourceFileDirectory": "[parameters('trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileDirectory')]",
+							"DestinationFileFolder": "[parameters('trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileFolder')]",
+							"DestinationFileDirectory": "[parameters('trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileDirectory')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 15,
+						"startTime": "2020-07-16T15:59:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
