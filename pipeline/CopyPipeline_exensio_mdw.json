@@ -60,7 +60,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "SourceDataset_ebs",
+						"referenceName": "mdw_logs",
 						"type": "DatasetReference"
 					}
 				],
