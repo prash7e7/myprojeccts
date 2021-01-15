@@ -219,7 +219,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Get Metadata inbound').output.childItems",
+						"value": "@activity('Get Metadata inbound').output",
 						"type": "Expression"
 					},
 					"activities": [
