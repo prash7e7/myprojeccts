@@ -28895,7 +28895,6 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "exensop_mdw_logs.parquet",
 						"folderPath": "translated/parquet/app/middleware-prod",
 						"fileSystem": "adls"
 					},
@@ -29290,7 +29289,7 @@
 				"typeProperties": {
 					"recurrence": {
 						"frequency": "Minute",
-						"interval": 1,
+						"interval": 5,
 						"startTime": "2021-01-15T09:47:00Z",
 						"timeZone": "UTC"
 					}
