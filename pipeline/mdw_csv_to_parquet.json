@@ -31,7 +31,8 @@
 					"sink": {
 						"type": "ParquetSink",
 						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings"
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
 						},
 						"formatSettings": {
 							"type": "ParquetWriteSettings"
@@ -155,8 +156,7 @@
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "ElapsedTime (s)",
-									"type": "String",
+									"name": "ElapsedTime",
 									"physicalType": "UTF8"
 								}
 							},
