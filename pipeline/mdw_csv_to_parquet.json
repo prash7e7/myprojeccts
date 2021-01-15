@@ -380,8 +380,7 @@
 												"physicalType": "String"
 											},
 											"sink": {
-												"name": "ElapsedTime (s)",
-												"type": "String",
+												"name": "ElapsedTime",
 												"physicalType": "UTF8"
 											}
 										},
