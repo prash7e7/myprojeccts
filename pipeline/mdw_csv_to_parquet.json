@@ -255,7 +255,8 @@
 								"sink": {
 									"type": "ParquetSink",
 									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings"
+										"type": "AzureBlobFSWriteSettings",
+										"copyBehavior": "MergeFiles"
 									},
 									"formatSettings": {
 										"type": "ParquetWriteSettings"
@@ -332,8 +333,7 @@
 												"physicalType": "String"
 											},
 											"sink": {
-												"name": "FileSize (KB)",
-												"type": "String",
+												"name": "FileSize",
 												"physicalType": "UTF8"
 											}
 										},
