@@ -33,7 +33,10 @@
 								"value": "@pipeline().parameters.windowStart",
 								"type": "Expression"
 							},
-							"modifiedDatetimeEnd": "2021-01-16T00:00:00.000Z",
+							"modifiedDatetimeEnd": {
+								"value": "@pipeline().parameters.windowEnd",
+								"type": "Expression"
+							},
 							"wildcardFileName": "*",
 							"enablePartitionDiscovery": false
 						},

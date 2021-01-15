@@ -19,6 +19,12 @@
 						"value": "@trigger().scheduledTime"
 					}
 				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "copy_exensio_mdw",
+					"type": "PipelineReference"
+				}
 			}
 		],
 		"type": "ScheduleTrigger",
