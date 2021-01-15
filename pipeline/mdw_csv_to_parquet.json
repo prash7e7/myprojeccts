@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Get Metadata inbound').output.childItems",
+						"value": "@activity('Get List of csv files').output.childItems",
 						"type": "Expression"
 					},
 					"activities": [
