@@ -1,0 +1,9 @@
+{
+	"name": "copy_exensio_mdw",
+	"properties": {
+		"folder": {
+			"name": "MDW"
+		},
+		"annotations": []
+	}
+}
