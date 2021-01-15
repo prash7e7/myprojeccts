@@ -2,7 +2,7 @@
 	"name": "Trigger_ebs",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Stopped",
+		"runtimeState": "Started",
 		"pipelines": [
 			{
 				"pipelineReference": {
@@ -25,7 +25,7 @@
 		"typeProperties": {
 			"recurrence": {
 				"frequency": "Minute",
-				"interval": 5,
+				"interval": 2,
 				"startTime": "2021-01-15T09:47:00Z",
 				"timeZone": "UTC"
 			}
