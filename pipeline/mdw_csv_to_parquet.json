@@ -104,7 +104,7 @@
 							{
 								"source": {
 									"name": "FileSize (KB)",
-									"type": "Int16",
+									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
@@ -152,7 +152,7 @@
 							{
 								"source": {
 									"name": "ElapsedTime (s)",
-									"type": "Int16",
+									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
