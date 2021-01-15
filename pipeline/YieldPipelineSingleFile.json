@@ -17,7 +17,12 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "YieldCleanFlow",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"YieldSource": {
+								"fileName": "fileName"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
