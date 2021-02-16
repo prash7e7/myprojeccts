@@ -1204,7 +1204,8 @@
 											"type": "String"
 										},
 										"sink": {
-											"name": "ElapsedTime"
+											"name": "ElapsedTime (s)",
+											"type": "String"
 										}
 									},
 									{
@@ -2634,12 +2635,7 @@
 											"type": "DataFlowReference",
 											"parameters": {},
 											"datasetParameters": {
-												"YieldSource": {
-													"fileName": {
-														"value": "@item().name",
-														"type": "Expression"
-													}
-												},
+												"YieldSource": {},
 												"YieldSink": {}
 											}
 										},
@@ -2690,9 +2686,7 @@
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"YieldSource": {
-										"fileName": "fileName"
-									},
+									"YieldSource": {},
 									"YieldSink": {}
 								}
 							},
@@ -2712,6 +2706,237 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/YieldCleanFlow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/copy_exensio_mdw')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "copy_exensio_mdw",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "adls/inbound/app/middleware-test/"
+							},
+							{
+								"name": "Destination",
+								"value": "translated/parquet/app/middleware-prod/"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"modifiedDatetimeStart": "2021-01-14T00:00:00.000Z",
+									"wildcardFileName": "*",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "MergeFiles"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "InterfaceName",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "InterfaceName",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "InterfaceFolder",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "InterfaceFolder",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "DirSource",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "DirSource",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "DirDestination",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "DirDestination",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "FileName",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "FileName",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "FileSize (KB)",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "FileSize",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "RunId",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "RunId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "StartTime",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "StartTime",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "EndTime",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "EndTime",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "ElapsedTime (s)",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ElapsedTime",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Status",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Status",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Message",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Message",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "mdw_logs",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "mdw_logs_parquet",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "MDW"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/mdw_logs')]",
+				"[concat(variables('factoryId'), '/datasets/mdw_logs_parquet')]"
 			]
 		},
 		{
@@ -29231,7 +29456,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
+				"runtimeState": "Stopped",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -29399,7 +29624,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
+				"runtimeState": "Stopped",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -29656,7 +29881,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "YieldInputCSV",
+								"referenceName": "YieldCSVCY",
 								"type": "DatasetReference"
 							},
 							"name": "YieldSource"
@@ -29701,7 +29926,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/YieldInputCSV')]",
+				"[concat(variables('factoryId'), '/datasets/YieldCSVCY')]",
 				"[concat(variables('factoryId'), '/datasets/YieldParquetCY')]"
 			]
 		},
@@ -29880,237 +30105,6 @@
 				"[concat(variables('factoryId'), '/datasets/compressedcsv')]",
 				"[concat(variables('factoryId'), '/datasets/USRWEH_Parquet')]",
 				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/copy_exensio_mdw')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "copy_exensio_mdw",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "adls/inbound/app/middleware-test/"
-							},
-							{
-								"name": "Destination",
-								"value": "translated/parquet/app/middleware-prod/"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"modifiedDatetimeStart": "2021-01-14T00:00:00.000Z",
-									"wildcardFileName": "*",
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings",
-									"copyBehavior": "MergeFiles"
-								},
-								"formatSettings": {
-									"type": "ParquetWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "InterfaceName",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "InterfaceName",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "InterfaceFolder",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "InterfaceFolder",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "DirSource",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "DirSource",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "DirDestination",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "DirDestination",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "FileName",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "FileName",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "FileSize (KB)",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "FileSize",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "RunId",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "RunId",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "StartTime",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "StartTime",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "EndTime",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "EndTime",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "ElapsedTime (s)",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "ElapsedTime",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "Status",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Status",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "Message",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Message",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "mdw_logs",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "mdw_logs_parquet",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "MDW"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/mdw_logs')]",
-				"[concat(variables('factoryId'), '/datasets/mdw_logs_parquet')]"
 			]
 		}
 	]
