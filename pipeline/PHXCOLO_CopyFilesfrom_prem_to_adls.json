@@ -1,5 +1,5 @@
 {
-	"name": "PHXCOLO_CopyFilesfromMultipleContainers",
+	"name": "PHXCOLO_CopyFilesfrom_prem_to_adls",
 	"properties": {
 		"description": "Scan the file path on your source storage store and get the container list.",
 		"activities": [
@@ -17,13 +17,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "BinarySourceFileStore1",
+						"referenceName": "PHXCOLO_BinarySourceFileStore1",
 						"type": "DatasetReference",
 						"parameters": {
-							"folderPath": {
-								"value": "@pipeline().parameters.SourceFileFolder",
-								"type": "Expression"
-							},
+							"folderPath": "@pipeline().parameters.SourceFileFolder",
 							"directory": "@pipeline().parameters.SourceFileDirectory"
 						}
 					},
