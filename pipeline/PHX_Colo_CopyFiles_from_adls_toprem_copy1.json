@@ -72,9 +72,8 @@
 								"source": {
 									"type": "BinarySource",
 									"storeSettings": {
-										"type": "AzureBlobFSReadSettings",
-										"recursive": true,
-										"deleteFilesAfterCompletion": true
+										"type": "FileServerReadSettings",
+										"recursive": true
 									},
 									"formatSettings": {
 										"type": "BinaryReadSettings"
@@ -91,17 +90,11 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "BinarySourceFileStore2",
+									"referenceName": "PHX_COLO_BinarySourceFileStore",
 									"type": "DatasetReference",
 									"parameters": {
-										"container": {
-											"value": "@pipeline().parameters.SourceFileFolder",
-											"type": "Expression"
-										},
-										"directory": {
-											"value": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)",
-											"type": "Expression"
-										}
+										"folderPath": "@pipeline().parameters.SourceFileDirectory",
+										"directory": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)"
 									}
 								}
 							],
