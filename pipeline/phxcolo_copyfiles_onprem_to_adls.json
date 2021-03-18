@@ -138,7 +138,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"dataset": {
-									"referenceName": "BinarySourceFileStore1",
+									"referenceName": "PHXCOLO_BinarySourceFileStore1",
 									"type": "DatasetReference",
 									"parameters": {
 										"folderPath": "@pipeline().parameters.SourceFileFolder",
