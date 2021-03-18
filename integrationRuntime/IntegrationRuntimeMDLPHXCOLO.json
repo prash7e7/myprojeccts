@@ -1,0 +1,6 @@
+{
+	"name": "IntegrationRuntimeMDLPHXCOLO",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
