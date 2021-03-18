@@ -1,0 +1,154 @@
+{
+	"name": "PHX_Colo_CopyFiles_from_adls_toprem_copy1",
+	"properties": {
+		"description": "Scan the file path on your source storage store and get the container list.",
+		"activities": [
+			{
+				"name": "EnumerateContainersList",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "PHX_COLO_BinarySourceFileStore",
+						"type": "DatasetReference",
+						"parameters": {
+							"folderPath": "@pipeline().parameters.SourceFileFolder",
+							"directory": "@pipeline().parameters.SourceFileDirectory"
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "FileServerReadSettings"
+					},
+					"formatSettings": {
+						"type": "BinaryReadSettings"
+					}
+				}
+			},
+			{
+				"name": "ForEachContainer",
+				"description": "Get the container list from Metadata activity and then iterates each of them to Copy activity.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "EnumerateContainersList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('EnumerateContainersList').output.childItems",
+						"type": "Expression"
+					},
+					"batchCount": 4,
+					"activities": [
+						{
+							"name": "CopyOneContainer",
+							"description": "Copy each container from source storage store to destination store.",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "BinarySource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"deleteFilesAfterCompletion": true
+									},
+									"formatSettings": {
+										"type": "BinaryReadSettings"
+									}
+								},
+								"sink": {
+									"type": "BinarySink",
+									"storeSettings": {
+										"type": "FileServerWriteSettings",
+										"copyBehavior": "PreserveHierarchy"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "BinarySourceFileStore2",
+									"type": "DatasetReference",
+									"parameters": {
+										"container": {
+											"value": "@pipeline().parameters.SourceFileFolder",
+											"type": "Expression"
+										},
+										"directory": {
+											"value": "@concat(pipeline().parameters.SourceFileDirectory,'/',item().name)",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "BinarySinkFileStore2",
+									"type": "DatasetReference",
+									"parameters": {
+										"folderPath": {
+											"value": "@pipeline().parameters.DestinationFileFolder",
+											"type": "Expression"
+										},
+										"directory": {
+											"value": "@concat(pipeline().parameters.DestinationFileDirectory,'/',item().name)",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"SourceFileFolder": {
+				"type": "string",
+				"defaultValue": "adls"
+			},
+			"SourceFileDirectory": {
+				"type": "string",
+				"defaultValue": "outbound"
+			},
+			"DestinationFileFolder": {
+				"type": "string",
+				"defaultValue": "outbound"
+			},
+			"DestinationFileDirectory": {
+				"type": "string",
+				"defaultValue": "staged"
+			}
+		},
+		"folder": {
+			"name": "Copy Jobs"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-11-09T18:54:10Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
