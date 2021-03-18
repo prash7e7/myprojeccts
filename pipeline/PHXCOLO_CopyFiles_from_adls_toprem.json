@@ -1,5 +1,5 @@
 {
-	"name": "CopyFiles_from_adls_toprem_copy1",
+	"name": "PHXCOLO_CopyFiles_from_adls_toprem",
 	"properties": {
 		"description": "Scan the file path on your source storage store and get the container list.",
 		"activities": [
@@ -115,7 +115,11 @@
 							"outputs": [
 								{
 									"referenceName": "PHXCOLO_BinarySinkFileStore2",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"folderPath": "@pipeline().parameters.DestinationFileFolder",
+										"directory": "@concat(pipeline().parameters.DestinationFileDirectory,'/',item().name)"
+									}
 								}
 							]
 						}
