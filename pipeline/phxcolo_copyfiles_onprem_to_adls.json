@@ -1,5 +1,5 @@
 {
-	"name": "PHXCOLO_CopyFilesfrom_prem_to_adls",
+	"name": "phxcolo_copyfiles_onprem_to_adls",
 	"properties": {
 		"description": "Scan the file path on your source storage store and get the container list.",
 		"activities": [
@@ -183,7 +183,7 @@
 			}
 		},
 		"folder": {
-			"name": "Copy Jobs"
+			"name": "Copy Files Phx Colo"
 		},
 		"annotations": [],
 		"lastPublishTime": "2020-11-09T18:54:10Z"
