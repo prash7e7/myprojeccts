@@ -1,0 +1,17 @@
+{
+	"name": "ONPREMALLUSERSPHXCOLO",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "FileServer",
+		"typeProperties": {
+			"host": "\\\\USAZ15WS078\\adls",
+			"userId": "onsemi\\fabtimesys",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI1ODA2MGNlOS02NThkLTRlMmYtYmViOC1kNTE2YmUyMmZiNDUiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "IntegrationRuntimeMDLPHXCOLO",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
