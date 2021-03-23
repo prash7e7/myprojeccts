@@ -1,10 +1,10 @@
 {
-	"name": "Copy_batchset_from_inbound_to_scored",
+	"name": "infer_store_results_filter",
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
-				"type": "Copy",
+				"name": "batch_inference",
+				"type": "DatabricksNotebook",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
@@ -15,7 +15,11 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"enableStaging": false
+					"notebookPath": "/Users/zbm9dp@onsemi.com/data_factory_image_classification/batch_inference"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado",
+					"type": "LinkedServiceReference"
 				}
 			}
 		],
