@@ -1,0 +1,21 @@
+{
+	"name": "inbound_batch",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "onsemidevmdlstoragelink",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Image_defect_classification "
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "inbound/site/CZ4/Defect/Models/Model_name/Batch_Set/",
+				"fileSystem": "adls"
+			}
+		}
+	}
+}
