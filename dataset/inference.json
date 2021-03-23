@@ -1,0 +1,22 @@
+{
+	"name": "inference",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "onsemidevmdlstoragelink",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@utcnow()",
+					"type": "Expression"
+				},
+				"folderPath": "inbound/site/CZ4/Defect/Models/Model_name/Batch_Set",
+				"fileSystem": "adls"
+			}
+		}
+	}
+}
