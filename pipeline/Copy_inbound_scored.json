@@ -1,5 +1,5 @@
 {
-	"name": "Copy_train_test_inbound_scored",
+	"name": "Copy_inbound_scored",
 	"properties": {
 		"activities": [
 			{
@@ -16,8 +16,14 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "AzureBlobFSSource",
-						"recursive": true
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
+						}
 					},
 					"sink": {
 						"type": "BinarySink",
@@ -29,7 +35,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "AzureBlobFSSourceDatasetEntity",
+						"referenceName": "inbound_training_testing_datasets",
 						"type": "DatasetReference"
 					}
 				],

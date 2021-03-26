@@ -6,14 +6,14 @@
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "Image_classification"
+			"name": "CZ4_Image_classification"
 		},
 		"annotations": [],
 		"type": "Binary",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "inbound/site/CZ4/defect/models/testPrd_step1/training",
+				"folderPath": "inbound/site/CZ4",
 				"fileSystem": "adls"
 			}
 		}
