@@ -1,0 +1,49 @@
+{
+	"name": "Create_new_model",
+	"properties": {
+		"activities": [
+			{
+				"name": "Train_new_model",
+				"description": "Train a new model from scratch on datasets listed in create_trigger.txt file",
+				"type": "DatabricksSparkPython",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Copy_results_from_scored_to_outbound",
+				"type": "DatabricksSparkPython",
+				"dependsOn": [
+					{
+						"activity": "Train_new_model",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": []
+			}
+		],
+		"folder": {
+			"name": "CZ4_Defect_classification"
+		},
+		"annotations": []
+	}
+}
