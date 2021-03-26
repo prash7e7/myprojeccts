@@ -26,6 +26,9 @@
 		"ONPREMALLUSERS_password": {
 			"value": ""
 		},
+		"ONPREMALLUSERSPHXCOLO_password": {
+			"value": ""
+		},
 		"ONPREMVM_password": {
 			"value": ""
 		},
@@ -42,6 +45,12 @@
 			"value": "\\\\USCO01WS0029\\adls"
 		},
 		"ONPREMALLUSERS_properties_typeProperties_userId": {
+			"value": "onsemi\\fabtimesys"
+		},
+		"ONPREMALLUSERSPHXCOLO_properties_typeProperties_host": {
+			"value": "\\\\USAZ15WS078\\adls"
+		},
+		"ONPREMALLUSERSPHXCOLO_properties_typeProperties_userId": {
 			"value": "onsemi\\fabtimesys"
 		},
 		"ONPREMVM_properties_typeProperties_host": {

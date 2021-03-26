@@ -35,6 +35,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ONPREMALLUSERS'"
 		},
+		"ONPREMALLUSERSPHXCOLO_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ONPREMALLUSERSPHXCOLO'"
+		},
 		"ONPREMVM_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ONPREMVM'"
@@ -56,6 +60,14 @@
 			"defaultValue": "\\\\USCO01WS0029\\adls"
 		},
 		"ONPREMALLUSERS_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "onsemi\\fabtimesys"
+		},
+		"ONPREMALLUSERSPHXCOLO_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "\\\\USAZ15WS078\\adls"
+		},
+		"ONPREMALLUSERSPHXCOLO_properties_typeProperties_userId": {
 			"type": "string",
 			"defaultValue": "onsemi\\fabtimesys"
 		},
@@ -205,15 +217,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"ExtensioAPI_password": {
-						"value": "[parameters('ExtensioAPI_password')]"
-					},
-					"ExtensioAPI_properties_typeProperties_url": {
-						"value": "[parameters('ExtensioAPI_properties_typeProperties_url')]"
-					},
-					"ExtensioAPI_properties_typeProperties_userName": {
-						"value": "[parameters('ExtensioAPI_properties_typeProperties_userName')]"
 					}
 				}
 			},
@@ -235,8 +238,14 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"ExtensioAPI_password": {
+						"value": "[parameters('ExtensioAPI_password')]"
+					},
 					"ONPREMALLUSERS_password": {
 						"value": "[parameters('ONPREMALLUSERS_password')]"
+					},
+					"ONPREMALLUSERSPHXCOLO_password": {
+						"value": "[parameters('ONPREMALLUSERSPHXCOLO_password')]"
 					},
 					"ONPREMVM_password": {
 						"value": "[parameters('ONPREMVM_password')]"
@@ -244,11 +253,23 @@
 					"fabtimesqlserver_connectionString": {
 						"value": "[parameters('fabtimesqlserver_connectionString')]"
 					},
+					"ExtensioAPI_properties_typeProperties_url": {
+						"value": "[parameters('ExtensioAPI_properties_typeProperties_url')]"
+					},
+					"ExtensioAPI_properties_typeProperties_userName": {
+						"value": "[parameters('ExtensioAPI_properties_typeProperties_userName')]"
+					},
 					"ONPREMALLUSERS_properties_typeProperties_host": {
 						"value": "[parameters('ONPREMALLUSERS_properties_typeProperties_host')]"
 					},
 					"ONPREMALLUSERS_properties_typeProperties_userId": {
 						"value": "[parameters('ONPREMALLUSERS_properties_typeProperties_userId')]"
+					},
+					"ONPREMALLUSERSPHXCOLO_properties_typeProperties_host": {
+						"value": "[parameters('ONPREMALLUSERSPHXCOLO_properties_typeProperties_host')]"
+					},
+					"ONPREMALLUSERSPHXCOLO_properties_typeProperties_userId": {
+						"value": "[parameters('ONPREMALLUSERSPHXCOLO_properties_typeProperties_userId')]"
 					},
 					"ONPREMVM_properties_typeProperties_host": {
 						"value": "[parameters('ONPREMVM_properties_typeProperties_host')]"
@@ -275,12 +296,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowStart": {
-						"value": "[parameters('Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowStart')]"
-					},
-					"Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowEnd": {
-						"value": "[parameters('Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowEnd')]"
 					}
 				}
 			},
@@ -301,6 +316,12 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowStart": {
+						"value": "[parameters('Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowStart')]"
+					},
+					"Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowEnd": {
+						"value": "[parameters('Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowEnd')]"
 					},
 					"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
 						"value": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder')]"

@@ -7,9 +7,17 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "Mfg-Data-Lake-DEV-Factory"
 		},
+		"ExtensioAPI_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ExtensioAPI'"
+		},
 		"ONPREMALLUSERS_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ONPREMALLUSERS'"
+		},
+		"ONPREMALLUSERSPHXCOLO_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ONPREMALLUSERSPHXCOLO'"
 		},
 		"ONPREMVM_password": {
 			"type": "secureString",
@@ -19,11 +27,27 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
 		},
+		"ExtensioAPI_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1"
+		},
+		"ExtensioAPI_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "exn_dba"
+		},
 		"ONPREMALLUSERS_properties_typeProperties_host": {
 			"type": "string",
 			"defaultValue": "\\\\USCO01WS0029\\adls"
 		},
 		"ONPREMALLUSERS_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "onsemi\\fabtimesys"
+		},
+		"ONPREMALLUSERSPHXCOLO_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "\\\\USAZ15WS078\\adls"
+		},
+		"ONPREMALLUSERSPHXCOLO_properties_typeProperties_userId": {
 			"type": "string",
 			"defaultValue": "onsemi\\fabtimesys"
 		},
@@ -41,6 +65,30 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/ExtensioAPI')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('ExtensioAPI_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": false,
+					"authenticationType": "Basic",
+					"userName": "[parameters('ExtensioAPI_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ExtensioAPI_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "integrationRuntimeMfgDataLake",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ONPREMALLUSERS')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -57,6 +105,28 @@
 				},
 				"connectVia": {
 					"referenceName": "integrationRuntimeMfgDataLake",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ONPREMALLUSERSPHXCOLO')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "FileServer",
+				"typeProperties": {
+					"host": "[parameters('ONPREMALLUSERSPHXCOLO_properties_typeProperties_host')]",
+					"userId": "[parameters('ONPREMALLUSERSPHXCOLO_properties_typeProperties_userId')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ONPREMALLUSERSPHXCOLO_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "IntegrationRuntimeMDLPHXCOLO",
 					"type": "IntegrationRuntimeReference"
 				}
 			},
@@ -99,6 +169,184 @@
 					"referenceName": "integrationRuntimeMfgDataLake",
 					"type": "IntegrationRuntimeReference"
 				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Batch_inference_store_results_filter_results')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "batch_inference",
+						"description": "takes best_model.pt and images from inbound batch set and outputs csv/parquet to scored/results. ",
+						"type": "DatabricksSparkPython",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pythonFile": "dbfs://Users/zbm9dp@onsemi.com/data_factory_image_classification/batch_inference",
+							"parameters": [
+								"CZ4"
+							]
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "filter_results",
+						"type": "DatabricksSparkPython",
+						"dependsOn": [
+							{
+								"activity": "batch_inference",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pythonFile": "dbfs:///Users/zbm9dp@onsemi.com/data_factory_image_classification/filter_csv",
+							"parameters": [
+								"CZ4"
+							]
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"folder": {
+					"name": "CZ4_Defect_classification"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/inbound_data')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CZ4_Image_classification/inbound"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "inbound/site/CZ4",
+						"fileSystem": "adls"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/scored_sink_data_for_copy')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CZ4_Image_classification/scored"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "scored/site/CZ4",
+						"fileSystem": "adls"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Create_new_model')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Train_new_model",
+						"description": "Train a new model from scratch on datasets listed in create_trigger.txt file",
+						"type": "DatabricksSparkPython",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pythonFile": "dbfs://Users/zbm9dp@onsemi.com/data_factory_image_classification/batch_inference"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Copy_results_from_scored_to_outbound",
+						"type": "DatabricksSparkPython",
+						"dependsOn": [
+							{
+								"activity": "Train_new_model",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pythonFile": "dbfs://Users/zbm9dp@onsemi.com/data_factory_image_classification/batch_inference"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"folder": {
+					"name": "CZ4_Defect_classification"
+				},
+				"annotations": []
 			},
 			"dependsOn": []
 		},
@@ -1078,7 +1326,9 @@
 				"annotations": [],
 				"lastPublishTime": "2020-10-19T12:27:14Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ExtensioAPI')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/copy_exensio_mdw')]",
@@ -1701,206 +1951,43 @@
 				},
 				"schema": []
 			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/RestResource1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ExtensioAPI",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/fabtimshipment')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "fabtimesqlserver",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "tblShipment"
-				}
-			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/fabtimesqlserver')]"
+				"[concat(variables('factoryId'), '/linkedServices/ExtensioAPI')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/USR_MET_Trigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
+			"name": "[concat(parameters('factoryName'), '/PHXCOLO_BinarySinkFileStore2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "USR_MET2Parquet",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Hour",
-						"interval": 2,
-						"startTime": "2021-01-11T13:00:00",
-						"timeZone": "Mountain Standard Time"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/trigger_EveryDay_translation')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "Databricks_FDC_translation",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2020-10-20T12:28:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DataFlowForCSVMergeToParquet')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "DelimitedText2",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "mergedCSV",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [],
-					"script": "parameters{\n\trecursiveInputPath as string ('translated/csv/site/USR/FDC/Tools/ASH10653/2020-008-01'),\n\trecursiveOutputPath as string ('translated/parquet/site/USR/FDC/Tools/ASH10653/2020-008-01')\n}\nsource(output(\n\t\t{_c0} as short,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as short,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as integer,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID21 as string,\n\t\tSubstrate_Information_Cassette_ID as string,\n\t\tSubstrate_Information_Slot_ID as short,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Lot_ID28 as timestamp,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as timestamp,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID35 as string,\n\t\tExtra_Information_Extra_1_ID36 as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as timestamp,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as short,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as timestamp,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as timestamp,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as double,\n\t\tGeneral_Info_Number_of_Data_Points as short,\n\t\tGeneral_Info_Number_of_Scans as boolean,\n\t\tGeneral_Info_Number_of_Bins as short,\n\t\tBins as short,\n\t\tTimePoints as short,\n\t\t{Time Relative (sec)} as double,\n\t\t{Time Absolute (UTC)} as double,\n\t\t{Time Absolute (Date_Time)} as string,\n\t\tStep as boolean,\n\t\tStatus as boolean,\n\t\t{Tool:_Gas_-_CF4_Flow_(sccm);_SVID180} as boolean,\n\t\t{Tool:_Gas_-_O2_Large_Flow_(sccm);_SVID181} as short,\n\t\t{Tool:_Gas_-_NF3_Flow_(sccm);_SVID182} as boolean,\n\t\t{Tool:_Gas_-_N2H2_Flow_(sccm);_SVID183} as boolean,\n\t\t{Tool:_Gas_-_Argon_Flow_(sccm);_SVID184} as short,\n\t\t{Tool:_Pres-_Chamber_Pressure_(torr);_SVID186} as double,\n\t\t{Tool:_Temp_-_Hot_Plate_(C);_SVID187} as short,\n\t\t{Tool:_EP_-_Photo_Multiplier_Vout_(v);_SVID188} as double,\n\t\t{Tool:_RF_Bias;_SVID189} as short,\n\t\t{Tool:_RF_Match_C1_Pos_(%);_SVID190} as short,\n\t\t{Tool:_RF_Match_C2_Pos_(%);_SVID191} as short,\n\t\t{Tool:_RF_Forward_Power_(Watts);_SVID192} as short,\n\t\t{Tool:_RF_Reflected_Power_(Watts);_SVID193} as short,\n\t\t{Tool:_MW_Forward_Power_(Watts);_SVID194} as short,\n\t\t{Tool:_MW_Reflected_Power_(Watts);_SVID195} as short,\n\t\t{Tool:_Recipe_Step_Number;_SVID196_[Tool's_Step]} as short,\n\t\t{Tool:_Wafer_-_Slot_Number;_SVID222} as short,\n\t\t{Tool:_EP_-_End_Point_Time;_SVID266} as boolean,\n\t\t{Tool:_RF_Power_Set_Point_(Watts);_SVID288} as short,\n\t\t{Tool:_MW_Set_Point_(Watts);_SVID289} as short,\n\t\t{Tool:_Pres-_Chamber_Pressure_Set_Point_(torr);_SVID290} as double,\n\t\t{Tool:_Temp_-_Hot_Plate_SetPoint_(C);_SVID291} as short,\n\t\t{Tool:_Gas_-_CF4_Set_Point_(sccm);_SVID292} as boolean,\n\t\t{Tool:_Gas_-_O2_Large_Set_Point_(sccm);_SVID293} as boolean,\n\t\t{Tool:_Gas_-_NF3_Set_Point_(sccm);_SVID294} as boolean,\n\t\t{Tool:_Gas_-_N2H2_Set_Point_(sccm);_SVID295} as boolean,\n\t\t{Tool:_Gas_-_Argon_Set_Point_(sccm);_SVID296} as boolean,\n\t\t{Tool:_EP_-_Photo_Multiplier_End_Point_HiV_(v);_SVID316} as short,\n\t\t{Tool:_Pin_Height_Set_Point;_SVID317} as short,\n\t\t{Tool:_Gas_-_O2_Small_Flow} as double,\n\t\t{Tool:_Gas_-_O2_Small_Set_Point} as double,\n\t\tTool_Bin_Polling_Latency as double,\n\t\tTool_Bin_Data_Age as double,\n\t\tTool_Bin_Data_Age_SECS as double,\n\t\t{Sig:_Temp_-_Hot_Plate_-_Filtered_(No_RF)_(post_Run)} as double,\n\t\t{Sig:_Filter:_Acceptable_Data_Age} as boolean,\n\t\t{Sig:_Ash_Total_Time} as double,\n\t\t{Sig:_Overash_Time} as double,\n\t\t{Sig:_Ash_EP_Time} as double,\n\t\t{Sig:_Overash_Percentage} as double,\n\t\t{Sig:_Filter:_Max_Data_Age} as boolean,\n\t\t{Sig:_Overash_Percentage_filtered_for_Data_Age} as double,\n\t\t{Sig:_MW_-_Power_Deviation_(post_Run)} as double,\n\t\t{Sig:_RF_-_Power_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Large_O2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Small_O2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_CF4_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_NF3_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Argon_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_N2H2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_MW_-_Reflected_Power_(Steady_state)_(post_Run)} as double,\n\t\t{Sig:_RF_-_Reflected_Power_(Steady_state)_(post_Run)} as double,\n\t\t{Sig:_Pres_-_Pressure_Deviation_(High_Pressure)(Steady_State)_(post_Run)} as double,\n\t\t{Sig:_EP_-_EP_Intensity_after_resist_removal_(post_Run)} as double,\n\t\t{Sig:_Temp_-_Hot_Plate_Deviation_(post_Run)} as double,\n\t\t{Sig:_EP_-_EP_Max_Intensity_with_no_RF} as double,\n\t\t{Sig:_Pres_-_Pressure_Deviation_(Low_Pressure)(Steady_State)_(post_Run)} as double,\n\t\t{Sig:_Filter:_Slot_Number_Correction_>_25} as short,\n\t\t{Sig:_Filter:_Slot_Number_Corrected_Value} as short,\n\t\t{Sig:_RF_-_Bias_(Power_on)_(post_Run)} as double,\n\t\t{Sig:_Overash_Time_7V} as double,\n\t\t{Sig:_Overash_Percentage_7V} as double,\n\t\t{Sig:_Overash_Percentage_filtered_for_Data_Age_7V} as double,\n\t\t{Sig:_EP_-_End_Point_voltage_above_trigger._(post_Run)} as double,\n\t\t{Sig:_Gas:_O2_Large_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_O2_Small_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_NF3_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_CF4_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_N2H2_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_Argon_Usage_(liters)} as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tinferDriftedColumnTypes: true,\n\twildcardPaths:[(concat($recursiveInputPath, '/*.csv'))]) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace($$,';',''),':',''),':',''),'(',''),')',''),' ',''),' ',''),')',''),'(',''),']',''),'[',''),'(',''),')',''),'>',''),'\\'','') = $$)\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ExtractFDCMetaData')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "sandbox"
+				"description": "Connection to your destination data store.",
+				"linkedServiceName": {
+					"referenceName": "ONPREMALLUSERSPHXCOLO",
+					"type": "LinkedServiceReference"
 				},
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "FDCMetaData",
-								"type": "DatasetReference"
-							},
-							"name": "FDCMetaData"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "FDCParquetDS",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Pivot1"
-						},
-						{
-							"name": "Filter1"
-						}
-					],
-					"script": "source(output(\n\t\tfdc_metadata_key as string,\n\t\tfdc_metadata_value as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tinferDriftedColumnTypes: true,\n\tskipLines: 3) ~> FDCMetaData\nFilter1 pivot(groupBy(fdc_metadata_value),\n\tpivotBy(fdc_metadata_key),\n\t{} = first(fdc_metadata_value),\n\tcolumnNaming: '$V$N',\n\tlateral: false) ~> Pivot1\nFDCMetaData filter(instr(\"General Info, Run Path and Name\" , fdc_metadata_key)>0 || \r\ninstr(\"Sensor ID\" , fdc_metadata_key)>0 ||\r\ninstr(\"Substrate Information, Lot ID\" , fdc_metadata_key)>0 ||\r\ninstr(\"Substrate Information, Slot ID\" , fdc_metadata_key)>0) ~> Filter1\nPivot1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MergeCSV_to_Parquet')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"folder": {
-					"name": "sandbox"
+				"parameters": {
+					"folderPath": {
+						"type": "string"
+					},
+					"directory": {
+						"type": "string"
+					}
 				},
-				"type": "MappingDataFlow",
+				"annotations": [],
+				"type": "Binary",
 				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "DelimitedText2",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
+					"location": {
+						"type": "FileServerLocation",
+						"folderPath": {
+							"value": "@concat(dataset().folderPath,'/',dataset().directory)",
+							"type": "Expression"
 						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "mergedCSV",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [],
-					"script": "source(output(\n\t\t{_c0} as short,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as short,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as integer,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID21 as string,\n\t\tSubstrate_Information_Cassette_ID as string,\n\t\tSubstrate_Information_Slot_ID as short,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Lot_ID28 as timestamp,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as timestamp,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID35 as string,\n\t\tExtra_Information_Extra_1_ID36 as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as timestamp,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as short,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as timestamp,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as timestamp,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as double,\n\t\tGeneral_Info_Number_of_Data_Points as short,\n\t\tGeneral_Info_Number_of_Scans as boolean,\n\t\tGeneral_Info_Number_of_Bins as short,\n\t\tBins as short,\n\t\tTimePoints as short,\n\t\t{Time Relative (sec)} as double,\n\t\t{Time Absolute (UTC)} as double,\n\t\t{Time Absolute (Date_Time)} as string,\n\t\tStep as boolean,\n\t\tStatus as boolean,\n\t\t{Tool:_Gas_-_CF4_Flow_(sccm);_SVID180} as boolean,\n\t\t{Tool:_Gas_-_O2_Large_Flow_(sccm);_SVID181} as short,\n\t\t{Tool:_Gas_-_NF3_Flow_(sccm);_SVID182} as boolean,\n\t\t{Tool:_Gas_-_N2H2_Flow_(sccm);_SVID183} as boolean,\n\t\t{Tool:_Gas_-_Argon_Flow_(sccm);_SVID184} as short,\n\t\t{Tool:_Pres-_Chamber_Pressure_(torr);_SVID186} as double,\n\t\t{Tool:_Temp_-_Hot_Plate_(C);_SVID187} as short,\n\t\t{Tool:_EP_-_Photo_Multiplier_Vout_(v);_SVID188} as double,\n\t\t{Tool:_RF_Bias;_SVID189} as short,\n\t\t{Tool:_RF_Match_C1_Pos_(%);_SVID190} as short,\n\t\t{Tool:_RF_Match_C2_Pos_(%);_SVID191} as short,\n\t\t{Tool:_RF_Forward_Power_(Watts);_SVID192} as short,\n\t\t{Tool:_RF_Reflected_Power_(Watts);_SVID193} as short,\n\t\t{Tool:_MW_Forward_Power_(Watts);_SVID194} as short,\n\t\t{Tool:_MW_Reflected_Power_(Watts);_SVID195} as short,\n\t\t{Tool:_Recipe_Step_Number;_SVID196_[Tool's_Step]} as short,\n\t\t{Tool:_Wafer_-_Slot_Number;_SVID222} as short,\n\t\t{Tool:_EP_-_End_Point_Time;_SVID266} as boolean,\n\t\t{Tool:_RF_Power_Set_Point_(Watts);_SVID288} as short,\n\t\t{Tool:_MW_Set_Point_(Watts);_SVID289} as short,\n\t\t{Tool:_Pres-_Chamber_Pressure_Set_Point_(torr);_SVID290} as double,\n\t\t{Tool:_Temp_-_Hot_Plate_SetPoint_(C);_SVID291} as short,\n\t\t{Tool:_Gas_-_CF4_Set_Point_(sccm);_SVID292} as boolean,\n\t\t{Tool:_Gas_-_O2_Large_Set_Point_(sccm);_SVID293} as boolean,\n\t\t{Tool:_Gas_-_NF3_Set_Point_(sccm);_SVID294} as boolean,\n\t\t{Tool:_Gas_-_N2H2_Set_Point_(sccm);_SVID295} as boolean,\n\t\t{Tool:_Gas_-_Argon_Set_Point_(sccm);_SVID296} as boolean,\n\t\t{Tool:_EP_-_Photo_Multiplier_End_Point_HiV_(v);_SVID316} as short,\n\t\t{Tool:_Pin_Height_Set_Point;_SVID317} as short,\n\t\t{Tool:_Gas_-_O2_Small_Flow} as double,\n\t\t{Tool:_Gas_-_O2_Small_Set_Point} as double,\n\t\tTool_Bin_Polling_Latency as double,\n\t\tTool_Bin_Data_Age as double,\n\t\tTool_Bin_Data_Age_SECS as double,\n\t\t{Sig:_Temp_-_Hot_Plate_-_Filtered_(No_RF)_(post_Run)} as double,\n\t\t{Sig:_Filter:_Acceptable_Data_Age} as boolean,\n\t\t{Sig:_Ash_Total_Time} as double,\n\t\t{Sig:_Overash_Time} as double,\n\t\t{Sig:_Ash_EP_Time} as double,\n\t\t{Sig:_Overash_Percentage} as double,\n\t\t{Sig:_Filter:_Max_Data_Age} as boolean,\n\t\t{Sig:_Overash_Percentage_filtered_for_Data_Age} as double,\n\t\t{Sig:_MW_-_Power_Deviation_(post_Run)} as double,\n\t\t{Sig:_RF_-_Power_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Large_O2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Small_O2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_CF4_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_NF3_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Argon_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_N2H2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_MW_-_Reflected_Power_(Steady_state)_(post_Run)} as double,\n\t\t{Sig:_RF_-_Reflected_Power_(Steady_state)_(post_Run)} as double,\n\t\t{Sig:_Pres_-_Pressure_Deviation_(High_Pressure)(Steady_State)_(post_Run)} as double,\n\t\t{Sig:_EP_-_EP_Intensity_after_resist_removal_(post_Run)} as double,\n\t\t{Sig:_Temp_-_Hot_Plate_Deviation_(post_Run)} as double,\n\t\t{Sig:_EP_-_EP_Max_Intensity_with_no_RF} as double,\n\t\t{Sig:_Pres_-_Pressure_Deviation_(Low_Pressure)(Steady_State)_(post_Run)} as double,\n\t\t{Sig:_Filter:_Slot_Number_Correction_>_25} as short,\n\t\t{Sig:_Filter:_Slot_Number_Corrected_Value} as short,\n\t\t{Sig:_RF_-_Bias_(Power_on)_(post_Run)} as double,\n\t\t{Sig:_Overash_Time_7V} as double,\n\t\t{Sig:_Overash_Percentage_7V} as double,\n\t\t{Sig:_Overash_Percentage_filtered_for_Data_Age_7V} as double,\n\t\t{Sig:_EP_-_End_Point_voltage_above_trigger._(post_Run)} as double,\n\t\t{Sig:_Gas:_O2_Large_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_O2_Small_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_NF3_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_CF4_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_N2H2_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_Argon_Usage_(liters)} as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['translated/csv/site/USR/FDC/Tools/ASH10653/2020-008-01/*.csv']) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\ttranslate($$,':; ()[]','') = $$)\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ONPREMALLUSERSPHXCOLO')]"
+			]
 		}
 	]
 }
