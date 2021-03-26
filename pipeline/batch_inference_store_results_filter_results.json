@@ -1,5 +1,5 @@
 {
-	"name": "infer_store_results_filter",
+	"name": "batch_inference_store_results_filter_results",
 	"properties": {
 		"activities": [
 			{
