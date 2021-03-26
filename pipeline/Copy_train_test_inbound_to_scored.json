@@ -1,0 +1,9 @@
+{
+	"name": "Copy_train_test_inbound_to_scored",
+	"properties": {
+		"folder": {
+			"name": "Image_classification"
+		},
+		"annotations": []
+	}
+}
