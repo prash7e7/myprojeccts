@@ -1,5 +1,5 @@
 {
-	"name": "inbound_training_testing_datasets",
+	"name": "inbound_data",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "onsemidevmdlstoragelink",
