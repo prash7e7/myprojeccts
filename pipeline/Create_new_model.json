@@ -1,0 +1,49 @@
+{
+	"name": "Create_new_model",
+	"properties": {
+		"description": "Trigger this when a new model is to be created",
+		"activities": [
+			{
+				"name": "Train_new_model",
+				"description": "Train a new model from scratch on datasets listed in create_trigger.txt file",
+				"type": "DatabricksSparkPython",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": []
+			},
+			{
+				"name": "copy_results_scored_outbound",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Train_new_model",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"enableStaging": false
+				}
+			}
+		],
+		"folder": {
+			"name": "CZ4_Image_classification"
+		},
+		"annotations": []
+	}
+}
