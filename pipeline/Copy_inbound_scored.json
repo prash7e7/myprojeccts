@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "copy_folder",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -28,20 +28,21 @@
 					"sink": {
 						"type": "BinarySink",
 						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings"
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
 						}
 					},
 					"enableStaging": false
 				},
 				"inputs": [
 					{
-						"referenceName": "inbound_training_testing_datasets",
+						"referenceName": "inbound_data",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "inference",
+						"referenceName": "scored_data",
 						"type": "DatasetReference"
 					}
 				]
