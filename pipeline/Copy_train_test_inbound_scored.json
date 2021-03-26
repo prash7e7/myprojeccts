@@ -1,5 +1,5 @@
 {
-	"name": "Copy_batchset_from_IR_to_ADLS",
+	"name": "Copy_train_test_inbound_scored",
 	"properties": {
 		"activities": [
 			{
