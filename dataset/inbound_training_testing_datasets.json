@@ -1,0 +1,21 @@
+{
+	"name": "inbound_training_testing_datasets",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "onsemidevmdlstoragelink",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Image_classification"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "inbound/site/CZ4/defect/models/testPrd_step1/training",
+				"fileSystem": "adls"
+			}
+		}
+	}
+}
