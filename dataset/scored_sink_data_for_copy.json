@@ -1,0 +1,21 @@
+{
+	"name": "scored_sink_data_for_copy",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "onsemidevmdlstoragelink",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "CZ4_Image_classification/scored"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "scored/site/CZ4",
+				"fileSystem": "adls"
+			}
+		}
+	}
+}
