@@ -16,7 +16,10 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"pythonFile": "dbfs://Users/zbm9dp@onsemi.com/data_factory_image_classification/batch_inference"
+					"pythonFile": "dbfs://Users/zbm9dp@onsemi.com/data_factory_image_classification/create_model",
+					"parameters": [
+						"/dbfs/mnt/datalake/scored/site/CZ4/defect/models/testPrd_step1/training/"
+					]
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks_rado",
@@ -43,7 +46,8 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"pythonFile": "dbfs://Users/zbm9dp@onsemi.com/data_factory_image_classification/batch_inference"
+					"pythonFile": "dbfs://Users/zbm9dp@onsemi.com/data_factory_image_classification/batch_inference",
+					"parameters": []
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks_rado",
