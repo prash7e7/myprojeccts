@@ -14,7 +14,7 @@
 		"type": "BlobEventsTrigger",
 		"typeProperties": {
 			"blobPathBeginsWith": "/adls/blobs/scored/site/CZ4/defect/models",
-			"blobPathEndsWith": "training/trigger/train_trigger.txt",
+			"blobPathEndsWith": "train_trigger.txt",
 			"ignoreEmptyBlobs": true,
 			"scope": "/subscriptions/77eca5ce-e649-4920-af32-b5dd93df06fc/resourceGroups/Mfg-Data-Lake-DEV/providers/Microsoft.Storage/storageAccounts/onsemidevmdlstorage",
 			"events": [
