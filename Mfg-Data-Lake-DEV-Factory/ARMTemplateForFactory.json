@@ -30162,7 +30162,7 @@
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
 					"blobPathBeginsWith": "/adls/blobs/scored/site/CZ4/defect/models",
-					"blobPathEndsWith": "training/trigger/train_trigger.txt",
+					"blobPathEndsWith": "train_trigger.txt",
 					"ignoreEmptyBlobs": true,
 					"scope": "[parameters('CZ4_storage_trigger_properties_typeProperties_scope')]",
 					"events": [
