@@ -6,12 +6,48 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "Mfg-Data-Lake-DEV-Factory"
+		},
+		"CZ4_storage_trigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/77eca5ce-e649-4920-af32-b5dd93df06fc/resourceGroups/Mfg-Data-Lake-DEV/providers/Microsoft.Storage/storageAccounts/onsemidevmdlstorage"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/PHXCOLO_BinarySinkFileStore2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your destination data store.",
+				"linkedServiceName": {
+					"referenceName": "ONPREMALLUSERSPHXCOLO",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"folderPath": {
+						"type": "string"
+					},
+					"directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"folderPath": {
+							"value": "@concat(dataset().folderPath,'/',dataset().directory)",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/PHXCOLO_BinarySourceFileStore1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -75,6 +111,35 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "tblShipment"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CZ4_storage_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Create_new_model",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/adls/blobs/scored/site/CZ4/defect/models",
+					"blobPathEndsWith": "training/trigger/train_trigger.txt",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('CZ4_storage_trigger_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
 				}
 			},
 			"dependsOn": []
@@ -536,67 +601,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Copy_inbound_scored')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "copy_folder",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "BinarySource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true
-								},
-								"formatSettings": {
-									"type": "BinaryReadSettings"
-								}
-							},
-							"sink": {
-								"type": "BinarySink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings",
-									"copyBehavior": "PreserveHierarchy"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "inbound_data",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "scored_sink_data_for_copy",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "CZ4_Defect_classification"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/ASH_test')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1003,135 +1007,6 @@
 				"lastPublishTime": "2020-11-09T18:54:10Z"
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Databricks_ETL_ASH')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ETL_USR_ASH_parsing",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ASH_dev"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "cleanCSV_Delta_Parquet_ASH",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "ETL_USR_ASH_parsing",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "cleanCSV_Delta_Parquet_ASH",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {},
-									"sink2": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "ETL_USR_ASH_csv",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "ETL_USR_ASH_parsing",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Deployments/DEV/ETL_USR/ETL_USR_ASH_csv_delta_parquet_dev"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "FDC_ASH_PIM_Batch_Detection",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "ETL_USR_ASH_csv",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Deployments/DEV/FDC_Batch_Detection/FDC_ASH_PIM_Batch_Detection"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado_ml_cluster",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"folder": {
-					"name": "Databricks_ETL"
-				},
-				"annotations": [],
-				"lastPublishTime": "2020-09-01T09:46:40Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ASH')]"
-			]
 		}
 	]
 }

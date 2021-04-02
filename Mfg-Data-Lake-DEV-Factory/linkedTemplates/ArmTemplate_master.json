@@ -83,6 +83,10 @@
 			"type": "string",
 			"defaultValue": "https://onsemidevmdlstorage.dfs.core.windows.net"
 		},
+		"CZ4_storage_trigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/77eca5ce-e649-4920-af32-b5dd93df06fc/resourceGroups/Mfg-Data-Lake-DEV/providers/Microsoft.Storage/storageAccounts/onsemidevmdlstorage"
+		},
 		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
 			"type": "string",
 			"defaultValue": "inbound"
@@ -296,6 +300,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"CZ4_storage_trigger_properties_typeProperties_scope": {
+						"value": "[parameters('CZ4_storage_trigger_properties_typeProperties_scope')]"
 					}
 				}
 			},
