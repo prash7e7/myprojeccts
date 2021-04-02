@@ -18,35 +18,9 @@
 				"typeProperties": {
 					"pythonFile": "dbfs://Users/zbm9dp@onsemi.com/data_factory_image_classification/create_model",
 					"parameters": [
+						"@triggerBody().folderName",
 						""
 					]
-				},
-				"linkedServiceName": {
-					"referenceName": "AzureDatabricks_rado",
-					"type": "LinkedServiceReference"
-				}
-			},
-			{
-				"name": "Copy_results_from_scored_to_outbound",
-				"type": "DatabricksSparkPython",
-				"dependsOn": [
-					{
-						"activity": "Train_new_model",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"pythonFile": "dbfs://Users/zbm9dp@onsemi.com/data_factory_image_classification/batch_inference"
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks_rado",
