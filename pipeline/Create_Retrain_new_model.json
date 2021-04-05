@@ -150,7 +150,7 @@
 					"notebookPath": "/Image_classification/CZ4/create_model"
 				},
 				"linkedServiceName": {
-					"referenceName": "AzureDatabricks_daniel_Image_classification",
+					"referenceName": "AzureDatabricks_gpucluster_daniel",
 					"type": "LinkedServiceReference"
 				}
 			}
