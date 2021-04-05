@@ -2,11 +2,17 @@
 	"name": "Train_trigger_checkevery5mins",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Started",
+		"runtimeState": "Stopped",
 		"pipelines": [
 			{
 				"pipelineReference": {
 					"referenceName": "Create_Retrain_new_model",
+					"type": "PipelineReference"
+				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "Test_existing_model",
 					"type": "PipelineReference"
 				}
 			}
