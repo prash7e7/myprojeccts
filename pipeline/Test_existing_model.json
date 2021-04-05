@@ -63,7 +63,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "train_trigger_inbound",
+						"referenceName": "test_trigger_inbound",
 						"type": "DatasetReference"
 					}
 				],
