@@ -6,7 +6,7 @@
 		"pipelines": [
 			{
 				"pipelineReference": {
-					"referenceName": "Create_new_model",
+					"referenceName": "Create_Retrain_new_model",
 					"type": "PipelineReference"
 				}
 			}
