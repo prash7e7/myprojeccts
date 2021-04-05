@@ -8,7 +8,7 @@
 				"type": "DatabricksSparkPython",
 				"dependsOn": [
 					{
-						"activity": "Move_from_inbound_scored",
+						"activity": "Move_trigger_from_inbound_scored",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -25,7 +25,7 @@
 				"typeProperties": {
 					"pythonFile": "dbfs://Users/zbm9dp@onsemi.com/data_factory_image_classification/create_model",
 					"parameters": [
-						"@triggerBody().folderName",
+						"CZ4",
 						""
 					]
 				},
@@ -55,7 +55,7 @@
 				}
 			},
 			{
-				"name": "Move_from_inbound_scored",
+				"name": "Move_trigger_from_inbound_scored",
 				"type": "Copy",
 				"dependsOn": [
 					{
