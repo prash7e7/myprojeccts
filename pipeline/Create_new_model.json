@@ -8,7 +8,7 @@
 				"type": "DatabricksSparkPython",
 				"dependsOn": [
 					{
-						"activity": "Move_trigger_from_inbound_scored",
+						"activity": "copy_inbound_to_scored",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -47,7 +47,10 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"pythonFile": "dbfs:/Users/zbm9dp@onsemi.com/data_factory_image_classification/check_inbound_train_trigger"
+					"pythonFile": "dbfs:/Users/zbm9dp@onsemi.com/data_factory_image_classification/check_inbound_train_trigger",
+					"parameters": [
+						""
+					]
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks_rado_ml_cluster",
@@ -102,6 +105,58 @@
 				"outputs": [
 					{
 						"referenceName": "scored_train_trigger",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "copy_inbound_to_scored",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Move_trigger_from_inbound_scored",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
+						}
+					},
+					"sink": {
+						"type": "BinarySink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "inbound_data",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "scored_sink_data_for_copy",
 						"type": "DatasetReference"
 					}
 				]

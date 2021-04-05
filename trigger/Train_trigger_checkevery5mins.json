@@ -1,0 +1,24 @@
+{
+	"name": "Train_trigger_checkevery5mins",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Create_new_model",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 5,
+				"startTime": "2021-04-04T16:11:00Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}
