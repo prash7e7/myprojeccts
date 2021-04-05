@@ -1,0 +1,22 @@
+{
+	"name": "scored_train_trigger",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "onsemidevmdlstoragelink",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "CZ4_Image_classification/inbound"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "train_trigger.txt",
+				"folderPath": "scored/site/CZ4/defect/Trigger",
+				"fileSystem": "adls"
+			}
+		}
+	}
+}
