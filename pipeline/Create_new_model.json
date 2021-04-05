@@ -6,7 +6,14 @@
 				"name": "Train_new_model",
 				"description": "Train a new model from scratch on datasets listed in create_trigger.txt file",
 				"type": "DatabricksSparkPython",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Move_from_inbound_scored",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -26,8 +33,69 @@
 					"referenceName": "AzureDatabricks_rado",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "Check_for_inbound_train_trigger",
+				"type": "DatabricksSparkPython",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pythonFile": "dbfs:/Users/zbm9dp@onsemi.com/data_factory_image_classification/check_inbound_train_trigger"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado_ml_cluster",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Move_from_inbound_scored",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Check_for_inbound_train_trigger",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"deleteFilesAfterCompletion": false
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "inbound_data",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
+		"concurrency": 1,
 		"folder": {
 			"name": "CZ4_Defect_classification"
 		},
