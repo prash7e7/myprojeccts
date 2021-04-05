@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks1'"
 		},
+		"AzureDatabricks_daniel_Image_classification_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_daniel_Image_classification'"
+		},
 		"AzureDatabricks_rado_accessToken": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_rado'"
@@ -47,9 +51,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
 		},
-		"AzureDatabricks_daniel_Image_classification_accessToken": {
+		"AzureDatabricks_gpucluster_daniel_accessToken": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_daniel_Image_classification'"
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_gpucluster_daniel'"
 		},
 		"ExtensioAPI_properties_typeProperties_url": {
 			"type": "string",
@@ -1577,7 +1581,7 @@
 							"notebookPath": "/Image_classification/CZ4/create_model"
 						},
 						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_daniel_Image_classification",
+							"referenceName": "AzureDatabricks_gpucluster_daniel",
 							"type": "LinkedServiceReference"
 						}
 					}
@@ -1594,7 +1598,7 @@
 				"[concat(variables('factoryId'), '/datasets/inbound_data')]",
 				"[concat(variables('factoryId'), '/datasets/scored_sink_data_for_copy')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado_ml_cluster')]",
-				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_daniel_Image_classification')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_gpucluster_daniel')]"
 			]
 		},
 		{
@@ -30018,6 +30022,60 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/scored_train_trigger')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CZ4_Image_classification/inbound"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "train_trigger.txt",
+						"folderPath": "scored/site/CZ4/defect/Trigger",
+						"fileSystem": "adls"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/train_trigger_inbound')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CZ4_Image_classification/inbound"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "train_trigger.txt",
+						"folderPath": "inbound/site/CZ4/defect/Trigger",
+						"fileSystem": "adls"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/weh_file_for_delete')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -30099,6 +30157,30 @@
 						"value": "[parameters('AzureDatabricks1_accessToken')]"
 					},
 					"existingClusterId": "0416-124834-wrung770"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDatabricks_daniel_Image_classification')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-5020195826862837.17.azuredatabricks.net",
+					"accessToken": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDatabricks_daniel_Image_classification_accessToken')]"
+					},
+					"newClusterNodeType": "Standard_NC12",
+					"newClusterNumOfWorker": "1",
+					"newClusterSparkEnvVars": {
+						"PYSPARK_PYTHON": "/databricks/python3/bin/python3"
+					},
+					"newClusterVersion": "7.4.x-gpu-ml-scala2.12",
+					"newClusterInitScripts": []
 				}
 			},
 			"dependsOn": []
@@ -30338,6 +30420,36 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/CopyFilesfromMultipleContainers')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Train_trigger_checkevery5mins')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Create_Retrain_new_model",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 5,
+						"startTime": "2021-04-04T16:11:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Create_Retrain_new_model')]"
 			]
 		},
 		{
@@ -30973,91 +31085,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/train_trigger_inbound')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "CZ4_Image_classification/inbound"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "train_trigger.txt",
-						"folderPath": "inbound/site/CZ4/defect/Trigger",
-						"fileSystem": "adls"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/scored_train_trigger')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "CZ4_Image_classification/inbound"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "train_trigger.txt",
-						"folderPath": "scored/site/CZ4/defect/Trigger",
-						"fileSystem": "adls"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Train_trigger_checkevery5mins')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "Create_Retrain_new_model",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 5,
-						"startTime": "2021-04-04T16:11:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/Create_Retrain_new_model')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureDatabricks_daniel_Image_classification')]",
+			"name": "[concat(parameters('factoryName'), '/AzureDatabricks_gpucluster_daniel')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -31067,15 +31095,9 @@
 					"domain": "https://adb-5020195826862837.17.azuredatabricks.net",
 					"accessToken": {
 						"type": "SecureString",
-						"value": "[parameters('AzureDatabricks_daniel_Image_classification_accessToken')]"
+						"value": "[parameters('AzureDatabricks_gpucluster_daniel_accessToken')]"
 					},
-					"newClusterNodeType": "Standard_NC12",
-					"newClusterNumOfWorker": "1",
-					"newClusterSparkEnvVars": {
-						"PYSPARK_PYTHON": "/databricks/python3/bin/python3"
-					},
-					"newClusterVersion": "7.4.x-gpu-ml-scala2.12",
-					"newClusterInitScripts": []
+					"existingClusterId": "0308-220502-widen851"
 				}
 			},
 			"dependsOn": []

@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks1'"
 		},
+		"AzureDatabricks_daniel_Image_classification_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_daniel_Image_classification'"
+		},
 		"AzureDatabricks_rado_accessToken": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_rado'"
@@ -47,9 +51,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
 		},
-		"AzureDatabricks_daniel_Image_classification_accessToken": {
+		"AzureDatabricks_gpucluster_daniel_accessToken": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_daniel_Image_classification'"
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_gpucluster_daniel'"
 		},
 		"ExtensioAPI_properties_typeProperties_url": {
 			"type": "string",
@@ -176,6 +180,9 @@
 					"AzureDatabricks1_accessToken": {
 						"value": "[parameters('AzureDatabricks1_accessToken')]"
 					},
+					"AzureDatabricks_daniel_Image_classification_accessToken": {
+						"value": "[parameters('AzureDatabricks_daniel_Image_classification_accessToken')]"
+					},
 					"AzureDatabricks_rado_accessToken": {
 						"value": "[parameters('AzureDatabricks_rado_accessToken')]"
 					},
@@ -185,8 +192,8 @@
 					"AzureSynapseDLLink_connectionString": {
 						"value": "[parameters('AzureSynapseDLLink_connectionString')]"
 					},
-					"AzureDatabricks_daniel_Image_classification_accessToken": {
-						"value": "[parameters('AzureDatabricks_daniel_Image_classification_accessToken')]"
+					"AzureDatabricks_gpucluster_daniel_accessToken": {
+						"value": "[parameters('AzureDatabricks_gpucluster_daniel_accessToken')]"
 					},
 					"onsemidevmdlstoragelink_properties_typeProperties_url": {
 						"value": "[parameters('onsemidevmdlstoragelink_properties_typeProperties_url')]"

@@ -65,6 +65,29 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/mergedCSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "translated/parquet/site/USR/FDC/Tools/ASH10653",
+						"fileSystem": "adls"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/mergedCSVToParquet')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -129,6 +152,56 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"folderPath": "scored/site/CZ4",
+						"fileSystem": "adls"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/scored_train_trigger')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CZ4_Image_classification/inbound"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "train_trigger.txt",
+						"folderPath": "scored/site/CZ4/defect/Trigger",
+						"fileSystem": "adls"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/train_trigger_inbound')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CZ4_Image_classification/inbound"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "train_trigger.txt",
+						"folderPath": "inbound/site/CZ4/defect/Trigger",
 						"fileSystem": "adls"
 					}
 				}
@@ -290,56 +363,6 @@
 				"connectVia": {
 					"referenceName": "integrationRuntimeMfgDataLake",
 					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/train_trigger_inbound')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "CZ4_Image_classification/inbound"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "train_trigger.txt",
-						"folderPath": "inbound/site/CZ4/defect/Trigger",
-						"fileSystem": "adls"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/scored_train_trigger')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "onsemidevmdlstoragelink",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "CZ4_Image_classification/inbound"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "train_trigger.txt",
-						"folderPath": "scored/site/CZ4/defect/Trigger",
-						"fileSystem": "adls"
-					}
 				}
 			},
 			"dependsOn": []
@@ -1279,7 +1302,7 @@
 							"notebookPath": "/Image_classification/CZ4/create_model"
 						},
 						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_daniel_Image_classification",
+							"referenceName": "AzureDatabricks_gpucluster_daniel",
 							"type": "LinkedServiceReference"
 						}
 					}
@@ -1784,281 +1807,6 @@
 								"parameters": {}
 							}
 						]
-					}
-				],
-				"folder": {
-					"name": "MDW"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/mdw_csv_to_parquet')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ForEach csv file",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "Get List of csv files",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Get List of csv files').output.childItems",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "copy csv to parquet",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": true,
-												"wildcardFolderPath": "inbound/app/middleware-test/",
-												"wildcardFileName": {
-													"value": "@item().name",
-													"type": "Expression"
-												},
-												"enablePartitionDiscovery": false
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
-										},
-										"sink": {
-											"type": "ParquetSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings",
-												"copyBehavior": "MergeFiles",
-												"blockSizeInMB": 50
-											},
-											"formatSettings": {
-												"type": "ParquetWriteSettings"
-											}
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"mappings": [
-												{
-													"source": {
-														"name": "InterfaceName",
-														"type": "String",
-														"physicalType": "String"
-													},
-													"sink": {
-														"name": "InterfaceName",
-														"type": "String",
-														"physicalType": "UTF8"
-													}
-												},
-												{
-													"source": {
-														"name": "InterfaceFolder",
-														"type": "String",
-														"physicalType": "String"
-													},
-													"sink": {
-														"name": "InterfaceFolder",
-														"type": "String",
-														"physicalType": "UTF8"
-													}
-												},
-												{
-													"source": {
-														"name": "DirSource",
-														"type": "String",
-														"physicalType": "String"
-													},
-													"sink": {
-														"name": "DirSource",
-														"type": "String",
-														"physicalType": "UTF8"
-													}
-												},
-												{
-													"source": {
-														"name": "DirDestination",
-														"type": "String",
-														"physicalType": "String"
-													},
-													"sink": {
-														"name": "DirDestination",
-														"type": "String",
-														"physicalType": "UTF8"
-													}
-												},
-												{
-													"source": {
-														"name": "FileName",
-														"type": "String",
-														"physicalType": "String"
-													},
-													"sink": {
-														"name": "FileName",
-														"type": "String",
-														"physicalType": "UTF8"
-													}
-												},
-												{
-													"source": {
-														"name": "FileSize (KB)",
-														"type": "String",
-														"physicalType": "String"
-													},
-													"sink": {
-														"name": "FileSize",
-														"physicalType": "UTF8"
-													}
-												},
-												{
-													"source": {
-														"name": "RunId",
-														"type": "String",
-														"physicalType": "String"
-													},
-													"sink": {
-														"name": "RunId",
-														"type": "String",
-														"physicalType": "UTF8"
-													}
-												},
-												{
-													"source": {
-														"name": "StartTime",
-														"type": "String",
-														"physicalType": "String"
-													},
-													"sink": {
-														"name": "StartTime",
-														"type": "String",
-														"physicalType": "UTF8"
-													}
-												},
-												{
-													"source": {
-														"name": "EndTime",
-														"type": "String",
-														"physicalType": "String"
-													},
-													"sink": {
-														"name": "EndTime",
-														"type": "String",
-														"physicalType": "UTF8"
-													}
-												},
-												{
-													"source": {
-														"name": "ElapsedTime (s)",
-														"type": "String",
-														"physicalType": "String"
-													},
-													"sink": {
-														"name": "ElapsedTime",
-														"physicalType": "UTF8"
-													}
-												},
-												{
-													"source": {
-														"name": "Status",
-														"type": "String",
-														"physicalType": "String"
-													},
-													"sink": {
-														"name": "Status",
-														"type": "String",
-														"physicalType": "UTF8"
-													}
-												},
-												{
-													"source": {
-														"name": "Message",
-														"type": "String",
-														"physicalType": "String"
-													},
-													"sink": {
-														"name": "Message",
-														"type": "String",
-														"physicalType": "UTF8"
-													}
-												}
-											],
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "mdw_logs",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "mdw_logs_parquet",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									]
-								}
-							]
-						}
-					},
-					{
-						"name": "Get List of csv files",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "mdw_logs",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
-							}
-						}
 					}
 				],
 				"folder": {

@@ -65,6 +65,48 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/unzip_copy_csv_delta')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "compressedcsv",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "USRWEH_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						},
+						{
+							"linkedService": {
+								"referenceName": "onsemidevmdlstoragelink",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink4"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DerivedColumn1"
+						}
+					],
+					"script": "source(output(\n\t\tLotId as string,\n\t\tFab as string,\n\t\tFamily as string,\n\t\tTechnology as string,\n\t\tPlan as string,\n\t\tDevice as string,\n\t\tSourceLot as string,\n\t\tLotClass as string,\n\t\twf_num as short,\n\t\twf_id as string,\n\t\tSequence as string,\n\t\tProcStep as string,\n\t\tStage as string,\n\t\torig_slot as short,\n\t\tfinal_slot as short,\n\t\torig_cass as short,\n\t\tfinal_cass as short,\n\t\tzone as string,\n\t\tzone_seat as string,\n\t\tboat_seat as string,\n\t\tsubtool as string,\n\t\tequipment as string,\n\t\ttrackInTime as string,\n\t\ttrackOutTime as string,\n\t\trecipe as string,\n\t\tOperator as string,\n\t\tTooling as string,\n\t\tReworkCount as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tskipLines: 1,\n\twildcardPaths:['inbound/site/USR/WEH/*.gz']) ~> source2\nsource2 derive(trackInTime_formated = toTimestamp(trackInTime, 'yyyyMMddHHmmss'),\n\t\ttrackOutTime_formated = toTimestamp(trackOutTime, 'yyyyMMddHHmmss')) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'adls',\n\tfolderPath: 'translated/delta/site/USR/WEH',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink4"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ASH_test')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1734,6 +1776,36 @@
 				"annotations": [],
 				"lastPublishTime": "2020-11-25T02:04:14Z"
 			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/unzip_copy_csv_delta')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Train_trigger_checkevery5mins')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Create_Retrain_new_model",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 5,
+						"startTime": "2021-04-04T16:11:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
 			"dependsOn": []
 		},
 		{
@@ -1767,34 +1839,6 @@
 						"frequency": "Minute",
 						"interval": 5,
 						"startTime": "2021-01-15T09:47:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Train_trigger_checkevery5mins')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "Create_Retrain_new_model",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 5,
-						"startTime": "2021-04-04T16:11:00Z",
 						"timeZone": "UTC"
 					}
 				}
