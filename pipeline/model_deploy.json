@@ -1,0 +1,51 @@
+{
+	"name": "model_deploy",
+	"properties": {
+		"activities": [
+			{
+				"name": "check_for_inbound_model_trigger_file",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado_ml_cluster",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "move_model_trigger_from_inbound_scored",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "check_for_inbound_model_trigger_file",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"enableStaging": false
+				}
+			}
+		],
+		"folder": {
+			"name": "CZ4_Defect_classification"
+		},
+		"annotations": []
+	}
+}
