@@ -1,0 +1,190 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "Mfg-Data-Lake-DEV-Factory"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Create_Retrain_new_model')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Train_new_model",
+						"description": "Train a new model from scratch on datasets listed in create_trigger.txt file",
+						"type": "DatabricksSparkPython",
+						"dependsOn": [
+							{
+								"activity": "copy_inbound_to_scored",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pythonFile": "dbfs:/Image_classification/create_model.py",
+							"parameters": [
+								"CZ4",
+								""
+							]
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Check_for_inbound_train_trigger",
+						"type": "DatabricksSparkPython",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pythonFile": "dbfs:/Image_classification/check_inbound_train_trigger.py",
+							"parameters": [
+								""
+							]
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado_ml_cluster",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Move_trigger_from_inbound_scored",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Check_for_inbound_train_trigger",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"deleteFilesAfterCompletion": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "train_trigger_inbound",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "scored_train_trigger",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "copy_inbound_to_scored",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Move_trigger_from_inbound_scored",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "inbound_data",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "scored_sink_data_for_copy",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"concurrency": 1,
+				"folder": {
+					"name": "CZ4_Defect_classification"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		}
+	]
+}
