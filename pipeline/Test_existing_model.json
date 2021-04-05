@@ -69,7 +69,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "scored_train_trigger",
+						"referenceName": "scored_test_trigger",
 						"type": "DatasetReference"
 					}
 				]
@@ -144,7 +144,11 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": []
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_gpucluster_daniel",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"concurrency": 1,
