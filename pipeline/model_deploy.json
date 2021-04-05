@@ -14,6 +14,9 @@
 					"secureInput": false
 				},
 				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Image_classification/CZ4/check_inbound_model_trigger"
+				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks_rado_ml_cluster",
 					"type": "LinkedServiceReference"
