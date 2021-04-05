@@ -1425,7 +1425,14 @@
 						"name": "Train_new_model",
 						"description": "Train a new model from scratch on datasets listed in create_trigger.txt file",
 						"type": "DatabricksSparkPython",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "copy_inbound_to_scored",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -1437,7 +1444,7 @@
 						"typeProperties": {
 							"pythonFile": "dbfs://Users/zbm9dp@onsemi.com/data_factory_image_classification/create_model",
 							"parameters": [
-								"@triggerBody().folderName",
+								"CZ4",
 								""
 							]
 						},
@@ -1445,15 +1452,152 @@
 							"referenceName": "AzureDatabricks_rado",
 							"type": "LinkedServiceReference"
 						}
+					},
+					{
+						"name": "Check_for_inbound_train_trigger",
+						"type": "DatabricksSparkPython",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pythonFile": "dbfs:/Users/zbm9dp@onsemi.com/data_factory_image_classification/check_inbound_train_trigger",
+							"parameters": [
+								""
+							]
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado_ml_cluster",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Move_trigger_from_inbound_scored",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Check_for_inbound_train_trigger",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"deleteFilesAfterCompletion": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "train_trigger_inbound",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "scored_train_trigger",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "copy_inbound_to_scored",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Move_trigger_from_inbound_scored",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "inbound_data",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "scored_sink_data_for_copy",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
+				"concurrency": 1,
 				"folder": {
 					"name": "CZ4_Defect_classification"
 				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado_ml_cluster')]",
+				"[concat(variables('factoryId'), '/datasets/train_trigger_inbound')]",
+				"[concat(variables('factoryId'), '/datasets/scored_train_trigger')]",
+				"[concat(variables('factoryId'), '/datasets/inbound_data')]",
+				"[concat(variables('factoryId'), '/datasets/scored_sink_data_for_copy')]"
 			]
 		},
 		{
@@ -30149,7 +30293,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Stopped",
+				"runtimeState": "Started",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -30839,6 +30983,90 @@
 				"[concat(variables('factoryId'), '/datasets/compressedcsv')]",
 				"[concat(variables('factoryId'), '/datasets/USRWEH_Parquet')]",
 				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/train_trigger_inbound')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CZ4_Image_classification/inbound"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "train_trigger.txt",
+						"folderPath": "inbound/site/CZ4/defect/Trigger",
+						"fileSystem": "adls"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/scored_train_trigger')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CZ4_Image_classification/inbound"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "train_trigger.txt",
+						"folderPath": "scored/site/CZ4/defect/Trigger",
+						"fileSystem": "adls"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Train_trigger_checkevery5mins')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Create_new_model",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 5,
+						"startTime": "2021-04-04T16:11:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Create_new_model')]"
 			]
 		}
 	]
