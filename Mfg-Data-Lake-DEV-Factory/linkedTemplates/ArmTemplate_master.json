@@ -47,6 +47,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
 		},
+		"AzureDatabricks_daniel_Image_classification_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_daniel_Image_classification'"
+		},
 		"ExtensioAPI_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1"
@@ -180,6 +184,9 @@
 					},
 					"AzureSynapseDLLink_connectionString": {
 						"value": "[parameters('AzureSynapseDLLink_connectionString')]"
+					},
+					"AzureDatabricks_daniel_Image_classification_accessToken": {
+						"value": "[parameters('AzureDatabricks_daniel_Image_classification_accessToken')]"
 					},
 					"onsemidevmdlstoragelink_properties_typeProperties_url": {
 						"value": "[parameters('onsemidevmdlstoragelink_properties_typeProperties_url')]"
