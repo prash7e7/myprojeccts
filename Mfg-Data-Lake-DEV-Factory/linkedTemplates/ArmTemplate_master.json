@@ -183,6 +183,9 @@
 					},
 					"onsemidevmdlstoragelink_properties_typeProperties_url": {
 						"value": "[parameters('onsemidevmdlstoragelink_properties_typeProperties_url')]"
+					},
+					"CZ4_storage_trigger_properties_typeProperties_scope": {
+						"value": "[parameters('CZ4_storage_trigger_properties_typeProperties_scope')]"
 					}
 				}
 			},
@@ -320,9 +323,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"CZ4_storage_trigger_properties_typeProperties_scope": {
-						"value": "[parameters('CZ4_storage_trigger_properties_typeProperties_scope')]"
 					},
 					"Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowStart": {
 						"value": "[parameters('Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowStart')]"
