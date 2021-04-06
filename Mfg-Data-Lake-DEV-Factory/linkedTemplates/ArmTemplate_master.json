@@ -337,6 +337,26 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'Mfg-Data-Lake-DEV-Factory_ArmTemplate_4')]"
+			]
+		},
+		{
+			"name": "Mfg-Data-Lake-DEV-Factory_ArmTemplate_6",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_6.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowStart": {
 						"value": "[parameters('Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowStart')]"
@@ -380,7 +400,7 @@
 				}
 			},
 			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'Mfg-Data-Lake-DEV-Factory_ArmTemplate_4')]"
+				"[resourceId('Microsoft.Resources/deployments', 'Mfg-Data-Lake-DEV-Factory_ArmTemplate_5')]"
 			]
 		}
 	]

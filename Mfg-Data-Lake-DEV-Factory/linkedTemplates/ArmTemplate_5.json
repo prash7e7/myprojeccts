@@ -6,64 +6,191 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "Mfg-Data-Lake-DEV-Factory"
-		},
-		"Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowStart": {
-			"type": "string",
-			"defaultValue": "@{addminutes(trigger().scheduledTime, -5)}"
-		},
-		"Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowEnd": {
-			"type": "string",
-			"defaultValue": "@trigger().scheduledTime"
-		},
-		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder": {
-			"type": "string",
-			"defaultValue": "inbound"
-		},
-		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory": {
-			"type": "string",
-			"defaultValue": "staged"
-		},
-		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder": {
-			"type": "string",
-			"defaultValue": "adls"
-		},
-		"CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory": {
-			"type": "string",
-			"defaultValue": "inbound"
-		},
-		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder": {
-			"type": "string",
-			"defaultValue": "adls"
-		},
-		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory": {
-			"type": "string",
-			"defaultValue": "inbound/site/USR/WEH"
-		},
-		"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath": {
-			"type": "string",
-			"defaultValue": "inbound/site/USR/WEH/deletelogs"
-		},
-		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder": {
-			"type": "string",
-			"defaultValue": "adls"
-		},
-		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileDirectory": {
-			"type": "string",
-			"defaultValue": "outbound"
-		},
-		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileFolder": {
-			"type": "string",
-			"defaultValue": "outbound"
-		},
-		"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileDirectory": {
-			"type": "string",
-			"defaultValue": "staged"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/YieldCleanFlow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "sandbox"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "YieldCSVCY",
+								"type": "DatasetReference"
+							},
+							"name": "YieldSource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "YieldParquetCY",
+								"type": "DatasetReference"
+							},
+							"name": "YieldSink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SelectExtraction"
+						},
+						{
+							"name": "DerivedColumn1"
+						},
+						{
+							"name": "SelectExtraction2"
+						},
+						{
+							"name": "SelectExtraction3"
+						},
+						{
+							"name": "SelectionExtraction4"
+						},
+						{
+							"name": "FTLotInsertionRank"
+						},
+						{
+							"name": "ECIDTestPassRank"
+						},
+						{
+							"name": "ECIDReworkRank"
+						}
+					],
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['sandbox/user/zbmhpw/source/']) ~> YieldSource\nECIDReworkRank select(mapColumn(\n\t\teach(match(name!=\"lot_key\"&&name!=\"rework_flag\"),\n\t\t\tregexReplace($$,\" \",\"_\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction\nYieldSource derive(ECID = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", \r\n                        concat(right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2), \r\n                            concat(\":\", \r\n                                concat(toString(byName('DLT_X TAG')),\r\n                                    concat(\":\", toString(byName('DLT_Y TAG'))))))))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", \r\n                        concat(right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2), \r\n                            concat(\":\", \r\n                                concat(toString(byName('DLT_X TAG')),\r\n                                    concat(\":\", toString(byName('DLT_Y TAG')))))))))))\r\n),\n\t\tFab_Wafer = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2)))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2))))))\r\n),\n\t\tFab_Lot = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\".\", \"S\"))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\".\", \"S\")))))\r\n),\n\t\tFTLot = case(\r\n    right(toString(byName('Lot')), 2) == \"SS\", left(toString(byName('Lot')), length(toString(byName('Lot'))) - 2),\r\n    right(toString(byName('Lot')), 1) == \"S\", left(toString(byName('Lot')), length(toString(byName('Lot'))) - 1),\r\n    toString(byName('Lot'))\r\n    ),\n\t\tECID_Timestamp = add(toTimestamp(byName('start_time'), 'MM/dd/yyy HH:mm'), seconds(toInteger(byName('serial')))),\n\t\tPassDie = iif(toInteger(byName('STDF_SwBin'))==1, 1, 0)) ~> DerivedColumn1\nSelectExtraction select(mapColumn(\n\t\tECID,\n\t\tFTLot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\teach(match(true()),\n\t\t\treplace($$,\"(\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction2\nSelectExtraction2 select(mapColumn(\n\t\tECID,\n\t\tFTLot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\teach(match(true()),\n\t\t\treplace($$,\")\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction3\nSelectExtraction3 select(mapColumn(\n\t\tECID,\n\t\tFab_Wafer,\n\t\tFab_Lot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\tFTLot,\n\t\tFTLotInsertion,\n\t\tPassDie,\n\t\teach(match(true()),\n\t\t\treplace($$,\"=\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectionExtraction4\nDerivedColumn1 rank(asc(FTLot, true),\n\toutput(FTLotInsertion as long),\n\tdense: true) ~> FTLotInsertionRank\nFTLotInsertionRank window(over(ECID),\n\tasc(ECID_Timestamp, true),\n\tECID_Test_Pass = denseRank()) ~> ECIDTestPassRank\nECIDTestPassRank window(over(ECID),\n\tdesc(ECID_Timestamp, true),\n\tECID_Rework = denseRank()) ~> ECIDReworkRank\nSelectionExtraction4 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'outputParquetFile[n].parquet',\n\tpartitionBy('key',\n\t\t0,\n\t\tECID\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> YieldSink"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/YieldCleanFlow2')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "sandbox"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "YieldCSVCY",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "YieldParquetCY",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Select1"
+						},
+						{
+							"name": "Select2"
+						},
+						{
+							"name": "Select3"
+						}
+					],
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tinferDriftedColumnTypes: true) ~> source1\nsource1 select(mapColumn(\n\t\teach(match(name!=\"lot_key\"&&name!=\"rework_flag\"),\n\t\t\tregexReplace($$,\" \",\"_\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 select(mapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,\"(\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 select(mapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,\")\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select3\nSelect3 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cleanCSV_Delta_Parquet_ASH')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CleanCSV_ASH",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ASH_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"linkedService": {
+								"referenceName": "onsemidevmdlstoragelink",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink2"
+						}
+					],
+					"transformations": [],
+					"script": "source(output(\n\t\t{_c0} as short,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as short,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as integer,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID as string,\n\t\tSubstrate_Information_Cassette_ID as short,\n\t\tSubstrate_Information_Slot_ID as short,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Substrate_Start_Time_local as timestamp,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as timestamp,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as timestamp,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as short,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as timestamp,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as timestamp,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as double,\n\t\tGeneral_Info_Number_of_Data_Points as short,\n\t\tGeneral_Info_Number_of_Scans as boolean,\n\t\tGeneral_Info_Number_of_Bins as short,\n\t\tBins as short,\n\t\tTimePoints as short,\n\t\tTimeRelativesec as double,\n\t\tTimeAbsoluteUTC as double,\n\t\tTimeAbsoluteDate_Time as string,\n\t\tStep as boolean,\n\t\tStatus as boolean,\n\t\tTool_Pres_CM_mTorr_SVID167813621 as short,\n\t\tTool_Pwr_Bot_RF_Fwd_W_SVID167813623 as short,\n\t\tTool_Pwr_Bot_RF_Refl_W_SVID167813625 as short,\n\t\tTool_Pwr_Bot_RF_VPP_V_SVID167813627 as short,\n\t\tTool_Pwr_Bot_RF_VDC_V_SVID167813629 as short,\n\t\tTool_Gas_C4F8_Flow_sccm_SVID167813630 as double,\n\t\tTool_Gas_C5F8_Flow_sccm_SVID167813631 as double,\n\t\tTool_Gas_CO_Flow_sccm_SVID167813632 as double,\n\t\tTool_Gas_Ar_Flow_sccm_SVID167813633 as double,\n\t\tTool_Gas_O2_30_sccm_Flow_sccm_SVID167813634 as double,\n\t\tTool_Gas_CHF3_Flow_sccm_SVID167813635 as double,\n\t\tTool_Gas_CF4_Flow_sccm_SVID167813636 as double,\n\t\tTool_Gas_O2_1_SLM_Flow_sccm_SVID167813637 as double,\n\t\tTool_Temp_Elec_Top_degC_SVID167813638 as double,\n\t\tTool_Temp_Wall_Side_degC_SVID167813639 as double,\n\t\tTool_Temp_Elec_Bot_degC_SVID167813640 as double,\n\t\tTool_He_Pres_Back_1_Torr_SVID167813641 as double,\n\t\tTool_He_Pres_Back_2_Torr_SVID167813642 as double,\n\t\tTool_He_Flow_1_sccm_SVID167813643 as double,\n\t\tTool_He_Flow_2_sccm_SVID167813644 as double,\n\t\tTool_ESC_Voltage_V_SVID167813645 as short,\n\t\tTool_ESC_Current_uA_SVID167813646 as short,\n\t\tTool_Pres_APC_Pos_deg_SVID167813647 as double,\n\t\tTool_Gap_Dist_mm_SVID167813648 as double,\n\t\tTool_Cap_C1_Bot_Pos_SVID167813651 as short,\n\t\tTool_Cap_C2_Bot_Pos_SVID167813652 as short,\n\t\tTool_Imped_R_Top_ohm_SVID167813653 as boolean,\n\t\tTool_Imped_Jx_Top_ohm_SVID167813654 as boolean,\n\t\tTool_Imped_R_Bot_ohm_SVID167813655 as boolean,\n\t\tTool_Imped_Jx_Bot_ohm_SVID167813656 as boolean,\n\t\tTool_Phase_SVID167813658 as short,\n\t\tTool_Magnitude_SVID167813659 as short,\n\t\t{Tool_Rcp_Step_Num_SVID167813666_[Tool's_Step]} as short,\n\t\tTool_Rcp_Step_Time_sec_SVID167813667 as double,\n\t\tTool_Gas_CH2F2_Flow_sccm_SVID167813678 as double,\n\t\tTool_Gas_N2_Flow_sccm_SVID167813679 as double,\n\t\tTool_Gas_He_Flow_sccm_SVID167813680 as short,\n\t\tTool_Gas_H2_Flow_sccm_SVID167813681 as double,\n\t\tTool_Gas_CHF3_2_Flow as double,\n\t\tTool_Bin_Polling_Latency as double,\n\t\tTool_Bin_Data_Age as double,\n\t\tTool_Bin_Data_Age_SECS as double,\n\t\tSig_Bot_RF_On as boolean,\n\t\tSig_Edge_He_Backside_Pressure_RF_On as double,\n\t\tSig_Center_He_Backside_Pressure_RF_On as double,\n\t\tSig_Center_He_Backside_Flow_RF_On as double,\n\t\tSig_Edge_He_Backside_Flow_RF_On as double,\n\t\tSig_Upper_Temperature_RF_On as double,\n\t\tSig_Side_Temperature_RF_On as double,\n\t\tSig_Lower_Temperature_RF_On as double,\n\t\tSig_ElectroStatic_Chuck_Voltage_RF_On as double,\n\t\tSig_ElectroStatic_Chuck_Current_RF_On as double,\n\t\tSig_Chamber_Pressure_RF_On_Steady_State_post_Run as double,\n\t\tSig_CH2F2_Flow_RF_On as double,\n\t\tSig_Vpp_Arc_Counter_1450_W as double,\n\t\tSig_No_arc__0 as double,\n\t\t{Sig_Vpp_Arc_Counter_1200-1450_W} as double,\n\t\tSig_Vpp_Arc_Counter_1450_W_v2_post_Run as double,\n\t\tSig_Reflected_Power_of_Stady_State_post_Run as double,\n\t\tSig_Filter_Acceptable_Data_Age as boolean,\n\t\t{Sig_Pwr_Bot_RF_Fwd_DevAvg_Steady_State_5-60} as double,\n\t\t{Sig_Gas_Ar_Steady_State_5-60_RF_On_post_Run} as double,\n\t\t{Sig_Gas_Ar_DevAvg_Steady_State_5-60_RF_On_post_Run} as double,\n\t\tSig_VPP_TRIM_Step_4_post_Run as double,\n\t\tSig_C4F8_TRIM_Step_4_post_Run as double,\n\t\tSig_VPP_TRIM_Step_2_post_Run as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> source1\nsource1 sink(input(\n\t\t{_c0} as string,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID as string,\n\t\tSubstrate_Information_Cassette_ID as string,\n\t\tSubstrate_Information_Slot_ID as string,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Substrate_Start_Time_local as string,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as string,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as string,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as string,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as string,\n\t\tGeneral_Info_Number_of_Data_Points as string,\n\t\tGeneral_Info_Number_of_Scans as string,\n\t\tGeneral_Info_Number_of_Bins as string,\n\t\tBins as string,\n\t\tTimePoints as string,\n\t\tTimeRelativesec as string,\n\t\tTimeAbsoluteUTC as string,\n\t\tTimeAbsoluteDate_Time as string,\n\t\tStep as string,\n\t\tStatus as string,\n\t\tTool_Pres_CM_mTorr_SVID167813621 as string,\n\t\tTool_Pwr_Bot_RF_Fwd_W_SVID167813623 as string,\n\t\tTool_Pwr_Bot_RF_Refl_W_SVID167813625 as string,\n\t\tTool_Pwr_Bot_RF_VPP_V_SVID167813627 as string,\n\t\tTool_Pwr_Bot_RF_VDC_V_SVID167813629 as string,\n\t\tTool_Gas_C4F8_Flow_sccm_SVID167813630 as string,\n\t\tTool_Gas_C5F8_Flow_sccm_SVID167813631 as string,\n\t\tTool_Gas_CO_Flow_sccm_SVID167813632 as string,\n\t\tTool_Gas_Ar_Flow_sccm_SVID167813633 as string,\n\t\tTool_Gas_O2_30_sccm_Flow_sccm_SVID167813634 as string,\n\t\tTool_Gas_CHF3_Flow_sccm_SVID167813635 as string,\n\t\tTool_Gas_CF4_Flow_sccm_SVID167813636 as string,\n\t\tTool_Gas_O2_1_SLM_Flow_sccm_SVID167813637 as string,\n\t\tTool_Temp_Elec_Top_degC_SVID167813638 as string,\n\t\tTool_Temp_Wall_Side_degC_SVID167813639 as string,\n\t\tTool_Temp_Elec_Bot_degC_SVID167813640 as string,\n\t\tTool_He_Pres_Back_1_Torr_SVID167813641 as string,\n\t\tTool_He_Pres_Back_2_Torr_SVID167813642 as string,\n\t\tTool_He_Flow_1_sccm_SVID167813643 as string,\n\t\tTool_He_Flow_2_sccm_SVID167813644 as string,\n\t\tTool_ESC_Voltage_V_SVID167813645 as string,\n\t\tTool_ESC_Current_uA_SVID167813646 as string,\n\t\tTool_Pres_APC_Pos_deg_SVID167813647 as string,\n\t\tTool_Gap_Dist_mm_SVID167813648 as string,\n\t\tTool_Cap_C1_Bot_Pos_SVID167813651 as string,\n\t\tTool_Cap_C2_Bot_Pos_SVID167813652 as string,\n\t\tTool_Imped_R_Top_ohm_SVID167813653 as string,\n\t\tTool_Imped_Jx_Top_ohm_SVID167813654 as string,\n\t\tTool_Imped_R_Bot_ohm_SVID167813655 as string,\n\t\tTool_Imped_Jx_Bot_ohm_SVID167813656 as string,\n\t\tTool_Phase_SVID167813658 as string,\n\t\tTool_Magnitude_SVID167813659 as string,\n\t\t{Tool_Rcp_Step_Num_SVID167813666_[Tool's_Step]} as string,\n\t\tTool_Rcp_Step_Time_sec_SVID167813667 as string,\n\t\tTool_Gas_CH2F2_Flow_sccm_SVID167813678 as string,\n\t\tTool_Gas_N2_Flow_sccm_SVID167813679 as string,\n\t\tTool_Gas_He_Flow_sccm_SVID167813680 as string,\n\t\tTool_Gas_H2_Flow_sccm_SVID167813681 as string,\n\t\tTool_Gas_CHF3_2_Flow as string,\n\t\tTool_Bin_Polling_Latency as string,\n\t\tTool_Bin_Data_Age as string,\n\t\tTool_Bin_Data_Age_SECS as string,\n\t\tSig_Bot_RF_On as string,\n\t\tSig_Edge_He_Backside_Pressure_RF_On as string,\n\t\tSig_Center_He_Backside_Pressure_RF_On as string,\n\t\tSig_Center_He_Backside_Flow_RF_On as string,\n\t\tSig_Edge_He_Backside_Flow_RF_On as string,\n\t\tSig_Upper_Temperature_RF_On as string,\n\t\tSig_Side_Temperature_RF_On as string,\n\t\tSig_Lower_Temperature_RF_On as string,\n\t\tSig_ElectroStatic_Chuck_Voltage_RF_On as string,\n\t\tSig_ElectroStatic_Chuck_Current_RF_On as string,\n\t\tSig_Chamber_Pressure_RF_On_Steady_State_post_Run as string,\n\t\tSig_CH2F2_Flow_RF_On as string,\n\t\tSig_Vpp_Arc_Counter_1450_W as string,\n\t\tSig_No_arc__0 as string,\n\t\t{Sig_Vpp_Arc_Counter_1200-1450_W} as string,\n\t\tSig_Vpp_Arc_Counter_1450_W_v2_post_Run as string,\n\t\tSig_Reflected_Power_of_Stady_State_post_Run as string,\n\t\tSig_Filter_Acceptable_Data_Age as string,\n\t\t{Sig_Pwr_Bot_RF_Fwd_DevAvg_Steady_State_5-60} as string,\n\t\t{Sig_Gas_Ar_Steady_State_5-60_RF_On_post_Run} as string,\n\t\t{Sig_Gas_Ar_DevAvg_Steady_State_5-60_RF_On_post_Run} as string,\n\t\tSig_VPP_TRIM_Step_4_post_Run as string,\n\t\tSig_C4F8_TRIM_Step_4_post_Run as string,\n\t\tSig_VPP_TRIM_Step_2_post_Run as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace(replace(replace($$,'\\'',''),'[',''),']','') = $$)\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tfileSystem: 'adls',\n\tfolderPath: 'translated/examples/ASH.delta.df',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace(replace(replace($$,'\\'',''),'[',''),']','') = $$)\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cleanCSV_Delta_Parquet_ETH')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CleanCSV_ETH",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ETH_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"linkedService": {
+								"referenceName": "onsemidevmdlstoragelink",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink2"
+						}
+					],
+					"transformations": [],
+					"script": "source(output(\n\t\t{_c0} as short,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as short,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as integer,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID as string,\n\t\tSubstrate_Information_Cassette_ID as short,\n\t\tSubstrate_Information_Slot_ID as short,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Substrate_Start_Time_local as timestamp,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as timestamp,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as timestamp,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as short,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as timestamp,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as timestamp,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as double,\n\t\tGeneral_Info_Number_of_Data_Points as short,\n\t\tGeneral_Info_Number_of_Scans as boolean,\n\t\tGeneral_Info_Number_of_Bins as short,\n\t\tBins as short,\n\t\tTimePoints as short,\n\t\tTimeRelativesec as double,\n\t\tTimeAbsoluteUTC as double,\n\t\tTimeAbsoluteDate_Time as string,\n\t\tStep as boolean,\n\t\tStatus as boolean,\n\t\tTool_Pres_CM_mTorr_SVID167813621 as short,\n\t\tTool_Pwr_Bot_RF_Fwd_W_SVID167813623 as short,\n\t\tTool_Pwr_Bot_RF_Refl_W_SVID167813625 as short,\n\t\tTool_Pwr_Bot_RF_VPP_V_SVID167813627 as short,\n\t\tTool_Pwr_Bot_RF_VDC_V_SVID167813629 as short,\n\t\tTool_Gas_C4F8_Flow_sccm_SVID167813630 as double,\n\t\tTool_Gas_C5F8_Flow_sccm_SVID167813631 as double,\n\t\tTool_Gas_CO_Flow_sccm_SVID167813632 as double,\n\t\tTool_Gas_Ar_Flow_sccm_SVID167813633 as double,\n\t\tTool_Gas_O2_30_sccm_Flow_sccm_SVID167813634 as double,\n\t\tTool_Gas_CHF3_Flow_sccm_SVID167813635 as double,\n\t\tTool_Gas_CF4_Flow_sccm_SVID167813636 as double,\n\t\tTool_Gas_O2_1_SLM_Flow_sccm_SVID167813637 as double,\n\t\tTool_Temp_Elec_Top_degC_SVID167813638 as double,\n\t\tTool_Temp_Wall_Side_degC_SVID167813639 as double,\n\t\tTool_Temp_Elec_Bot_degC_SVID167813640 as double,\n\t\tTool_He_Pres_Back_1_Torr_SVID167813641 as double,\n\t\tTool_He_Pres_Back_2_Torr_SVID167813642 as double,\n\t\tTool_He_Flow_1_sccm_SVID167813643 as double,\n\t\tTool_He_Flow_2_sccm_SVID167813644 as double,\n\t\tTool_ESC_Voltage_V_SVID167813645 as short,\n\t\tTool_ESC_Current_uA_SVID167813646 as short,\n\t\tTool_Pres_APC_Pos_deg_SVID167813647 as double,\n\t\tTool_Gap_Dist_mm_SVID167813648 as double,\n\t\tTool_Cap_C1_Bot_Pos_SVID167813651 as short,\n\t\tTool_Cap_C2_Bot_Pos_SVID167813652 as short,\n\t\tTool_Imped_R_Top_ohm_SVID167813653 as boolean,\n\t\tTool_Imped_Jx_Top_ohm_SVID167813654 as boolean,\n\t\tTool_Imped_R_Bot_ohm_SVID167813655 as boolean,\n\t\tTool_Imped_Jx_Bot_ohm_SVID167813656 as boolean,\n\t\tTool_Phase_SVID167813658 as short,\n\t\tTool_Magnitude_SVID167813659 as short,\n\t\t{Tool_Rcp_Step_Num_SVID167813666_[Tool's_Step]} as short,\n\t\tTool_Rcp_Step_Time_sec_SVID167813667 as double,\n\t\tTool_Gas_CH2F2_Flow_sccm_SVID167813678 as double,\n\t\tTool_Gas_N2_Flow_sccm_SVID167813679 as double,\n\t\tTool_Gas_He_Flow_sccm_SVID167813680 as short,\n\t\tTool_Gas_H2_Flow_sccm_SVID167813681 as double,\n\t\tTool_Gas_CHF3_2_Flow as double,\n\t\tTool_Bin_Polling_Latency as double,\n\t\tTool_Bin_Data_Age as double,\n\t\tTool_Bin_Data_Age_SECS as double,\n\t\tSig_Bot_RF_On as boolean,\n\t\tSig_Edge_He_Backside_Pressure_RF_On as double,\n\t\tSig_Center_He_Backside_Pressure_RF_On as double,\n\t\tSig_Center_He_Backside_Flow_RF_On as double,\n\t\tSig_Edge_He_Backside_Flow_RF_On as double,\n\t\tSig_Upper_Temperature_RF_On as double,\n\t\tSig_Side_Temperature_RF_On as double,\n\t\tSig_Lower_Temperature_RF_On as double,\n\t\tSig_ElectroStatic_Chuck_Voltage_RF_On as double,\n\t\tSig_ElectroStatic_Chuck_Current_RF_On as double,\n\t\tSig_Chamber_Pressure_RF_On_Steady_State_post_Run as double,\n\t\tSig_CH2F2_Flow_RF_On as double,\n\t\tSig_Vpp_Arc_Counter_1450_W as double,\n\t\t{Sig_No_arc_=_0} as double,\n\t\t{Sig_Vpp_Arc_Counter_1200-1450_W} as double,\n\t\tSig_Vpp_Arc_Counter_1450_W_v2_post_Run as double,\n\t\tSig_Reflected_Power_of_Stady_State_post_Run as double,\n\t\tSig_Filter_Acceptable_Data_Age as boolean,\n\t\t{Sig_Pwr_Bot_RF_Fwd_DevAvg_Steady_State_5-60} as double,\n\t\t{Sig_Gas_Ar_Steady_State_5-60_RF_On_post_Run} as double,\n\t\t{Sig_Gas_Ar_DevAvg_Steady_State_5-60_RF_On_post_Run} as double,\n\t\tSig_VPP_TRIM_Step_4_post_Run as double,\n\t\tSig_C4F8_TRIM_Step_4_post_Run as double,\n\t\tSig_VPP_TRIM_Step_2_post_Run as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,'=','') = $$)\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tfileSystem: 'adls',\n\tfolderPath: 'translated/examples/ETH.delta.df',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,'=','') = $$)\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2"
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/unzip_copy_csv_delta')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
@@ -103,6 +230,264 @@
 					],
 					"script": "source(output(\n\t\tLotId as string,\n\t\tFab as string,\n\t\tFamily as string,\n\t\tTechnology as string,\n\t\tPlan as string,\n\t\tDevice as string,\n\t\tSourceLot as string,\n\t\tLotClass as string,\n\t\twf_num as short,\n\t\twf_id as string,\n\t\tSequence as string,\n\t\tProcStep as string,\n\t\tStage as string,\n\t\torig_slot as short,\n\t\tfinal_slot as short,\n\t\torig_cass as short,\n\t\tfinal_cass as short,\n\t\tzone as string,\n\t\tzone_seat as string,\n\t\tboat_seat as string,\n\t\tsubtool as string,\n\t\tequipment as string,\n\t\ttrackInTime as string,\n\t\ttrackOutTime as string,\n\t\trecipe as string,\n\t\tOperator as string,\n\t\tTooling as string,\n\t\tReworkCount as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tskipLines: 1,\n\twildcardPaths:['inbound/site/USR/WEH/*.gz']) ~> source2\nsource2 derive(trackInTime_formated = toTimestamp(trackInTime, 'yyyyMMddHHmmss'),\n\t\ttrackOutTime_formated = toTimestamp(trackOutTime, 'yyyyMMddHHmmss')) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'adls',\n\tfolderPath: 'translated/delta/site/USR/WEH',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink4"
 				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Test_existing_model')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "check_for_inbound_test_trigger",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Image_classification/CZ4/check_inbound_test_trigger"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_gpucluster_daniel",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Move_trigger_from_inbound_scored",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "check_for_inbound_test_trigger",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"deleteFilesAfterCompletion": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "test_trigger_inbound",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "scored_test_trigger",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "copy_inbound_to_scored",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Move_trigger_from_inbound_scored",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "inbound_data",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "scored_sink_data_for_copy",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Test_model",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "copy_inbound_to_scored",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Image_classification/CZ4/Test_model"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_gpucluster_daniel",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"concurrency": 1,
+				"folder": {
+					"name": "CZ4_Defect_classification"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/model_deploy')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "check_for_inbound_model_trigger_file",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Image_classification/CZ4/check_inbound_model_trigger"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado_ml_cluster",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "move_model_trigger_from_inbound_scored",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "check_for_inbound_model_trigger_file",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"deleteFilesAfterCompletion": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "model_trigger_inbound",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "model_trigger_scored",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "CZ4_Defect_classification"
+				},
+				"annotations": []
 			},
 			"dependsOn": []
 		},
@@ -150,7 +535,9 @@
 				"annotations": [],
 				"lastPublishTime": "2020-08-18T08:34:14Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ASH')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/CopyFiles_from_adls_toprem')]",
@@ -637,7 +1024,9 @@
 				"annotations": [],
 				"lastPublishTime": "2020-09-01T09:46:40Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ASH')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Databricks_ETL_ETH')]",
@@ -710,7 +1099,9 @@
 				"annotations": [],
 				"lastPublishTime": "2020-08-17T20:44:23Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ETH')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ETH_test')]",
@@ -756,7 +1147,9 @@
 				"annotations": [],
 				"lastPublishTime": "2020-08-18T08:34:14Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ETH')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/MergeCSVToParquet')]",
@@ -1135,7 +1528,9 @@
 				"annotations": [],
 				"lastPublishTime": "2020-11-25T02:04:14Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/YieldCleanFlow')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/YieldPipelineSingleFile')]",
@@ -1179,7 +1574,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/YieldCleanFlow')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/copyfromDBtoParquet')]",
@@ -1642,312 +2039,6 @@
 				"lastPublishTime": "2020-11-09T18:54:10Z"
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/unzip_plus_transformcsv')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "csv_delta_parquet",
-						"description": "csv_delta_parquet",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "Delete Empty File",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "unzip_copy_csv_delta",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source2": {},
-									"sink2": {},
-									"sink4": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "DeleteFiles",
-						"description": "Connect to your storage account to save the log file.",
-						"type": "Delete",
-						"dependsOn": [
-							{
-								"activity": "csv_delta_parquet",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "BinaryDatasetForDeleteActivity",
-								"type": "DatasetReference",
-								"parameters": {
-									"FolderPath": {
-										"value": "@pipeline().parameters.SourceFolder",
-										"type": "Expression"
-									},
-									"Directory": {
-										"value": "@pipeline().parameters.SourceDirectory",
-										"type": "Expression"
-									}
-								}
-							},
-							"logStorageSettings": {
-								"linkedServiceName": {
-									"referenceName": "onsemidevmdlstoragelink",
-									"type": "LinkedServiceReference"
-								},
-								"path": {
-									"value": "@pipeline().parameters.LoggingPath",
-									"type": "Expression"
-								}
-							},
-							"enableLogging": true,
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true,
-								"wildcardFileName": "*.gz"
-							}
-						}
-					},
-					{
-						"name": "Delete Empty File",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "Delete Empty Files",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					}
-				],
-				"parameters": {
-					"SourceFolder": {
-						"type": "string",
-						"defaultValue": "adls"
-					},
-					"SourceDirectory": {
-						"type": "string",
-						"defaultValue": "inbound/site/USR/WEH"
-					},
-					"LoggingPath": {
-						"type": "string",
-						"defaultValue": "inbound/site/USR/WEH/deletelogs"
-					}
-				},
-				"folder": {
-					"name": "USR_WEH"
-				},
-				"annotations": [],
-				"lastPublishTime": "2020-11-25T02:04:14Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/unzip_copy_csv_delta')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Train_trigger_checkevery5mins')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "Create_Retrain_new_model",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 5,
-						"startTime": "2021-04-04T16:11:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Trigger_ebs')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "CopyPipeline_exensio_mdw",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"windowStart": {
-								"type": "Expression",
-								"value": "[parameters('Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowStart')]"
-							},
-							"windowEnd": {
-								"type": "Expression",
-								"value": "[parameters('Trigger_ebs_properties_CopyPipeline_exensio_mdw_parameters_windowEnd')]"
-							}
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 5,
-						"startTime": "2021-01-15T09:47:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CopyEvery5Mins')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "CopyFilesfromMultipleContainers",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"SourceFileFolder": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileFolder')]",
-							"SourceFileDirectory": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_SourceFileDirectory')]",
-							"DestinationFileFolder": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileFolder')]",
-							"DestinationFileDirectory": "[parameters('CopyEvery5Mins_properties_CopyFilesfromMultipleContainers_parameters_DestinationFileDirectory')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 5,
-						"startTime": "2020-05-12T21:36:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/CopyFilesfromMultipleContainers')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/USR_WEH_Trigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "unzip_plus_transformcsv",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"SourceFolder": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceFolder')]",
-							"SourceDirectory": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_SourceDirectory')]",
-							"LoggingPath": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Hour",
-						"interval": 4,
-						"startTime": "2020-11-10T04:00:00",
-						"timeZone": "Mountain Standard Time"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/unzip_plus_transformcsv')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/trigger_copyadlstoonprem')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "CopyFiles_from_adls_toprem",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"SourceFileFolder": "[parameters('trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder')]",
-							"SourceFileDirectory": "[parameters('trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileDirectory')]",
-							"DestinationFileFolder": "[parameters('trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileFolder')]",
-							"DestinationFileDirectory": "[parameters('trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_DestinationFileDirectory')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 15,
-						"startTime": "2020-07-16T15:59:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/CopyFiles_from_adls_toprem')]"
-			]
 		}
 	]
 }

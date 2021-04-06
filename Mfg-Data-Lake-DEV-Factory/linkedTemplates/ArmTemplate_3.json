@@ -368,6 +368,106 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/test_trigger_inbound')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CZ4_Image_classification/inbound"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "test_trigger.txt",
+						"folderPath": "inbound/site/CZ4/defect/Trigger",
+						"fileSystem": "adls"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/scored_test_trigger')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CZ4_Image_classification/inbound"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "test_trigger.txt",
+						"folderPath": "scored/site/CZ4/defect/Trigger",
+						"fileSystem": "adls"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/model_trigger_inbound')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CZ4_Image_classification/inbound"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "model_trigger.txt",
+						"folderPath": "inbound/site/CZ4/defect/Trigger",
+						"fileSystem": "adls"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/model_trigger_scored')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CZ4_Image_classification/scored"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "model_trigger.txt",
+						"folderPath": "scored/site/CZ4/defect/Trigger",
+						"fileSystem": "adls"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Bulk Copy from Files to Database')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1143,678 +1243,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/scored_sink_data_for_copy')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Create_Retrain_new_model')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Move_trigger_from_inbound_scored",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Check_for_inbound_train_trigger",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "BinarySource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"deleteFilesAfterCompletion": true
-								},
-								"formatSettings": {
-									"type": "BinaryReadSettings"
-								}
-							},
-							"sink": {
-								"type": "BinarySink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "train_trigger_inbound",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "scored_train_trigger",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "copy_inbound_to_scored",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Move_trigger_from_inbound_scored",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "BinarySource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true
-								},
-								"formatSettings": {
-									"type": "BinaryReadSettings"
-								}
-							},
-							"sink": {
-								"type": "BinarySink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings",
-									"copyBehavior": "PreserveHierarchy"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "inbound_data",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "scored_sink_data_for_copy",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "Check_for_inbound_train_trigger",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Image_classification/CZ4/check_inbound_train_trigger"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado_ml_cluster",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Train_new_model",
-						"description": "Train a new model from scratch on datasets listed in train_trigger.txt file",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "copy_inbound_to_scored",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Image_classification/CZ4/create_model"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_gpucluster_daniel",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"concurrency": 1,
-				"folder": {
-					"name": "CZ4_Defect_classification"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/train_trigger_inbound')]",
-				"[concat(variables('factoryId'), '/datasets/scored_train_trigger')]",
-				"[concat(variables('factoryId'), '/datasets/scored_sink_data_for_copy')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Delete Empty Files')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Get folder metadata",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "weh_filestore_for_delete",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true
-							},
-							"formatSettings": {
-								"type": "BinaryReadSettings"
-							}
-						}
-					},
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "Get folder metadata",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Get folder metadata').output.childItems",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "Get File Metadata",
-									"type": "GetMetadata",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"dataset": {
-											"referenceName": "weh_file_for_delete",
-											"type": "DatasetReference",
-											"parameters": {
-												"FileName": "@item().name"
-											}
-										},
-										"fieldList": [
-											"itemName",
-											"size"
-										],
-										"storeSettings": {
-											"type": "AzureBlobFSReadSettings",
-											"recursive": true
-										},
-										"formatSettings": {
-											"type": "BinaryReadSettings"
-										}
-									}
-								},
-								{
-									"name": "if_0_filesize",
-									"type": "IfCondition",
-									"dependsOn": [
-										{
-											"activity": "Get File Metadata",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"userProperties": [],
-									"typeProperties": {
-										"expression": {
-											"value": "@equals(activity('Get File Metadata').output.size, 0)",
-											"type": "Expression"
-										},
-										"ifTrueActivities": [
-											{
-												"name": "Delete1",
-												"type": "Delete",
-												"dependsOn": [],
-												"policy": {
-													"timeout": "7.00:00:00",
-													"retry": 0,
-													"retryIntervalInSeconds": 30,
-													"secureOutput": false,
-													"secureInput": false
-												},
-												"userProperties": [],
-												"typeProperties": {
-													"dataset": {
-														"referenceName": "WEH_Binary",
-														"type": "DatasetReference",
-														"parameters": {
-															"FileName": {
-																"value": "@activity('Get File Metadata').output.ItemName",
-																"type": "Expression"
-															}
-														}
-													},
-													"enableLogging": false,
-													"storeSettings": {
-														"type": "AzureBlobFSReadSettings",
-														"recursive": true
-													}
-												}
-											}
-										]
-									}
-								}
-							]
-						}
-					}
-				],
-				"folder": {
-					"name": "USR_WEH"
-				},
-				"annotations": [],
-				"lastPublishTime": "2020-11-25T02:04:13Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/weh_filestore_for_delete')]",
-				"[concat(variables('factoryId'), '/datasets/weh_file_for_delete')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Extensio Web Test')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Login",
-						"type": "WebActivity",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1/session/login",
-							"connectVia": {
-								"referenceName": "integrationRuntimeMfgDataLake",
-								"type": "IntegrationRuntimeReference"
-							},
-							"method": "POST",
-							"headers": {},
-							"body": {
-								"username": "exn_dba",
-								"password": "iNabd667",
-								"dbname": "exnindb",
-								"dbschema": "META_YMS"
-							},
-							"linkedServices": [
-								{
-									"referenceName": "ExtensioAPI",
-									"type": "LinkedServiceReference"
-								}
-							]
-						}
-					},
-					{
-						"name": "getToken",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Login",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "token",
-							"value": {
-								"value": "@activity('Login').output.token",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "key-Program-5",
-						"type": "WebActivity",
-						"dependsOn": [
-							{
-								"activity": "getToken",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1/key/programs",
-							"connectVia": {
-								"referenceName": "integrationRuntimeMfgDataLake",
-								"type": "IntegrationRuntimeReference"
-							},
-							"method": "POST",
-							"headers": {
-								"Authorization": {
-									"value": "@concat('Bearer ', string(variables('token')))",
-									"type": "Expression"
-								}
-							},
-							"body": {
-								"pgc_keys": [
-									5
-								]
-							}
-						}
-					}
-				],
-				"variables": {
-					"token": {
-						"type": "String",
-						"defaultValue": "'default'"
-					}
-				},
-				"folder": {
-					"name": "Extensio Web"
-				},
-				"annotations": [],
-				"lastPublishTime": "2020-10-19T12:27:14Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ExtensioAPI')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/copy_exensio_mdw')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "copy_exensio_mdw",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "adls/inbound/app/middleware-test/"
-							},
-							{
-								"name": "Destination",
-								"value": "translated/parquet/app/middleware-prod/"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"modifiedDatetimeStart": "2021-01-14T00:00:00.000Z",
-									"wildcardFileName": "*",
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings",
-									"copyBehavior": "MergeFiles"
-								},
-								"formatSettings": {
-									"type": "ParquetWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "InterfaceName",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "InterfaceName",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "InterfaceFolder",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "InterfaceFolder",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "DirSource",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "DirSource",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "DirDestination",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "DirDestination",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "FileName",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "FileName",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "FileSize (KB)",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "FileSize",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "RunId",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "RunId",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "StartTime",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "StartTime",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "EndTime",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "EndTime",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "ElapsedTime (s)",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "ElapsedTime",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "Status",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Status",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "Message",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Message",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "mdw_logs",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "mdw_logs_parquet",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "MDW"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
 		}
 	]
 }
