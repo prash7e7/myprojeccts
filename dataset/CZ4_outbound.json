@@ -1,0 +1,21 @@
+{
+	"name": "CZ4_outbound",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "onsemidevmdlstoragelink",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "CZ4_Image_classification/outbound"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "outbound/site/CZ4",
+				"fileSystem": "adls"
+			}
+		}
+	}
+}
