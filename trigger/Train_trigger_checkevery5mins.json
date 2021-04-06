@@ -2,7 +2,7 @@
 	"name": "Train_trigger_checkevery5mins",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Stopped",
+		"runtimeState": "Started",
 		"pipelines": [
 			{
 				"pipelineReference": {
