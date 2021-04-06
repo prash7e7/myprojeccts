@@ -73,6 +73,33 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "send_model_from_scored_to_outbound_deploy",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "move_model_trigger_from_inbound_scored",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Image_classification/CZ4/deploy_model"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado_ml_cluster",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"folder": {
