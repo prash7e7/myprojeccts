@@ -31140,7 +31140,7 @@
 							"notebookPath": "/Image_classification/CZ4/check_inbound_test_trigger"
 						},
 						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_gpucluster_daniel",
+							"referenceName": "AzureDatabricks_rado_ml_cluster",
 							"type": "LinkedServiceReference"
 						}
 					},
@@ -31275,7 +31275,7 @@
 							"notebookPath": "/Image_classification/CZ4/Test_model"
 						},
 						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_gpucluster_daniel",
+							"referenceName": "AzureDatabricks_rado_ml_cluster",
 							"type": "LinkedServiceReference"
 						}
 					}
@@ -31287,7 +31287,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_gpucluster_daniel')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado_ml_cluster')]",
 				"[concat(variables('factoryId'), '/datasets/test_trigger_inbound')]",
 				"[concat(variables('factoryId'), '/datasets/scored_test_trigger')]",
 				"[concat(variables('factoryId'), '/datasets/inbound_data')]",
@@ -31427,6 +31427,33 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "send_model_from_scored_to_outbound_deploy",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "move_model_trigger_from_inbound_scored",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Image_classification/CZ4/deploy_model"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado_ml_cluster",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"folder": {
@@ -31486,6 +31513,58 @@
 						"type": "AzureBlobFSLocation",
 						"fileName": "model_trigger.txt",
 						"folderPath": "scored/site/CZ4/defect/Trigger",
+						"fileSystem": "adls"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Results_scored')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CZ4_Image_classification/scored"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "scored/site/CZ4/defect/models/testPrd_step1/Results",
+						"fileSystem": "adls"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CZ4_outbound')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CZ4_Image_classification/outbound"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "outbound/site/CZ4",
 						"fileSystem": "adls"
 					}
 				}
