@@ -31275,7 +31275,7 @@
 							"notebookPath": "/Image_classification/CZ4/Test_model"
 						},
 						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado_ml_cluster",
+							"referenceName": "AzureDatabricks_gpucluster_daniel",
 							"type": "LinkedServiceReference"
 						}
 					}
@@ -31291,7 +31291,8 @@
 				"[concat(variables('factoryId'), '/datasets/test_trigger_inbound')]",
 				"[concat(variables('factoryId'), '/datasets/scored_test_trigger')]",
 				"[concat(variables('factoryId'), '/datasets/inbound_data')]",
-				"[concat(variables('factoryId'), '/datasets/scored_sink_data_for_copy')]"
+				"[concat(variables('factoryId'), '/datasets/scored_sink_data_for_copy')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_gpucluster_daniel')]"
 			]
 		},
 		{

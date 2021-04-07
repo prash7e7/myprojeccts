@@ -463,7 +463,7 @@
 							"notebookPath": "/Image_classification/CZ4/Test_model"
 						},
 						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado_ml_cluster",
+							"referenceName": "AzureDatabricks_gpucluster_daniel",
 							"type": "LinkedServiceReference"
 						}
 					}
