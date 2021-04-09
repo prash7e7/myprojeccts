@@ -55,6 +55,18 @@
 					"referenceName": "AzureDatabricks_rado",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Create_Retrain_new_model",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
 			}
 		],
 		"folder": {
