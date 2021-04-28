@@ -22,7 +22,7 @@
 				}
 			],
 			"transformations": [],
-			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> MdwLogsCsv\nMdwLogsCsv sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tsaveOrder: 1) ~> MdwLogsParquetConsolidated"
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['*']) ~> MdwLogsCsv\nMdwLogsCsv sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tsaveOrder: 1) ~> MdwLogsParquetConsolidated"
 		}
 	}
 }
