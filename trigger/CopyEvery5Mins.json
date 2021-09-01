@@ -15,6 +15,12 @@
 					"DestinationFileFolder": "adls",
 					"DestinationFileDirectory": "inbound"
 				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "phxcolo_copyfiles_onprem_to_adls",
+					"type": "PipelineReference"
+				}
 			}
 		],
 		"type": "ScheduleTrigger",
