@@ -1,0 +1,286 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "Mfg-Data-Lake-DEV-Factory"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Batch_inference_store_results_filter_results')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "batch_inference",
+						"description": "takes best_model.pt and images from inbound batch set and outputs csv/parquet to scored/results. ",
+						"type": "DatabricksSparkPython",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pythonFile": "dbfs://Users/zbm9dp@onsemi.com/data_factory_image_classification/batch_inference",
+							"parameters": [
+								"CZ4"
+							]
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "filter_results",
+						"type": "DatabricksSparkPython",
+						"dependsOn": [
+							{
+								"activity": "batch_inference",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pythonFile": "dbfs:///Users/zbm9dp@onsemi.com/data_factory_image_classification/filter_csv",
+							"parameters": [
+								"CZ4"
+							]
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Execute Pipeline1",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Create_Retrain_new_model",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true
+						}
+					}
+				],
+				"folder": {
+					"name": "CZ4_Defect_classification"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MergePipeline_mdw')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "MDW_Csv_Parquet",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "MDW_Consolidate_Parquet",
+								"type": "DataFlowReference"
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"folder": {
+					"name": "MDW"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/MDW_Consolidate_Parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestToParquet')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Notebook1",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/daniela.bordencea@onsemi.com/CSV2Parquet"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado_ml_cluster",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"folder": {
+					"name": "Test"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/mdw_logs_parquet_consolidated')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "translated/parquet/app/middleware-prod-consolidated",
+						"fileSystem": "adls"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyEvery5Mins')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "CopyFilesfromMultipleContainers",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"SourceFileFolder": "inbound",
+							"SourceFileDirectory": "staged",
+							"DestinationFileFolder": "adls",
+							"DestinationFileDirectory": "inbound"
+						}
+					},
+					{
+						"pipelineReference": {
+							"referenceName": "phxcolo_copyfiles_onprem_to_adls",
+							"type": "PipelineReference"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 5,
+						"startTime": "2020-05-12T21:36:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger_EveryDay_translation')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2020-10-20T12:28:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MDW_Consolidate_Parquet')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "mdw_logs_parquet",
+								"type": "DatasetReference"
+							},
+							"name": "MdwLogsCsv"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "mdw_logs_parquet_consolidated",
+								"type": "DatasetReference"
+							},
+							"name": "MdwLogsParquetConsolidated"
+						}
+					],
+					"transformations": [],
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['translated/parquet/app/middleware-prod/*.parquet']) ~> MdwLogsCsv\nMdwLogsCsv sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tsaveOrder: 1) ~> MdwLogsParquetConsolidated"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/mdw_logs_parquet_consolidated')]"
+			]
+		}
+	]
+}

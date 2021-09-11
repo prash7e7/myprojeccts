@@ -14,6 +14,9 @@
 		"AzureDatabricks_daniel_Image_classification_accessToken": {
 			"value": ""
 		},
+		"AzureDatabricks_gpucluster_daniel_accessToken": {
+			"value": ""
+		},
 		"AzureDatabricks_rado_accessToken": {
 			"value": ""
 		},
@@ -36,9 +39,6 @@
 			"value": ""
 		},
 		"fabtimesqlserver_connectionString": {
-			"value": ""
-		},
-		"AzureDatabricks_gpucluster_daniel_accessToken": {
 			"value": ""
 		},
 		"ExtensioAPI_properties_typeProperties_url": {

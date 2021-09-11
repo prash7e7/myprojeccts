@@ -19,6 +19,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_daniel_Image_classification'"
 		},
+		"AzureDatabricks_gpucluster_daniel_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_gpucluster_daniel'"
+		},
 		"AzureDatabricks_rado_accessToken": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_rado'"
@@ -50,10 +54,6 @@
 		"fabtimesqlserver_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
-		},
-		"AzureDatabricks_gpucluster_daniel_accessToken": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_gpucluster_daniel'"
 		},
 		"ExtensioAPI_properties_typeProperties_url": {
 			"type": "string",
@@ -183,6 +183,9 @@
 					"AzureDatabricks_daniel_Image_classification_accessToken": {
 						"value": "[parameters('AzureDatabricks_daniel_Image_classification_accessToken')]"
 					},
+					"AzureDatabricks_gpucluster_daniel_accessToken": {
+						"value": "[parameters('AzureDatabricks_gpucluster_daniel_accessToken')]"
+					},
 					"AzureDatabricks_rado_accessToken": {
 						"value": "[parameters('AzureDatabricks_rado_accessToken')]"
 					},
@@ -191,9 +194,6 @@
 					},
 					"AzureSynapseDLLink_connectionString": {
 						"value": "[parameters('AzureSynapseDLLink_connectionString')]"
-					},
-					"AzureDatabricks_gpucluster_daniel_accessToken": {
-						"value": "[parameters('AzureDatabricks_gpucluster_daniel_accessToken')]"
 					},
 					"onsemidevmdlstoragelink_properties_typeProperties_url": {
 						"value": "[parameters('onsemidevmdlstoragelink_properties_typeProperties_url')]"
@@ -271,9 +271,6 @@
 					"ONPREMVM_password": {
 						"value": "[parameters('ONPREMVM_password')]"
 					},
-					"fabtimesqlserver_connectionString": {
-						"value": "[parameters('fabtimesqlserver_connectionString')]"
-					},
 					"ExtensioAPI_properties_typeProperties_url": {
 						"value": "[parameters('ExtensioAPI_properties_typeProperties_url')]"
 					},
@@ -317,6 +314,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"fabtimesqlserver_connectionString": {
+						"value": "[parameters('fabtimesqlserver_connectionString')]"
 					}
 				}
 			},

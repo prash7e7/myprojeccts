@@ -19,6 +19,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_daniel_Image_classification'"
 		},
+		"AzureDatabricks_gpucluster_daniel_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_gpucluster_daniel'"
+		},
 		"AzureDatabricks_rado_accessToken": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_rado'"
@@ -30,10 +34,6 @@
 		"AzureSynapseDLLink_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSynapseDLLink'"
-		},
-		"AzureDatabricks_gpucluster_daniel_accessToken": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks_gpucluster_daniel'"
 		},
 		"onsemidevmdlstoragelink_properties_typeProperties_url": {
 			"type": "string",
@@ -99,6 +99,24 @@
 					},
 					"newClusterVersion": "7.4.x-gpu-ml-scala2.12",
 					"newClusterInitScripts": []
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDatabricks_gpucluster_daniel')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-5020195826862837.17.azuredatabricks.net",
+					"accessToken": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDatabricks_gpucluster_daniel_accessToken')]"
+					},
+					"existingClusterId": "0308-220502-widen851"
 				}
 			},
 			"dependsOn": []
@@ -188,6 +206,26 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/trigger_EveryDay_translation')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2020-10-20T12:28:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/IntegrationRuntimeMDLPHXCOLO')]",
 			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
@@ -217,94 +255,6 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureDatabricks_gpucluster_daniel')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureDatabricks",
-				"typeProperties": {
-					"domain": "https://adb-5020195826862837.17.azuredatabricks.net",
-					"accessToken": {
-						"type": "SecureString",
-						"value": "[parameters('AzureDatabricks_gpucluster_daniel_accessToken')]"
-					},
-					"existingClusterId": "0308-220502-widen851"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Batch_inference_store_results_filter_results')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "batch_inference",
-						"description": "takes best_model.pt and images from inbound batch set and outputs csv/parquet to scored/results. ",
-						"type": "DatabricksSparkPython",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pythonFile": "dbfs://Users/zbm9dp@onsemi.com/data_factory_image_classification/batch_inference",
-							"parameters": [
-								"CZ4"
-							]
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "filter_results",
-						"type": "DatabricksSparkPython",
-						"dependsOn": [
-							{
-								"activity": "batch_inference",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pythonFile": "dbfs:///Users/zbm9dp@onsemi.com/data_factory_image_classification/filter_csv",
-							"parameters": [
-								"CZ4"
-							]
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"folder": {
-					"name": "CZ4_Defect_classification"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado')]"
-			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Databricks_FDC_translation')]",
@@ -707,6 +657,42 @@
 				},
 				"annotations": [],
 				"lastPublishTime": "2020-09-30T16:19:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado_ml_cluster')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestToParquet')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Notebook1",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/daniela.bordencea@onsemi.com/CSV2Parquet"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado_ml_cluster",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"folder": {
+					"name": "Test"
+				},
+				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado_ml_cluster')]"
@@ -1351,36 +1337,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDWSinkDataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your destination data store.",
-				"linkedServiceName": {
-					"referenceName": "AzureSynapseDLLink",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"sinkTableName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "AzureSqlDWTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": {
-						"value": "@dataset().sinkTableName",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSynapseDLLink')]"
 			]
 		}
 	]
