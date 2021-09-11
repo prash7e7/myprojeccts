@@ -1,0 +1,44 @@
+{
+	"name": "TestToParquet",
+	"properties": {
+		"activities": [
+			{
+				"name": "Notebook1",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/daniela.bordencea@onsemi.com/CSV2Parquet"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado_ml_cluster",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Python1",
+				"type": "DatabricksSparkPython",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": []
+			}
+		],
+		"folder": {
+			"name": "Test"
+		},
+		"annotations": []
+	}
+}
