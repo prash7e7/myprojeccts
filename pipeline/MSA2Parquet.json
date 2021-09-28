@@ -1,0 +1,31 @@
+{
+	"name": "MSA2Parquet",
+	"properties": {
+		"activities": [
+			{
+				"name": "MSA2Parquet",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/daniela.bordencea@onsemi.com/MSA2Parquet"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks_rado_ml_cluster",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "ONSC_PIM"
+		},
+		"annotations": []
+	}
+}
