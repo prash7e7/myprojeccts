@@ -6,10 +6,10 @@
 		"type": "Oracle",
 		"typeProperties": {
 			"connectionString": "host=tesesyn-db.onsemi.com;port=1532;sid=TESESYN;user id=newton",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJhMTQ1ZjkxNC0xZDU0LTQzNjUtYWMwNy1kMWQxYzU4MjViNDIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIxMTU5ZDliMy1lNzUxLTQ3NjQtODcxMi0yOGZjZmZlNTJhNmQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
-			"referenceName": "IntegrationRuntimeMDLPHXCOLO",
+			"referenceName": "integrationRuntimeMfgDataLake",
 			"type": "IntegrationRuntimeReference"
 		}
 	}
