@@ -1,0 +1,20 @@
+{
+	"name": "Cz4Parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "onsemidevmdlstoragelink",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "inbound/user/fg69gy",
+				"fileSystem": "adls"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
