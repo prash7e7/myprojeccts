@@ -5,8 +5,8 @@
 		"annotations": [],
 		"type": "Oracle",
 		"typeProperties": {
-			"connectionString": "host=dp01qa-db.onsemi.com;port=1750;sid=DP01QA;user id=dpwr1",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIzYTc2MjVhZS1hYmY1LTQ1MGYtYWVlMC1iZWE3NWIwZWY1NjQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"connectionString": "host=dp01qa-db.onsemi.com;port=1750;sid=DP01QA;user id=dpadmin",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJiMTcxMGI0Mi0yYmY3LTRiYmEtOWY3Ny0yYmUxMzdhY2FjODQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "IntegrationRuntimeMDLPHXCOLO",
