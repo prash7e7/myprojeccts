@@ -51,6 +51,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ONPREMVM'"
 		},
+		"Oracle1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Oracle1'"
+		},
+		"Oracle2_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Oracle2'"
+		},
 		"fabtimesqlserver_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
@@ -190,6 +198,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "sandbox"
 				},
@@ -275,6 +287,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "CZ4_Defect_classification"
 				},
@@ -764,6 +780,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"parameters": {
 					"SourceContainer": {
 						"type": "string",
@@ -924,6 +944,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"parameters": {
 					"SourceFileFolder": {
 						"type": "string",
@@ -1124,6 +1148,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"parameters": {
 					"SourceFileFolder": {
 						"type": "string",
@@ -1356,6 +1384,10 @@
 						]
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"parameters": {
 					"windowStart": {
 						"type": "String"
@@ -1372,6 +1404,80 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/mdw_logs')]",
 				"[concat(variables('factoryId'), '/datasets/mdw_logs_parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyToParquetFromCz4Dataview')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyToParquetFromCz4Dataview",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "OracleSource",
+								"oracleReaderQuery": "select * from metadata where lot = 'RG14495_1K'",
+								"partitionOption": "None",
+								"queryTimeout": "02:00:00"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "CZ4_Dataview",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Cz4Parquet",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Test"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CZ4_Dataview')]",
+				"[concat(variables('factoryId'), '/datasets/Cz4Parquet')]"
 			]
 		},
 		{
@@ -1428,6 +1534,10 @@
 						]
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "CZ4_Defect_classification"
 				},
@@ -1602,6 +1712,10 @@
 					}
 				],
 				"concurrency": 1,
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "CZ4_Defect_classification"
 				},
@@ -1735,6 +1849,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "Databricks_ETL"
 				},
@@ -1812,6 +1930,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "Databricks_ETL"
 				},
@@ -1890,6 +2012,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "Databricks_ETL"
 				},
@@ -2042,6 +2168,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "USR_WEH"
 				},
@@ -2092,6 +2222,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "sandbox"
 				},
@@ -2202,6 +2336,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"variables": {
 					"token": {
 						"type": "String",
@@ -2538,11 +2676,55 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "FDC_Pipeline"
 				},
 				"annotations": [],
 				"lastPublishTime": "2020-09-30T16:19:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado_ml_cluster')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MSA2Parquet')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "MSA2Parquet",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/daniela.bordencea@onsemi.com/MSA2Parquet"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks_rado_ml_cluster",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "ONSC_PIM"
+				},
+				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks_rado_ml_cluster')]"
@@ -2585,6 +2767,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "sandbox"
 				},
@@ -2632,6 +2818,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "MDW"
 				},
@@ -2852,6 +3042,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"parameters": {
 					"SourceFileFolder": {
 						"type": "string",
@@ -2909,6 +3103,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "Test"
 				},
@@ -3081,6 +3279,10 @@
 					}
 				],
 				"concurrency": 1,
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "CZ4_Defect_classification"
 				},
@@ -3126,6 +3328,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "Databricks_ETL"
 				},
@@ -3163,6 +3369,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "USR_MET"
 				},
@@ -3261,6 +3471,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "sandbox"
 				},
@@ -3309,6 +3523,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "sandbox"
 				},
@@ -3539,6 +3757,10 @@
 						]
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "MDW"
 				},
@@ -3652,6 +3874,10 @@
 						]
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "sandbox"
 				},
@@ -3931,6 +4157,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "MDW"
 				},
@@ -4049,6 +4279,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"folder": {
 					"name": "CZ4_Defect_classification"
 				},
@@ -4191,6 +4425,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"parameters": {
 					"SourceFileFolder": {
 						"type": "string",
@@ -4388,6 +4626,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"parameters": {
 					"SourceFileFolder": {
 						"type": "string",
@@ -4531,6 +4773,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"parameters": {
 					"SourceFolder": {
 						"type": "string",
@@ -5607,6 +5853,27 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/CZ4_Dataview')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Oracle2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "OracleTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "NEWTON",
+					"table": "NEWT_METADATA"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Oracle2')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CZ4_outbound')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -5691,6 +5958,31 @@
 						"type": "String"
 					}
 				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Cz4Parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "inbound/user/fg69gy",
+						"fileSystem": "adls"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
@@ -30930,6 +31222,44 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Oracle1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Oracle",
+				"typeProperties": {
+					"connectionString": "[parameters('Oracle1_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "IntegrationRuntimeMDLPHXCOLO",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/IntegrationRuntimeMDLPHXCOLO')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Oracle2')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Oracle",
+				"typeProperties": {
+					"connectionString": "[parameters('Oracle2_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "integrationRuntimeMfgDataLake",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeMfgDataLake')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/fabtimesqlserver')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -31287,7 +31617,7 @@
 						}
 					],
 					"transformations": [],
-					"script": "parameters{\n\trecursiveInputPath as string ('translated/csv/site/USR/FDC/Tools/ASH10653/2020-008-01'),\n\trecursiveOutputPath as string ('translated/parquet/site/USR/FDC/Tools/ASH10653/2020-008-01')\n}\nsource(output(\n\t\t{_c0} as short,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as short,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as integer,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID21 as string,\n\t\tSubstrate_Information_Cassette_ID as string,\n\t\tSubstrate_Information_Slot_ID as short,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Lot_ID28 as timestamp,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as timestamp,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID35 as string,\n\t\tExtra_Information_Extra_1_ID36 as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as timestamp,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as short,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as timestamp,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as timestamp,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as double,\n\t\tGeneral_Info_Number_of_Data_Points as short,\n\t\tGeneral_Info_Number_of_Scans as boolean,\n\t\tGeneral_Info_Number_of_Bins as short,\n\t\tBins as short,\n\t\tTimePoints as short,\n\t\t{Time Relative (sec)} as double,\n\t\t{Time Absolute (UTC)} as double,\n\t\t{Time Absolute (Date_Time)} as string,\n\t\tStep as boolean,\n\t\tStatus as boolean,\n\t\t{Tool:_Gas_-_CF4_Flow_(sccm);_SVID180} as boolean,\n\t\t{Tool:_Gas_-_O2_Large_Flow_(sccm);_SVID181} as short,\n\t\t{Tool:_Gas_-_NF3_Flow_(sccm);_SVID182} as boolean,\n\t\t{Tool:_Gas_-_N2H2_Flow_(sccm);_SVID183} as boolean,\n\t\t{Tool:_Gas_-_Argon_Flow_(sccm);_SVID184} as short,\n\t\t{Tool:_Pres-_Chamber_Pressure_(torr);_SVID186} as double,\n\t\t{Tool:_Temp_-_Hot_Plate_(C);_SVID187} as short,\n\t\t{Tool:_EP_-_Photo_Multiplier_Vout_(v);_SVID188} as double,\n\t\t{Tool:_RF_Bias;_SVID189} as short,\n\t\t{Tool:_RF_Match_C1_Pos_(%);_SVID190} as short,\n\t\t{Tool:_RF_Match_C2_Pos_(%);_SVID191} as short,\n\t\t{Tool:_RF_Forward_Power_(Watts);_SVID192} as short,\n\t\t{Tool:_RF_Reflected_Power_(Watts);_SVID193} as short,\n\t\t{Tool:_MW_Forward_Power_(Watts);_SVID194} as short,\n\t\t{Tool:_MW_Reflected_Power_(Watts);_SVID195} as short,\n\t\t{Tool:_Recipe_Step_Number;_SVID196_[Tool's_Step]} as short,\n\t\t{Tool:_Wafer_-_Slot_Number;_SVID222} as short,\n\t\t{Tool:_EP_-_End_Point_Time;_SVID266} as boolean,\n\t\t{Tool:_RF_Power_Set_Point_(Watts);_SVID288} as short,\n\t\t{Tool:_MW_Set_Point_(Watts);_SVID289} as short,\n\t\t{Tool:_Pres-_Chamber_Pressure_Set_Point_(torr);_SVID290} as double,\n\t\t{Tool:_Temp_-_Hot_Plate_SetPoint_(C);_SVID291} as short,\n\t\t{Tool:_Gas_-_CF4_Set_Point_(sccm);_SVID292} as boolean,\n\t\t{Tool:_Gas_-_O2_Large_Set_Point_(sccm);_SVID293} as boolean,\n\t\t{Tool:_Gas_-_NF3_Set_Point_(sccm);_SVID294} as boolean,\n\t\t{Tool:_Gas_-_N2H2_Set_Point_(sccm);_SVID295} as boolean,\n\t\t{Tool:_Gas_-_Argon_Set_Point_(sccm);_SVID296} as boolean,\n\t\t{Tool:_EP_-_Photo_Multiplier_End_Point_HiV_(v);_SVID316} as short,\n\t\t{Tool:_Pin_Height_Set_Point;_SVID317} as short,\n\t\t{Tool:_Gas_-_O2_Small_Flow} as double,\n\t\t{Tool:_Gas_-_O2_Small_Set_Point} as double,\n\t\tTool_Bin_Polling_Latency as double,\n\t\tTool_Bin_Data_Age as double,\n\t\tTool_Bin_Data_Age_SECS as double,\n\t\t{Sig:_Temp_-_Hot_Plate_-_Filtered_(No_RF)_(post_Run)} as double,\n\t\t{Sig:_Filter:_Acceptable_Data_Age} as boolean,\n\t\t{Sig:_Ash_Total_Time} as double,\n\t\t{Sig:_Overash_Time} as double,\n\t\t{Sig:_Ash_EP_Time} as double,\n\t\t{Sig:_Overash_Percentage} as double,\n\t\t{Sig:_Filter:_Max_Data_Age} as boolean,\n\t\t{Sig:_Overash_Percentage_filtered_for_Data_Age} as double,\n\t\t{Sig:_MW_-_Power_Deviation_(post_Run)} as double,\n\t\t{Sig:_RF_-_Power_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Large_O2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Small_O2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_CF4_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_NF3_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Argon_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_N2H2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_MW_-_Reflected_Power_(Steady_state)_(post_Run)} as double,\n\t\t{Sig:_RF_-_Reflected_Power_(Steady_state)_(post_Run)} as double,\n\t\t{Sig:_Pres_-_Pressure_Deviation_(High_Pressure)(Steady_State)_(post_Run)} as double,\n\t\t{Sig:_EP_-_EP_Intensity_after_resist_removal_(post_Run)} as double,\n\t\t{Sig:_Temp_-_Hot_Plate_Deviation_(post_Run)} as double,\n\t\t{Sig:_EP_-_EP_Max_Intensity_with_no_RF} as double,\n\t\t{Sig:_Pres_-_Pressure_Deviation_(Low_Pressure)(Steady_State)_(post_Run)} as double,\n\t\t{Sig:_Filter:_Slot_Number_Correction_>_25} as short,\n\t\t{Sig:_Filter:_Slot_Number_Corrected_Value} as short,\n\t\t{Sig:_RF_-_Bias_(Power_on)_(post_Run)} as double,\n\t\t{Sig:_Overash_Time_7V} as double,\n\t\t{Sig:_Overash_Percentage_7V} as double,\n\t\t{Sig:_Overash_Percentage_filtered_for_Data_Age_7V} as double,\n\t\t{Sig:_EP_-_End_Point_voltage_above_trigger._(post_Run)} as double,\n\t\t{Sig:_Gas:_O2_Large_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_O2_Small_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_NF3_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_CF4_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_N2H2_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_Argon_Usage_(liters)} as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tignoreNoFilesFound: false,\n\twildcardPaths:[(concat($recursiveInputPath, '/*.csv'))]) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace($$,';',''),':',''),':',''),'(',''),')',''),' ',''),' ',''),')',''),'(',''),']',''),'[',''),'(',''),')',''),'>',''),'\\'','') = $$)\n\t),\n\tpartitionBy('hash', 1)) ~> sink1"
+					"script": "parameters{\n\trecursiveInputPath as string ('translated/csv/site/USR/FDC/Tools/ASH10653/2020-008-01'),\n\trecursiveOutputPath as string ('translated/parquet/site/USR/FDC/Tools/ASH10653/2020-008-01')\n}\nsource(output(\n\t\t{_c0} as short,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as short,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as integer,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID21 as string,\n\t\tSubstrate_Information_Cassette_ID as string,\n\t\tSubstrate_Information_Slot_ID as short,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Lot_ID28 as timestamp,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as timestamp,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID35 as string,\n\t\tExtra_Information_Extra_1_ID36 as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as timestamp,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as short,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as timestamp,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as timestamp,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as double,\n\t\tGeneral_Info_Number_of_Data_Points as short,\n\t\tGeneral_Info_Number_of_Scans as boolean,\n\t\tGeneral_Info_Number_of_Bins as short,\n\t\tBins as short,\n\t\tTimePoints as short,\n\t\t{Time Relative (sec)} as double,\n\t\t{Time Absolute (UTC)} as double,\n\t\t{Time Absolute (Date_Time)} as string,\n\t\tStep as boolean,\n\t\tStatus as boolean,\n\t\t{Tool:_Gas_-_CF4_Flow_(sccm);_SVID180} as boolean,\n\t\t{Tool:_Gas_-_O2_Large_Flow_(sccm);_SVID181} as short,\n\t\t{Tool:_Gas_-_NF3_Flow_(sccm);_SVID182} as boolean,\n\t\t{Tool:_Gas_-_N2H2_Flow_(sccm);_SVID183} as boolean,\n\t\t{Tool:_Gas_-_Argon_Flow_(sccm);_SVID184} as short,\n\t\t{Tool:_Pres-_Chamber_Pressure_(torr);_SVID186} as double,\n\t\t{Tool:_Temp_-_Hot_Plate_(C);_SVID187} as short,\n\t\t{Tool:_EP_-_Photo_Multiplier_Vout_(v);_SVID188} as double,\n\t\t{Tool:_RF_Bias;_SVID189} as short,\n\t\t{Tool:_RF_Match_C1_Pos_(%);_SVID190} as short,\n\t\t{Tool:_RF_Match_C2_Pos_(%);_SVID191} as short,\n\t\t{Tool:_RF_Forward_Power_(Watts);_SVID192} as short,\n\t\t{Tool:_RF_Reflected_Power_(Watts);_SVID193} as short,\n\t\t{Tool:_MW_Forward_Power_(Watts);_SVID194} as short,\n\t\t{Tool:_MW_Reflected_Power_(Watts);_SVID195} as short,\n\t\t{Tool:_Recipe_Step_Number;_SVID196_[Tool's_Step]} as short,\n\t\t{Tool:_Wafer_-_Slot_Number;_SVID222} as short,\n\t\t{Tool:_EP_-_End_Point_Time;_SVID266} as boolean,\n\t\t{Tool:_RF_Power_Set_Point_(Watts);_SVID288} as short,\n\t\t{Tool:_MW_Set_Point_(Watts);_SVID289} as short,\n\t\t{Tool:_Pres-_Chamber_Pressure_Set_Point_(torr);_SVID290} as double,\n\t\t{Tool:_Temp_-_Hot_Plate_SetPoint_(C);_SVID291} as short,\n\t\t{Tool:_Gas_-_CF4_Set_Point_(sccm);_SVID292} as boolean,\n\t\t{Tool:_Gas_-_O2_Large_Set_Point_(sccm);_SVID293} as boolean,\n\t\t{Tool:_Gas_-_NF3_Set_Point_(sccm);_SVID294} as boolean,\n\t\t{Tool:_Gas_-_N2H2_Set_Point_(sccm);_SVID295} as boolean,\n\t\t{Tool:_Gas_-_Argon_Set_Point_(sccm);_SVID296} as boolean,\n\t\t{Tool:_EP_-_Photo_Multiplier_End_Point_HiV_(v);_SVID316} as short,\n\t\t{Tool:_Pin_Height_Set_Point;_SVID317} as short,\n\t\t{Tool:_Gas_-_O2_Small_Flow} as double,\n\t\t{Tool:_Gas_-_O2_Small_Set_Point} as double,\n\t\tTool_Bin_Polling_Latency as double,\n\t\tTool_Bin_Data_Age as double,\n\t\tTool_Bin_Data_Age_SECS as double,\n\t\t{Sig:_Temp_-_Hot_Plate_-_Filtered_(No_RF)_(post_Run)} as double,\n\t\t{Sig:_Filter:_Acceptable_Data_Age} as boolean,\n\t\t{Sig:_Ash_Total_Time} as double,\n\t\t{Sig:_Overash_Time} as double,\n\t\t{Sig:_Ash_EP_Time} as double,\n\t\t{Sig:_Overash_Percentage} as double,\n\t\t{Sig:_Filter:_Max_Data_Age} as boolean,\n\t\t{Sig:_Overash_Percentage_filtered_for_Data_Age} as double,\n\t\t{Sig:_MW_-_Power_Deviation_(post_Run)} as double,\n\t\t{Sig:_RF_-_Power_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Large_O2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Small_O2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_CF4_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_NF3_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Argon_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_N2H2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_MW_-_Reflected_Power_(Steady_state)_(post_Run)} as double,\n\t\t{Sig:_RF_-_Reflected_Power_(Steady_state)_(post_Run)} as double,\n\t\t{Sig:_Pres_-_Pressure_Deviation_(High_Pressure)(Steady_State)_(post_Run)} as double,\n\t\t{Sig:_EP_-_EP_Intensity_after_resist_removal_(post_Run)} as double,\n\t\t{Sig:_Temp_-_Hot_Plate_Deviation_(post_Run)} as double,\n\t\t{Sig:_EP_-_EP_Max_Intensity_with_no_RF} as double,\n\t\t{Sig:_Pres_-_Pressure_Deviation_(Low_Pressure)(Steady_State)_(post_Run)} as double,\n\t\t{Sig:_Filter:_Slot_Number_Correction_>_25} as short,\n\t\t{Sig:_Filter:_Slot_Number_Corrected_Value} as short,\n\t\t{Sig:_RF_-_Bias_(Power_on)_(post_Run)} as double,\n\t\t{Sig:_Overash_Time_7V} as double,\n\t\t{Sig:_Overash_Percentage_7V} as double,\n\t\t{Sig:_Overash_Percentage_filtered_for_Data_Age_7V} as double,\n\t\t{Sig:_EP_-_End_Point_voltage_above_trigger._(post_Run)} as double,\n\t\t{Sig:_Gas:_O2_Large_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_O2_Small_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_NF3_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_CF4_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_N2H2_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_Argon_Usage_(liters)} as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tignoreNoFilesFound: false,\n\twildcardPaths:[(concat($recursiveInputPath, '/*.csv'))]) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace($$,';',''),':',''),':',''),'(',''),')',''),' ',''),' ',''),')',''),'(',''),']',''),'[',''),'(',''),')',''),'>',''),'\\'','') = $$)\n\t),\n\tpartitionBy('hash', 1)) ~> sink1"
 				}
 			},
 			"dependsOn": [
@@ -31331,7 +31661,7 @@
 							"name": "Filter1"
 						}
 					],
-					"script": "source(output(\n\t\tfdc_metadata_key as string,\n\t\tfdc_metadata_value as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tignoreNoFilesFound: false,\n\tskipLines: 3) ~> FDCMetaData\nFilter1 pivot(groupBy(fdc_metadata_value),\n\tpivotBy(fdc_metadata_key),\n\t{} = first(fdc_metadata_value),\n\tcolumnNaming: '$V$N',\n\tlateral: false) ~> Pivot1\nFDCMetaData filter(instr(\"General Info, Run Path and Name\" , fdc_metadata_key)>0 || \r\ninstr(\"Sensor ID\" , fdc_metadata_key)>0 ||\r\ninstr(\"Substrate Information, Lot ID\" , fdc_metadata_key)>0 ||\r\ninstr(\"Substrate Information, Slot ID\" , fdc_metadata_key)>0) ~> Filter1\nPivot1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+					"script": "source(output(\n\t\tfdc_metadata_key as string,\n\t\tfdc_metadata_value as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tignoreNoFilesFound: false,\n\tskipLines: 3) ~> FDCMetaData\nFilter1 pivot(groupBy(fdc_metadata_value),\n\tpivotBy(fdc_metadata_key),\n\t{} = first(fdc_metadata_value),\n\tcolumnNaming: '$V$N',\n\tlateral: false) ~> Pivot1\nFDCMetaData filter(instr(\"General Info, Run Path and Name\" , fdc_metadata_key)>0 || \r\ninstr(\"Sensor ID\" , fdc_metadata_key)>0 ||\r\ninstr(\"Substrate Information, Lot ID\" , fdc_metadata_key)>0 ||\r\ninstr(\"Substrate Information, Slot ID\" , fdc_metadata_key)>0) ~> Filter1\nPivot1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
 				}
 			},
 			"dependsOn": [
@@ -31365,7 +31695,7 @@
 						}
 					],
 					"transformations": [],
-					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['translated/parquet/app/middleware-prod/*.parquet']) ~> MdwLogsCsv\nMdwLogsCsv sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tsaveOrder: 1) ~> MdwLogsParquetConsolidated"
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['translated/parquet/app/middleware-prod/*.parquet']) ~> MdwLogsCsv\nMdwLogsCsv sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tsaveOrder: 1) ~> MdwLogsParquetConsolidated"
 				}
 			},
 			"dependsOn": [
@@ -31402,7 +31732,7 @@
 						}
 					],
 					"transformations": [],
-					"script": "source(output(\n\t\t{_c0} as short,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as short,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as integer,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID21 as string,\n\t\tSubstrate_Information_Cassette_ID as string,\n\t\tSubstrate_Information_Slot_ID as short,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Lot_ID28 as timestamp,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as timestamp,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID35 as string,\n\t\tExtra_Information_Extra_1_ID36 as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as timestamp,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as short,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as timestamp,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as timestamp,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as double,\n\t\tGeneral_Info_Number_of_Data_Points as short,\n\t\tGeneral_Info_Number_of_Scans as boolean,\n\t\tGeneral_Info_Number_of_Bins as short,\n\t\tBins as short,\n\t\tTimePoints as short,\n\t\t{Time Relative (sec)} as double,\n\t\t{Time Absolute (UTC)} as double,\n\t\t{Time Absolute (Date_Time)} as string,\n\t\tStep as boolean,\n\t\tStatus as boolean,\n\t\t{Tool:_Gas_-_CF4_Flow_(sccm);_SVID180} as boolean,\n\t\t{Tool:_Gas_-_O2_Large_Flow_(sccm);_SVID181} as short,\n\t\t{Tool:_Gas_-_NF3_Flow_(sccm);_SVID182} as boolean,\n\t\t{Tool:_Gas_-_N2H2_Flow_(sccm);_SVID183} as boolean,\n\t\t{Tool:_Gas_-_Argon_Flow_(sccm);_SVID184} as short,\n\t\t{Tool:_Pres-_Chamber_Pressure_(torr);_SVID186} as double,\n\t\t{Tool:_Temp_-_Hot_Plate_(C);_SVID187} as short,\n\t\t{Tool:_EP_-_Photo_Multiplier_Vout_(v);_SVID188} as double,\n\t\t{Tool:_RF_Bias;_SVID189} as short,\n\t\t{Tool:_RF_Match_C1_Pos_(%);_SVID190} as short,\n\t\t{Tool:_RF_Match_C2_Pos_(%);_SVID191} as short,\n\t\t{Tool:_RF_Forward_Power_(Watts);_SVID192} as short,\n\t\t{Tool:_RF_Reflected_Power_(Watts);_SVID193} as short,\n\t\t{Tool:_MW_Forward_Power_(Watts);_SVID194} as short,\n\t\t{Tool:_MW_Reflected_Power_(Watts);_SVID195} as short,\n\t\t{Tool:_Recipe_Step_Number;_SVID196_[Tool's_Step]} as short,\n\t\t{Tool:_Wafer_-_Slot_Number;_SVID222} as short,\n\t\t{Tool:_EP_-_End_Point_Time;_SVID266} as boolean,\n\t\t{Tool:_RF_Power_Set_Point_(Watts);_SVID288} as short,\n\t\t{Tool:_MW_Set_Point_(Watts);_SVID289} as short,\n\t\t{Tool:_Pres-_Chamber_Pressure_Set_Point_(torr);_SVID290} as double,\n\t\t{Tool:_Temp_-_Hot_Plate_SetPoint_(C);_SVID291} as short,\n\t\t{Tool:_Gas_-_CF4_Set_Point_(sccm);_SVID292} as boolean,\n\t\t{Tool:_Gas_-_O2_Large_Set_Point_(sccm);_SVID293} as boolean,\n\t\t{Tool:_Gas_-_NF3_Set_Point_(sccm);_SVID294} as boolean,\n\t\t{Tool:_Gas_-_N2H2_Set_Point_(sccm);_SVID295} as boolean,\n\t\t{Tool:_Gas_-_Argon_Set_Point_(sccm);_SVID296} as boolean,\n\t\t{Tool:_EP_-_Photo_Multiplier_End_Point_HiV_(v);_SVID316} as short,\n\t\t{Tool:_Pin_Height_Set_Point;_SVID317} as short,\n\t\t{Tool:_Gas_-_O2_Small_Flow} as double,\n\t\t{Tool:_Gas_-_O2_Small_Set_Point} as double,\n\t\tTool_Bin_Polling_Latency as double,\n\t\tTool_Bin_Data_Age as double,\n\t\tTool_Bin_Data_Age_SECS as double,\n\t\t{Sig:_Temp_-_Hot_Plate_-_Filtered_(No_RF)_(post_Run)} as double,\n\t\t{Sig:_Filter:_Acceptable_Data_Age} as boolean,\n\t\t{Sig:_Ash_Total_Time} as double,\n\t\t{Sig:_Overash_Time} as double,\n\t\t{Sig:_Ash_EP_Time} as double,\n\t\t{Sig:_Overash_Percentage} as double,\n\t\t{Sig:_Filter:_Max_Data_Age} as boolean,\n\t\t{Sig:_Overash_Percentage_filtered_for_Data_Age} as double,\n\t\t{Sig:_MW_-_Power_Deviation_(post_Run)} as double,\n\t\t{Sig:_RF_-_Power_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Large_O2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Small_O2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_CF4_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_NF3_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Argon_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_N2H2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_MW_-_Reflected_Power_(Steady_state)_(post_Run)} as double,\n\t\t{Sig:_RF_-_Reflected_Power_(Steady_state)_(post_Run)} as double,\n\t\t{Sig:_Pres_-_Pressure_Deviation_(High_Pressure)(Steady_State)_(post_Run)} as double,\n\t\t{Sig:_EP_-_EP_Intensity_after_resist_removal_(post_Run)} as double,\n\t\t{Sig:_Temp_-_Hot_Plate_Deviation_(post_Run)} as double,\n\t\t{Sig:_EP_-_EP_Max_Intensity_with_no_RF} as double,\n\t\t{Sig:_Pres_-_Pressure_Deviation_(Low_Pressure)(Steady_State)_(post_Run)} as double,\n\t\t{Sig:_Filter:_Slot_Number_Correction_>_25} as short,\n\t\t{Sig:_Filter:_Slot_Number_Corrected_Value} as short,\n\t\t{Sig:_RF_-_Bias_(Power_on)_(post_Run)} as double,\n\t\t{Sig:_Overash_Time_7V} as double,\n\t\t{Sig:_Overash_Percentage_7V} as double,\n\t\t{Sig:_Overash_Percentage_filtered_for_Data_Age_7V} as double,\n\t\t{Sig:_EP_-_End_Point_voltage_above_trigger._(post_Run)} as double,\n\t\t{Sig:_Gas:_O2_Large_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_O2_Small_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_NF3_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_CF4_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_N2H2_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_Argon_Usage_(liters)} as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['translated/csv/site/USR/FDC/Tools/ASH10653/2020-008-01/*.csv']) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\ttranslate($$,':; ()[]','') = $$)\n\t),\n\tpartitionBy('hash', 1)) ~> sink1"
+					"script": "source(output(\n\t\t{_c0} as short,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as short,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as integer,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID21 as string,\n\t\tSubstrate_Information_Cassette_ID as string,\n\t\tSubstrate_Information_Slot_ID as short,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Lot_ID28 as timestamp,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as timestamp,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID35 as string,\n\t\tExtra_Information_Extra_1_ID36 as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as timestamp,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as short,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as timestamp,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as timestamp,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as double,\n\t\tGeneral_Info_Number_of_Data_Points as short,\n\t\tGeneral_Info_Number_of_Scans as boolean,\n\t\tGeneral_Info_Number_of_Bins as short,\n\t\tBins as short,\n\t\tTimePoints as short,\n\t\t{Time Relative (sec)} as double,\n\t\t{Time Absolute (UTC)} as double,\n\t\t{Time Absolute (Date_Time)} as string,\n\t\tStep as boolean,\n\t\tStatus as boolean,\n\t\t{Tool:_Gas_-_CF4_Flow_(sccm);_SVID180} as boolean,\n\t\t{Tool:_Gas_-_O2_Large_Flow_(sccm);_SVID181} as short,\n\t\t{Tool:_Gas_-_NF3_Flow_(sccm);_SVID182} as boolean,\n\t\t{Tool:_Gas_-_N2H2_Flow_(sccm);_SVID183} as boolean,\n\t\t{Tool:_Gas_-_Argon_Flow_(sccm);_SVID184} as short,\n\t\t{Tool:_Pres-_Chamber_Pressure_(torr);_SVID186} as double,\n\t\t{Tool:_Temp_-_Hot_Plate_(C);_SVID187} as short,\n\t\t{Tool:_EP_-_Photo_Multiplier_Vout_(v);_SVID188} as double,\n\t\t{Tool:_RF_Bias;_SVID189} as short,\n\t\t{Tool:_RF_Match_C1_Pos_(%);_SVID190} as short,\n\t\t{Tool:_RF_Match_C2_Pos_(%);_SVID191} as short,\n\t\t{Tool:_RF_Forward_Power_(Watts);_SVID192} as short,\n\t\t{Tool:_RF_Reflected_Power_(Watts);_SVID193} as short,\n\t\t{Tool:_MW_Forward_Power_(Watts);_SVID194} as short,\n\t\t{Tool:_MW_Reflected_Power_(Watts);_SVID195} as short,\n\t\t{Tool:_Recipe_Step_Number;_SVID196_[Tool's_Step]} as short,\n\t\t{Tool:_Wafer_-_Slot_Number;_SVID222} as short,\n\t\t{Tool:_EP_-_End_Point_Time;_SVID266} as boolean,\n\t\t{Tool:_RF_Power_Set_Point_(Watts);_SVID288} as short,\n\t\t{Tool:_MW_Set_Point_(Watts);_SVID289} as short,\n\t\t{Tool:_Pres-_Chamber_Pressure_Set_Point_(torr);_SVID290} as double,\n\t\t{Tool:_Temp_-_Hot_Plate_SetPoint_(C);_SVID291} as short,\n\t\t{Tool:_Gas_-_CF4_Set_Point_(sccm);_SVID292} as boolean,\n\t\t{Tool:_Gas_-_O2_Large_Set_Point_(sccm);_SVID293} as boolean,\n\t\t{Tool:_Gas_-_NF3_Set_Point_(sccm);_SVID294} as boolean,\n\t\t{Tool:_Gas_-_N2H2_Set_Point_(sccm);_SVID295} as boolean,\n\t\t{Tool:_Gas_-_Argon_Set_Point_(sccm);_SVID296} as boolean,\n\t\t{Tool:_EP_-_Photo_Multiplier_End_Point_HiV_(v);_SVID316} as short,\n\t\t{Tool:_Pin_Height_Set_Point;_SVID317} as short,\n\t\t{Tool:_Gas_-_O2_Small_Flow} as double,\n\t\t{Tool:_Gas_-_O2_Small_Set_Point} as double,\n\t\tTool_Bin_Polling_Latency as double,\n\t\tTool_Bin_Data_Age as double,\n\t\tTool_Bin_Data_Age_SECS as double,\n\t\t{Sig:_Temp_-_Hot_Plate_-_Filtered_(No_RF)_(post_Run)} as double,\n\t\t{Sig:_Filter:_Acceptable_Data_Age} as boolean,\n\t\t{Sig:_Ash_Total_Time} as double,\n\t\t{Sig:_Overash_Time} as double,\n\t\t{Sig:_Ash_EP_Time} as double,\n\t\t{Sig:_Overash_Percentage} as double,\n\t\t{Sig:_Filter:_Max_Data_Age} as boolean,\n\t\t{Sig:_Overash_Percentage_filtered_for_Data_Age} as double,\n\t\t{Sig:_MW_-_Power_Deviation_(post_Run)} as double,\n\t\t{Sig:_RF_-_Power_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Large_O2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Small_O2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_CF4_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_NF3_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_Argon_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_Gas_-_N2H2_Flow_Deviation_(post_Run)} as double,\n\t\t{Sig:_MW_-_Reflected_Power_(Steady_state)_(post_Run)} as double,\n\t\t{Sig:_RF_-_Reflected_Power_(Steady_state)_(post_Run)} as double,\n\t\t{Sig:_Pres_-_Pressure_Deviation_(High_Pressure)(Steady_State)_(post_Run)} as double,\n\t\t{Sig:_EP_-_EP_Intensity_after_resist_removal_(post_Run)} as double,\n\t\t{Sig:_Temp_-_Hot_Plate_Deviation_(post_Run)} as double,\n\t\t{Sig:_EP_-_EP_Max_Intensity_with_no_RF} as double,\n\t\t{Sig:_Pres_-_Pressure_Deviation_(Low_Pressure)(Steady_State)_(post_Run)} as double,\n\t\t{Sig:_Filter:_Slot_Number_Correction_>_25} as short,\n\t\t{Sig:_Filter:_Slot_Number_Corrected_Value} as short,\n\t\t{Sig:_RF_-_Bias_(Power_on)_(post_Run)} as double,\n\t\t{Sig:_Overash_Time_7V} as double,\n\t\t{Sig:_Overash_Percentage_7V} as double,\n\t\t{Sig:_Overash_Percentage_filtered_for_Data_Age_7V} as double,\n\t\t{Sig:_EP_-_End_Point_voltage_above_trigger._(post_Run)} as double,\n\t\t{Sig:_Gas:_O2_Large_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_O2_Small_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_NF3_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_CF4_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_N2H2_Usage_(liters)} as double,\n\t\t{Sig:_Gas:_Argon_Usage_(liters)} as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['translated/csv/site/USR/FDC/Tools/ASH10653/2020-008-01/*.csv']) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\ttranslate($$,':; ()[]','') = $$)\n\t),\n\tpartitionBy('hash', 1)) ~> sink1"
 				}
 			},
 			"dependsOn": [
@@ -31444,7 +31774,7 @@
 							"description": "Creates an explicit mapping for each drifted column"
 						}
 					],
-					"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tignoreNoFilesFound: false,\n\tskipLines: 63,\n\tdateFormats: ['MM/dd/yyyy'],\n\ttimestampFormats: ['MM/dd/yyyy','MM/dd/yyyy HH:mm:ss'],\n\tpreferredIntegralType: 'long',\n\tpreferredFractionalType: 'decimal') ~> FDCDataFile\nFDCDataFile derive({Time Relative (sec)} = toString(byName('Time Relative (sec)')),\n\t\t{Time Absolute (UTC)} = toString(byName('Time Absolute (UTC)')),\n\t\t{Time Absolute (Date_Time)} = toString(byName('Time Absolute (Date_Time)')),\n\t\tStep = toString(byName('Step')),\n\t\tStatus = toString(byName('Status')),\n\t\t{Tool:_SST1_chamber_2_rpm_(r/min);_SVID200} = toString(byName('Tool:_SST1_chamber_2_rpm_(r/min);_SVID200')),\n\t\t{Tool:_SST1_chmbr_2_rx_time_rem_(cs);_SVID201} = toString(byName('Tool:_SST1_chmbr_2_rx_time_rem_(cs);_SVID201')),\n\t\t{Tool:_SST1_chmbr_2_step_time_rem_(cs);_SVID202} = toString(byName('Tool:_SST1_chmbr_2_step_time_rem_(cs);_SVID202')),\n\t\t{Tool:_SST1_chmbr_2_wafers_present;_SVID205} = toString(byName('Tool:_SST1_chmbr_2_wafers_present;_SVID205')),\n\t\t{Tool:_SST1_chmbr_2_door_state;_SVID206} = toString(byName('Tool:_SST1_chmbr_2_door_state;_SVID206')),\n\t\t{Tool:_SST1_chmbr_2_processed_state;_SVID208} = toString(byName('Tool:_SST1_chmbr_2_processed_state;_SVID208')),\n\t\t{Tool:_SST1_chmbr_2_PP_Step;_SVID211_[Tool's_Step]} = toString(byName('Tool:_SST1_chmbr_2_PP_Step;_SVID211_[Tools_Step]')),\n\t\t{Tool:_SST1_chmbr_2_PP_Exec_Name;_SVID212} = toString(byName('Tool:_SST1_chmbr_2_PP_Exec_Name;_SVID212')),\n\t\t{Tool:_SST1_chmbr_2_Process_State;_SVID213} = toString(byName('Tool:_SST1_chmbr_2_Process_State;_SVID213')),\n\t\t{Tool:_SST1_chmbr_2_N2_Temperature_(degC);_SVID214} = toString(byName('Tool:_SST1_chmbr_2_N2_Temperature_(degC);_SVID214')),\n\t\t{Tool:_SST1_chmbr_2_left_vision_score;_SVID215} = toString(byName('Tool:_SST1_chmbr_2_left_vision_score;_SVID215')),\n\t\t{Tool:_SST1_chmbr_2_right_vision_score;_SVID216} = toString(byName('Tool:_SST1_chmbr_2_right_vision_score;_SVID216')),\n\t\t{Snapshot:_SST1_chmbr_2_left_vision_score;_SVID215} = toString(byName('Snapshot:_SST1_chmbr_2_left_vision_score;_SVID215')),\n\t\t{Snapshot:_SST1_chmbr_2_right_vision_score;_SVID216} = toString(byName('Snapshot:_SST1_chmbr_2_right_vision_score;_SVID216')),\n\t\tTool_Bin_Polling_Latency = toString(byName('Tool_Bin_Polling_Latency')),\n\t\tTool_Bin_Data_Age = toString(byName('Tool_Bin_Data_Age')),\n\t\tTool_Bin_Data_Age_SECS = toString(byName('Tool_Bin_Data_Age_SECS'))) ~> MapDrifted1\nMapDrifted1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionFileNames:['prash_example.parquet'],\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\ttime_relative_sec = {Time Relative (sec)},\n\t\ttime_absolute_utc = {Time Absolute (UTC)},\n\t\ttime_absolute_dt = {Time Absolute (Date_Time)}\n\t),\n\tpartitionBy('hash', 1)) ~> FDCtoParquet"
+					"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tignoreNoFilesFound: false,\n\tskipLines: 63,\n\tdateFormats: ['MM/dd/yyyy'],\n\ttimestampFormats: ['MM/dd/yyyy','MM/dd/yyyy HH:mm:ss'],\n\tpreferredIntegralType: 'long',\n\tpreferredFractionalType: 'decimal') ~> FDCDataFile\nFDCDataFile derive({Time Relative (sec)} = toString(byName('Time Relative (sec)')),\n\t\t{Time Absolute (UTC)} = toString(byName('Time Absolute (UTC)')),\n\t\t{Time Absolute (Date_Time)} = toString(byName('Time Absolute (Date_Time)')),\n\t\tStep = toString(byName('Step')),\n\t\tStatus = toString(byName('Status')),\n\t\t{Tool:_SST1_chamber_2_rpm_(r/min);_SVID200} = toString(byName('Tool:_SST1_chamber_2_rpm_(r/min);_SVID200')),\n\t\t{Tool:_SST1_chmbr_2_rx_time_rem_(cs);_SVID201} = toString(byName('Tool:_SST1_chmbr_2_rx_time_rem_(cs);_SVID201')),\n\t\t{Tool:_SST1_chmbr_2_step_time_rem_(cs);_SVID202} = toString(byName('Tool:_SST1_chmbr_2_step_time_rem_(cs);_SVID202')),\n\t\t{Tool:_SST1_chmbr_2_wafers_present;_SVID205} = toString(byName('Tool:_SST1_chmbr_2_wafers_present;_SVID205')),\n\t\t{Tool:_SST1_chmbr_2_door_state;_SVID206} = toString(byName('Tool:_SST1_chmbr_2_door_state;_SVID206')),\n\t\t{Tool:_SST1_chmbr_2_processed_state;_SVID208} = toString(byName('Tool:_SST1_chmbr_2_processed_state;_SVID208')),\n\t\t{Tool:_SST1_chmbr_2_PP_Step;_SVID211_[Tool's_Step]} = toString(byName('Tool:_SST1_chmbr_2_PP_Step;_SVID211_[Tools_Step]')),\n\t\t{Tool:_SST1_chmbr_2_PP_Exec_Name;_SVID212} = toString(byName('Tool:_SST1_chmbr_2_PP_Exec_Name;_SVID212')),\n\t\t{Tool:_SST1_chmbr_2_Process_State;_SVID213} = toString(byName('Tool:_SST1_chmbr_2_Process_State;_SVID213')),\n\t\t{Tool:_SST1_chmbr_2_N2_Temperature_(degC);_SVID214} = toString(byName('Tool:_SST1_chmbr_2_N2_Temperature_(degC);_SVID214')),\n\t\t{Tool:_SST1_chmbr_2_left_vision_score;_SVID215} = toString(byName('Tool:_SST1_chmbr_2_left_vision_score;_SVID215')),\n\t\t{Tool:_SST1_chmbr_2_right_vision_score;_SVID216} = toString(byName('Tool:_SST1_chmbr_2_right_vision_score;_SVID216')),\n\t\t{Snapshot:_SST1_chmbr_2_left_vision_score;_SVID215} = toString(byName('Snapshot:_SST1_chmbr_2_left_vision_score;_SVID215')),\n\t\t{Snapshot:_SST1_chmbr_2_right_vision_score;_SVID216} = toString(byName('Snapshot:_SST1_chmbr_2_right_vision_score;_SVID216')),\n\t\tTool_Bin_Polling_Latency = toString(byName('Tool_Bin_Polling_Latency')),\n\t\tTool_Bin_Data_Age = toString(byName('Tool_Bin_Data_Age')),\n\t\tTool_Bin_Data_Age_SECS = toString(byName('Tool_Bin_Data_Age_SECS'))) ~> MapDrifted1\nMapDrifted1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionFileNames:['prash_example.parquet'],\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\ttime_relative_sec = {Time Relative (sec)},\n\t\ttime_absolute_utc = {Time Absolute (UTC)},\n\t\ttime_absolute_dt = {Time Absolute (Date_Time)}\n\t),\n\tpartitionBy('hash', 1)) ~> FDCtoParquet"
 				}
 			},
 			"dependsOn": [
@@ -31481,7 +31811,7 @@
 						}
 					],
 					"transformations": [],
-					"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022) ~> sink1"
+					"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: []) ~> sink1"
 				}
 			},
 			"dependsOn": [
@@ -31543,7 +31873,7 @@
 							"name": "ECIDReworkRank"
 						}
 					],
-					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['sandbox/user/zbmhpw/source/']) ~> YieldSource\nECIDReworkRank select(mapColumn(\n\t\teach(match(name!=\"lot_key\"&&name!=\"rework_flag\"),\n\t\t\tregexReplace($$,\" \",\"_\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction\nYieldSource derive(ECID = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", \r\n                        concat(right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2), \r\n                            concat(\":\", \r\n                                concat(toString(byName('DLT_X TAG')),\r\n                                    concat(\":\", toString(byName('DLT_Y TAG'))))))))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", \r\n                        concat(right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2), \r\n                            concat(\":\", \r\n                                concat(toString(byName('DLT_X TAG')),\r\n                                    concat(\":\", toString(byName('DLT_Y TAG')))))))))))\r\n),\n\t\tFab_Wafer = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2)))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2))))))\r\n),\n\t\tFab_Lot = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\".\", \"S\"))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\".\", \"S\")))))\r\n),\n\t\tFTLot = case(\r\n    right(toString(byName('Lot')), 2) == \"SS\", left(toString(byName('Lot')), length(toString(byName('Lot'))) - 2),\r\n    right(toString(byName('Lot')), 1) == \"S\", left(toString(byName('Lot')), length(toString(byName('Lot'))) - 1),\r\n    toString(byName('Lot'))\r\n    ),\n\t\tECID_Timestamp = add(toTimestamp(byName('start_time'), 'MM/dd/yyy HH:mm'), seconds(toInteger(byName('serial')))),\n\t\tPassDie = iif(toInteger(byName('STDF_SwBin'))==1, 1, 0)) ~> DerivedColumn1\nSelectExtraction select(mapColumn(\n\t\tECID,\n\t\tFTLot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\teach(match(true()),\n\t\t\treplace($$,\"(\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction2\nSelectExtraction2 select(mapColumn(\n\t\tECID,\n\t\tFTLot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\teach(match(true()),\n\t\t\treplace($$,\")\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction3\nSelectExtraction3 select(mapColumn(\n\t\tECID,\n\t\tFab_Wafer,\n\t\tFab_Lot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\tFTLot,\n\t\tFTLotInsertion,\n\t\tPassDie,\n\t\teach(match(true()),\n\t\t\treplace($$,\"=\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectionExtraction4\nDerivedColumn1 rank(asc(FTLot, true),\n\toutput(FTLotInsertion as long),\n\tdense: true) ~> FTLotInsertionRank\nFTLotInsertionRank window(over(ECID),\n\tasc(ECID_Timestamp, true),\n\tECID_Test_Pass = denseRank()) ~> ECIDTestPassRank\nECIDTestPassRank window(over(ECID),\n\tdesc(ECID_Timestamp, true),\n\tECID_Rework = denseRank()) ~> ECIDReworkRank\nSelectionExtraction4 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'outputParquetFile[n].parquet',\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('key',\n\t\t0,\n\t\tECID\n\t)) ~> YieldSink"
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['sandbox/user/zbmhpw/source/']) ~> YieldSource\nECIDReworkRank select(mapColumn(\n\t\teach(match(name!=\"lot_key\"&&name!=\"rework_flag\"),\n\t\t\tregexReplace($$,\" \",\"_\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction\nYieldSource derive(ECID = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", \r\n                        concat(right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2), \r\n                            concat(\":\", \r\n                                concat(toString(byName('DLT_X TAG')),\r\n                                    concat(\":\", toString(byName('DLT_Y TAG'))))))))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", \r\n                        concat(right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2), \r\n                            concat(\":\", \r\n                                concat(toString(byName('DLT_X TAG')),\r\n                                    concat(\":\", toString(byName('DLT_Y TAG')))))))))))\r\n),\n\t\tFab_Wafer = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2)))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\"-\", right(toString(toInteger(byName('DLT_WAFER TAG')) + 100), 2))))))\r\n),\n\t\tFab_Lot = iif(\r\n    isNull(toString(byName('DLT_LOC (1=GRESHAM) TAG'))), 'EMPTY',\r\n    concat(\"G\", iif(toInteger(byName('DLT_YR (8=2017 - 9=2018 - ETC) TAG')) == 12, \r\n        concat(\"AY\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\".\", \"S\"))), \r\n        concat(\"AW\", \r\n            concat(right(toString(toInteger(byName('DLT_WEEK TAG')) + 100), 2)),\r\n                concat(right(toString(toInteger(byName('DLT_LOT TAG')) + 1000), 3), \r\n                    concat(\".\", \"S\")))))\r\n),\n\t\tFTLot = case(\r\n    right(toString(byName('Lot')), 2) == \"SS\", left(toString(byName('Lot')), length(toString(byName('Lot'))) - 2),\r\n    right(toString(byName('Lot')), 1) == \"S\", left(toString(byName('Lot')), length(toString(byName('Lot'))) - 1),\r\n    toString(byName('Lot'))\r\n    ),\n\t\tECID_Timestamp = add(toTimestamp(byName('start_time'), 'MM/dd/yyy HH:mm'), seconds(toInteger(byName('serial')))),\n\t\tPassDie = iif(toInteger(byName('STDF_SwBin'))==1, 1, 0)) ~> DerivedColumn1\nSelectExtraction select(mapColumn(\n\t\tECID,\n\t\tFTLot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\teach(match(true()),\n\t\t\treplace($$,\"(\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction2\nSelectExtraction2 select(mapColumn(\n\t\tECID,\n\t\tFTLot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\teach(match(true()),\n\t\t\treplace($$,\")\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectExtraction3\nSelectExtraction3 select(mapColumn(\n\t\tECID,\n\t\tFab_Wafer,\n\t\tFab_Lot,\n\t\tECID_Timestamp,\n\t\tECID_Test_Pass,\n\t\tECID_Rework,\n\t\tFTLot,\n\t\tFTLotInsertion,\n\t\tPassDie,\n\t\teach(match(true()),\n\t\t\treplace($$,\"=\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectionExtraction4\nDerivedColumn1 rank(asc(FTLot, true),\n\toutput(FTLotInsertion as long),\n\tdense: true) ~> FTLotInsertionRank\nFTLotInsertionRank window(over(ECID),\n\tasc(ECID_Timestamp, true),\n\tECID_Test_Pass = denseRank()) ~> ECIDTestPassRank\nECIDTestPassRank window(over(ECID),\n\tdesc(ECID_Timestamp, true),\n\tECID_Rework = denseRank()) ~> ECIDReworkRank\nSelectionExtraction4 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfilePattern:'outputParquetFile[n].parquet',\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('key',\n\t\t0,\n\t\tECID\n\t)) ~> YieldSink"
 				}
 			},
 			"dependsOn": [
@@ -31590,7 +31920,7 @@
 							"name": "Select3"
 						}
 					],
-					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tignoreNoFilesFound: false) ~> source1\nsource1 select(mapColumn(\n\t\teach(match(name!=\"lot_key\"&&name!=\"rework_flag\"),\n\t\t\tregexReplace($$,\" \",\"_\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 select(mapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,\"(\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 select(mapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,\")\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select3\nSelect3 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> sink1"
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tignoreNoFilesFound: false) ~> source1\nsource1 select(mapColumn(\n\t\teach(match(name!=\"lot_key\"&&name!=\"rework_flag\"),\n\t\t\tregexReplace($$,\" \",\"_\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 select(mapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,\"(\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 select(mapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,\")\",\"\") = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select3\nSelect3 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> sink1"
 				}
 			},
 			"dependsOn": [
@@ -31631,7 +31961,7 @@
 						}
 					],
 					"transformations": [],
-					"script": "source(output(\n\t\t{_c0} as short,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as short,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as integer,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID as string,\n\t\tSubstrate_Information_Cassette_ID as short,\n\t\tSubstrate_Information_Slot_ID as short,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Substrate_Start_Time_local as timestamp,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as timestamp,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as timestamp,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as short,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as timestamp,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as timestamp,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as double,\n\t\tGeneral_Info_Number_of_Data_Points as short,\n\t\tGeneral_Info_Number_of_Scans as boolean,\n\t\tGeneral_Info_Number_of_Bins as short,\n\t\tBins as short,\n\t\tTimePoints as short,\n\t\tTimeRelativesec as double,\n\t\tTimeAbsoluteUTC as double,\n\t\tTimeAbsoluteDate_Time as string,\n\t\tStep as boolean,\n\t\tStatus as boolean,\n\t\tTool_Pres_CM_mTorr_SVID167813621 as short,\n\t\tTool_Pwr_Bot_RF_Fwd_W_SVID167813623 as short,\n\t\tTool_Pwr_Bot_RF_Refl_W_SVID167813625 as short,\n\t\tTool_Pwr_Bot_RF_VPP_V_SVID167813627 as short,\n\t\tTool_Pwr_Bot_RF_VDC_V_SVID167813629 as short,\n\t\tTool_Gas_C4F8_Flow_sccm_SVID167813630 as double,\n\t\tTool_Gas_C5F8_Flow_sccm_SVID167813631 as double,\n\t\tTool_Gas_CO_Flow_sccm_SVID167813632 as double,\n\t\tTool_Gas_Ar_Flow_sccm_SVID167813633 as double,\n\t\tTool_Gas_O2_30_sccm_Flow_sccm_SVID167813634 as double,\n\t\tTool_Gas_CHF3_Flow_sccm_SVID167813635 as double,\n\t\tTool_Gas_CF4_Flow_sccm_SVID167813636 as double,\n\t\tTool_Gas_O2_1_SLM_Flow_sccm_SVID167813637 as double,\n\t\tTool_Temp_Elec_Top_degC_SVID167813638 as double,\n\t\tTool_Temp_Wall_Side_degC_SVID167813639 as double,\n\t\tTool_Temp_Elec_Bot_degC_SVID167813640 as double,\n\t\tTool_He_Pres_Back_1_Torr_SVID167813641 as double,\n\t\tTool_He_Pres_Back_2_Torr_SVID167813642 as double,\n\t\tTool_He_Flow_1_sccm_SVID167813643 as double,\n\t\tTool_He_Flow_2_sccm_SVID167813644 as double,\n\t\tTool_ESC_Voltage_V_SVID167813645 as short,\n\t\tTool_ESC_Current_uA_SVID167813646 as short,\n\t\tTool_Pres_APC_Pos_deg_SVID167813647 as double,\n\t\tTool_Gap_Dist_mm_SVID167813648 as double,\n\t\tTool_Cap_C1_Bot_Pos_SVID167813651 as short,\n\t\tTool_Cap_C2_Bot_Pos_SVID167813652 as short,\n\t\tTool_Imped_R_Top_ohm_SVID167813653 as boolean,\n\t\tTool_Imped_Jx_Top_ohm_SVID167813654 as boolean,\n\t\tTool_Imped_R_Bot_ohm_SVID167813655 as boolean,\n\t\tTool_Imped_Jx_Bot_ohm_SVID167813656 as boolean,\n\t\tTool_Phase_SVID167813658 as short,\n\t\tTool_Magnitude_SVID167813659 as short,\n\t\t{Tool_Rcp_Step_Num_SVID167813666_[Tool's_Step]} as short,\n\t\tTool_Rcp_Step_Time_sec_SVID167813667 as double,\n\t\tTool_Gas_CH2F2_Flow_sccm_SVID167813678 as double,\n\t\tTool_Gas_N2_Flow_sccm_SVID167813679 as double,\n\t\tTool_Gas_He_Flow_sccm_SVID167813680 as short,\n\t\tTool_Gas_H2_Flow_sccm_SVID167813681 as double,\n\t\tTool_Gas_CHF3_2_Flow as double,\n\t\tTool_Bin_Polling_Latency as double,\n\t\tTool_Bin_Data_Age as double,\n\t\tTool_Bin_Data_Age_SECS as double,\n\t\tSig_Bot_RF_On as boolean,\n\t\tSig_Edge_He_Backside_Pressure_RF_On as double,\n\t\tSig_Center_He_Backside_Pressure_RF_On as double,\n\t\tSig_Center_He_Backside_Flow_RF_On as double,\n\t\tSig_Edge_He_Backside_Flow_RF_On as double,\n\t\tSig_Upper_Temperature_RF_On as double,\n\t\tSig_Side_Temperature_RF_On as double,\n\t\tSig_Lower_Temperature_RF_On as double,\n\t\tSig_ElectroStatic_Chuck_Voltage_RF_On as double,\n\t\tSig_ElectroStatic_Chuck_Current_RF_On as double,\n\t\tSig_Chamber_Pressure_RF_On_Steady_State_post_Run as double,\n\t\tSig_CH2F2_Flow_RF_On as double,\n\t\tSig_Vpp_Arc_Counter_1450_W as double,\n\t\tSig_No_arc__0 as double,\n\t\t{Sig_Vpp_Arc_Counter_1200-1450_W} as double,\n\t\tSig_Vpp_Arc_Counter_1450_W_v2_post_Run as double,\n\t\tSig_Reflected_Power_of_Stady_State_post_Run as double,\n\t\tSig_Filter_Acceptable_Data_Age as boolean,\n\t\t{Sig_Pwr_Bot_RF_Fwd_DevAvg_Steady_State_5-60} as double,\n\t\t{Sig_Gas_Ar_Steady_State_5-60_RF_On_post_Run} as double,\n\t\t{Sig_Gas_Ar_DevAvg_Steady_State_5-60_RF_On_post_Run} as double,\n\t\tSig_VPP_TRIM_Step_4_post_Run as double,\n\t\tSig_C4F8_TRIM_Step_4_post_Run as double,\n\t\tSig_VPP_TRIM_Step_2_post_Run as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\t{_c0} as string,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID as string,\n\t\tSubstrate_Information_Cassette_ID as string,\n\t\tSubstrate_Information_Slot_ID as string,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Substrate_Start_Time_local as string,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as string,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as string,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as string,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as string,\n\t\tGeneral_Info_Number_of_Data_Points as string,\n\t\tGeneral_Info_Number_of_Scans as string,\n\t\tGeneral_Info_Number_of_Bins as string,\n\t\tBins as string,\n\t\tTimePoints as string,\n\t\tTimeRelativesec as string,\n\t\tTimeAbsoluteUTC as string,\n\t\tTimeAbsoluteDate_Time as string,\n\t\tStep as string,\n\t\tStatus as string,\n\t\tTool_Pres_CM_mTorr_SVID167813621 as string,\n\t\tTool_Pwr_Bot_RF_Fwd_W_SVID167813623 as string,\n\t\tTool_Pwr_Bot_RF_Refl_W_SVID167813625 as string,\n\t\tTool_Pwr_Bot_RF_VPP_V_SVID167813627 as string,\n\t\tTool_Pwr_Bot_RF_VDC_V_SVID167813629 as string,\n\t\tTool_Gas_C4F8_Flow_sccm_SVID167813630 as string,\n\t\tTool_Gas_C5F8_Flow_sccm_SVID167813631 as string,\n\t\tTool_Gas_CO_Flow_sccm_SVID167813632 as string,\n\t\tTool_Gas_Ar_Flow_sccm_SVID167813633 as string,\n\t\tTool_Gas_O2_30_sccm_Flow_sccm_SVID167813634 as string,\n\t\tTool_Gas_CHF3_Flow_sccm_SVID167813635 as string,\n\t\tTool_Gas_CF4_Flow_sccm_SVID167813636 as string,\n\t\tTool_Gas_O2_1_SLM_Flow_sccm_SVID167813637 as string,\n\t\tTool_Temp_Elec_Top_degC_SVID167813638 as string,\n\t\tTool_Temp_Wall_Side_degC_SVID167813639 as string,\n\t\tTool_Temp_Elec_Bot_degC_SVID167813640 as string,\n\t\tTool_He_Pres_Back_1_Torr_SVID167813641 as string,\n\t\tTool_He_Pres_Back_2_Torr_SVID167813642 as string,\n\t\tTool_He_Flow_1_sccm_SVID167813643 as string,\n\t\tTool_He_Flow_2_sccm_SVID167813644 as string,\n\t\tTool_ESC_Voltage_V_SVID167813645 as string,\n\t\tTool_ESC_Current_uA_SVID167813646 as string,\n\t\tTool_Pres_APC_Pos_deg_SVID167813647 as string,\n\t\tTool_Gap_Dist_mm_SVID167813648 as string,\n\t\tTool_Cap_C1_Bot_Pos_SVID167813651 as string,\n\t\tTool_Cap_C2_Bot_Pos_SVID167813652 as string,\n\t\tTool_Imped_R_Top_ohm_SVID167813653 as string,\n\t\tTool_Imped_Jx_Top_ohm_SVID167813654 as string,\n\t\tTool_Imped_R_Bot_ohm_SVID167813655 as string,\n\t\tTool_Imped_Jx_Bot_ohm_SVID167813656 as string,\n\t\tTool_Phase_SVID167813658 as string,\n\t\tTool_Magnitude_SVID167813659 as string,\n\t\t{Tool_Rcp_Step_Num_SVID167813666_[Tool's_Step]} as string,\n\t\tTool_Rcp_Step_Time_sec_SVID167813667 as string,\n\t\tTool_Gas_CH2F2_Flow_sccm_SVID167813678 as string,\n\t\tTool_Gas_N2_Flow_sccm_SVID167813679 as string,\n\t\tTool_Gas_He_Flow_sccm_SVID167813680 as string,\n\t\tTool_Gas_H2_Flow_sccm_SVID167813681 as string,\n\t\tTool_Gas_CHF3_2_Flow as string,\n\t\tTool_Bin_Polling_Latency as string,\n\t\tTool_Bin_Data_Age as string,\n\t\tTool_Bin_Data_Age_SECS as string,\n\t\tSig_Bot_RF_On as string,\n\t\tSig_Edge_He_Backside_Pressure_RF_On as string,\n\t\tSig_Center_He_Backside_Pressure_RF_On as string,\n\t\tSig_Center_He_Backside_Flow_RF_On as string,\n\t\tSig_Edge_He_Backside_Flow_RF_On as string,\n\t\tSig_Upper_Temperature_RF_On as string,\n\t\tSig_Side_Temperature_RF_On as string,\n\t\tSig_Lower_Temperature_RF_On as string,\n\t\tSig_ElectroStatic_Chuck_Voltage_RF_On as string,\n\t\tSig_ElectroStatic_Chuck_Current_RF_On as string,\n\t\tSig_Chamber_Pressure_RF_On_Steady_State_post_Run as string,\n\t\tSig_CH2F2_Flow_RF_On as string,\n\t\tSig_Vpp_Arc_Counter_1450_W as string,\n\t\tSig_No_arc__0 as string,\n\t\t{Sig_Vpp_Arc_Counter_1200-1450_W} as string,\n\t\tSig_Vpp_Arc_Counter_1450_W_v2_post_Run as string,\n\t\tSig_Reflected_Power_of_Stady_State_post_Run as string,\n\t\tSig_Filter_Acceptable_Data_Age as string,\n\t\t{Sig_Pwr_Bot_RF_Fwd_DevAvg_Steady_State_5-60} as string,\n\t\t{Sig_Gas_Ar_Steady_State_5-60_RF_On_post_Run} as string,\n\t\t{Sig_Gas_Ar_DevAvg_Steady_State_5-60_RF_On_post_Run} as string,\n\t\tSig_VPP_TRIM_Step_4_post_Run as string,\n\t\tSig_C4F8_TRIM_Step_4_post_Run as string,\n\t\tSig_VPP_TRIM_Step_2_post_Run as string\n\t),\n\tformat: 'parquet',\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace(replace(replace($$,'\\'',''),'[',''),']','') = $$)\n\t),\n\tpartitionBy('hash', 1)) ~> sink1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tfileSystem: 'adls',\n\tfolderPath: 'translated/examples/ASH.delta.df',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace(replace(replace($$,'\\'',''),'[',''),']','') = $$)\n\t),\n\tpartitionBy('hash', 1)) ~> sink2"
+					"script": "source(output(\n\t\t{_c0} as short,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as short,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as integer,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID as string,\n\t\tSubstrate_Information_Cassette_ID as short,\n\t\tSubstrate_Information_Slot_ID as short,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Substrate_Start_Time_local as timestamp,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as timestamp,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as timestamp,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as short,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as timestamp,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as timestamp,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as double,\n\t\tGeneral_Info_Number_of_Data_Points as short,\n\t\tGeneral_Info_Number_of_Scans as boolean,\n\t\tGeneral_Info_Number_of_Bins as short,\n\t\tBins as short,\n\t\tTimePoints as short,\n\t\tTimeRelativesec as double,\n\t\tTimeAbsoluteUTC as double,\n\t\tTimeAbsoluteDate_Time as string,\n\t\tStep as boolean,\n\t\tStatus as boolean,\n\t\tTool_Pres_CM_mTorr_SVID167813621 as short,\n\t\tTool_Pwr_Bot_RF_Fwd_W_SVID167813623 as short,\n\t\tTool_Pwr_Bot_RF_Refl_W_SVID167813625 as short,\n\t\tTool_Pwr_Bot_RF_VPP_V_SVID167813627 as short,\n\t\tTool_Pwr_Bot_RF_VDC_V_SVID167813629 as short,\n\t\tTool_Gas_C4F8_Flow_sccm_SVID167813630 as double,\n\t\tTool_Gas_C5F8_Flow_sccm_SVID167813631 as double,\n\t\tTool_Gas_CO_Flow_sccm_SVID167813632 as double,\n\t\tTool_Gas_Ar_Flow_sccm_SVID167813633 as double,\n\t\tTool_Gas_O2_30_sccm_Flow_sccm_SVID167813634 as double,\n\t\tTool_Gas_CHF3_Flow_sccm_SVID167813635 as double,\n\t\tTool_Gas_CF4_Flow_sccm_SVID167813636 as double,\n\t\tTool_Gas_O2_1_SLM_Flow_sccm_SVID167813637 as double,\n\t\tTool_Temp_Elec_Top_degC_SVID167813638 as double,\n\t\tTool_Temp_Wall_Side_degC_SVID167813639 as double,\n\t\tTool_Temp_Elec_Bot_degC_SVID167813640 as double,\n\t\tTool_He_Pres_Back_1_Torr_SVID167813641 as double,\n\t\tTool_He_Pres_Back_2_Torr_SVID167813642 as double,\n\t\tTool_He_Flow_1_sccm_SVID167813643 as double,\n\t\tTool_He_Flow_2_sccm_SVID167813644 as double,\n\t\tTool_ESC_Voltage_V_SVID167813645 as short,\n\t\tTool_ESC_Current_uA_SVID167813646 as short,\n\t\tTool_Pres_APC_Pos_deg_SVID167813647 as double,\n\t\tTool_Gap_Dist_mm_SVID167813648 as double,\n\t\tTool_Cap_C1_Bot_Pos_SVID167813651 as short,\n\t\tTool_Cap_C2_Bot_Pos_SVID167813652 as short,\n\t\tTool_Imped_R_Top_ohm_SVID167813653 as boolean,\n\t\tTool_Imped_Jx_Top_ohm_SVID167813654 as boolean,\n\t\tTool_Imped_R_Bot_ohm_SVID167813655 as boolean,\n\t\tTool_Imped_Jx_Bot_ohm_SVID167813656 as boolean,\n\t\tTool_Phase_SVID167813658 as short,\n\t\tTool_Magnitude_SVID167813659 as short,\n\t\t{Tool_Rcp_Step_Num_SVID167813666_[Tool's_Step]} as short,\n\t\tTool_Rcp_Step_Time_sec_SVID167813667 as double,\n\t\tTool_Gas_CH2F2_Flow_sccm_SVID167813678 as double,\n\t\tTool_Gas_N2_Flow_sccm_SVID167813679 as double,\n\t\tTool_Gas_He_Flow_sccm_SVID167813680 as short,\n\t\tTool_Gas_H2_Flow_sccm_SVID167813681 as double,\n\t\tTool_Gas_CHF3_2_Flow as double,\n\t\tTool_Bin_Polling_Latency as double,\n\t\tTool_Bin_Data_Age as double,\n\t\tTool_Bin_Data_Age_SECS as double,\n\t\tSig_Bot_RF_On as boolean,\n\t\tSig_Edge_He_Backside_Pressure_RF_On as double,\n\t\tSig_Center_He_Backside_Pressure_RF_On as double,\n\t\tSig_Center_He_Backside_Flow_RF_On as double,\n\t\tSig_Edge_He_Backside_Flow_RF_On as double,\n\t\tSig_Upper_Temperature_RF_On as double,\n\t\tSig_Side_Temperature_RF_On as double,\n\t\tSig_Lower_Temperature_RF_On as double,\n\t\tSig_ElectroStatic_Chuck_Voltage_RF_On as double,\n\t\tSig_ElectroStatic_Chuck_Current_RF_On as double,\n\t\tSig_Chamber_Pressure_RF_On_Steady_State_post_Run as double,\n\t\tSig_CH2F2_Flow_RF_On as double,\n\t\tSig_Vpp_Arc_Counter_1450_W as double,\n\t\tSig_No_arc__0 as double,\n\t\t{Sig_Vpp_Arc_Counter_1200-1450_W} as double,\n\t\tSig_Vpp_Arc_Counter_1450_W_v2_post_Run as double,\n\t\tSig_Reflected_Power_of_Stady_State_post_Run as double,\n\t\tSig_Filter_Acceptable_Data_Age as boolean,\n\t\t{Sig_Pwr_Bot_RF_Fwd_DevAvg_Steady_State_5-60} as double,\n\t\t{Sig_Gas_Ar_Steady_State_5-60_RF_On_post_Run} as double,\n\t\t{Sig_Gas_Ar_DevAvg_Steady_State_5-60_RF_On_post_Run} as double,\n\t\tSig_VPP_TRIM_Step_4_post_Run as double,\n\t\tSig_C4F8_TRIM_Step_4_post_Run as double,\n\t\tSig_VPP_TRIM_Step_2_post_Run as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\t{_c0} as string,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID as string,\n\t\tSubstrate_Information_Cassette_ID as string,\n\t\tSubstrate_Information_Slot_ID as string,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Substrate_Start_Time_local as string,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as string,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as string,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as string,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as string,\n\t\tGeneral_Info_Number_of_Data_Points as string,\n\t\tGeneral_Info_Number_of_Scans as string,\n\t\tGeneral_Info_Number_of_Bins as string,\n\t\tBins as string,\n\t\tTimePoints as string,\n\t\tTimeRelativesec as string,\n\t\tTimeAbsoluteUTC as string,\n\t\tTimeAbsoluteDate_Time as string,\n\t\tStep as string,\n\t\tStatus as string,\n\t\tTool_Pres_CM_mTorr_SVID167813621 as string,\n\t\tTool_Pwr_Bot_RF_Fwd_W_SVID167813623 as string,\n\t\tTool_Pwr_Bot_RF_Refl_W_SVID167813625 as string,\n\t\tTool_Pwr_Bot_RF_VPP_V_SVID167813627 as string,\n\t\tTool_Pwr_Bot_RF_VDC_V_SVID167813629 as string,\n\t\tTool_Gas_C4F8_Flow_sccm_SVID167813630 as string,\n\t\tTool_Gas_C5F8_Flow_sccm_SVID167813631 as string,\n\t\tTool_Gas_CO_Flow_sccm_SVID167813632 as string,\n\t\tTool_Gas_Ar_Flow_sccm_SVID167813633 as string,\n\t\tTool_Gas_O2_30_sccm_Flow_sccm_SVID167813634 as string,\n\t\tTool_Gas_CHF3_Flow_sccm_SVID167813635 as string,\n\t\tTool_Gas_CF4_Flow_sccm_SVID167813636 as string,\n\t\tTool_Gas_O2_1_SLM_Flow_sccm_SVID167813637 as string,\n\t\tTool_Temp_Elec_Top_degC_SVID167813638 as string,\n\t\tTool_Temp_Wall_Side_degC_SVID167813639 as string,\n\t\tTool_Temp_Elec_Bot_degC_SVID167813640 as string,\n\t\tTool_He_Pres_Back_1_Torr_SVID167813641 as string,\n\t\tTool_He_Pres_Back_2_Torr_SVID167813642 as string,\n\t\tTool_He_Flow_1_sccm_SVID167813643 as string,\n\t\tTool_He_Flow_2_sccm_SVID167813644 as string,\n\t\tTool_ESC_Voltage_V_SVID167813645 as string,\n\t\tTool_ESC_Current_uA_SVID167813646 as string,\n\t\tTool_Pres_APC_Pos_deg_SVID167813647 as string,\n\t\tTool_Gap_Dist_mm_SVID167813648 as string,\n\t\tTool_Cap_C1_Bot_Pos_SVID167813651 as string,\n\t\tTool_Cap_C2_Bot_Pos_SVID167813652 as string,\n\t\tTool_Imped_R_Top_ohm_SVID167813653 as string,\n\t\tTool_Imped_Jx_Top_ohm_SVID167813654 as string,\n\t\tTool_Imped_R_Bot_ohm_SVID167813655 as string,\n\t\tTool_Imped_Jx_Bot_ohm_SVID167813656 as string,\n\t\tTool_Phase_SVID167813658 as string,\n\t\tTool_Magnitude_SVID167813659 as string,\n\t\t{Tool_Rcp_Step_Num_SVID167813666_[Tool's_Step]} as string,\n\t\tTool_Rcp_Step_Time_sec_SVID167813667 as string,\n\t\tTool_Gas_CH2F2_Flow_sccm_SVID167813678 as string,\n\t\tTool_Gas_N2_Flow_sccm_SVID167813679 as string,\n\t\tTool_Gas_He_Flow_sccm_SVID167813680 as string,\n\t\tTool_Gas_H2_Flow_sccm_SVID167813681 as string,\n\t\tTool_Gas_CHF3_2_Flow as string,\n\t\tTool_Bin_Polling_Latency as string,\n\t\tTool_Bin_Data_Age as string,\n\t\tTool_Bin_Data_Age_SECS as string,\n\t\tSig_Bot_RF_On as string,\n\t\tSig_Edge_He_Backside_Pressure_RF_On as string,\n\t\tSig_Center_He_Backside_Pressure_RF_On as string,\n\t\tSig_Center_He_Backside_Flow_RF_On as string,\n\t\tSig_Edge_He_Backside_Flow_RF_On as string,\n\t\tSig_Upper_Temperature_RF_On as string,\n\t\tSig_Side_Temperature_RF_On as string,\n\t\tSig_Lower_Temperature_RF_On as string,\n\t\tSig_ElectroStatic_Chuck_Voltage_RF_On as string,\n\t\tSig_ElectroStatic_Chuck_Current_RF_On as string,\n\t\tSig_Chamber_Pressure_RF_On_Steady_State_post_Run as string,\n\t\tSig_CH2F2_Flow_RF_On as string,\n\t\tSig_Vpp_Arc_Counter_1450_W as string,\n\t\tSig_No_arc__0 as string,\n\t\t{Sig_Vpp_Arc_Counter_1200-1450_W} as string,\n\t\tSig_Vpp_Arc_Counter_1450_W_v2_post_Run as string,\n\t\tSig_Reflected_Power_of_Stady_State_post_Run as string,\n\t\tSig_Filter_Acceptable_Data_Age as string,\n\t\t{Sig_Pwr_Bot_RF_Fwd_DevAvg_Steady_State_5-60} as string,\n\t\t{Sig_Gas_Ar_Steady_State_5-60_RF_On_post_Run} as string,\n\t\t{Sig_Gas_Ar_DevAvg_Steady_State_5-60_RF_On_post_Run} as string,\n\t\tSig_VPP_TRIM_Step_4_post_Run as string,\n\t\tSig_C4F8_TRIM_Step_4_post_Run as string,\n\t\tSig_VPP_TRIM_Step_2_post_Run as string\n\t),\n\tformat: 'parquet',\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace(replace(replace($$,'\\'',''),'[',''),']','') = $$)\n\t),\n\tpartitionBy('hash', 1)) ~> sink1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tfileSystem: 'adls',\n\tfolderPath: 'translated/examples/ASH.delta.df',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace(replace(replace($$,'\\'',''),'[',''),']','') = $$)\n\t),\n\tpartitionBy('hash', 1)) ~> sink2"
 				}
 			},
 			"dependsOn": [
@@ -31673,7 +32003,7 @@
 						}
 					],
 					"transformations": [],
-					"script": "source(output(\n\t\t{_c0} as short,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as short,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as integer,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID as string,\n\t\tSubstrate_Information_Cassette_ID as short,\n\t\tSubstrate_Information_Slot_ID as short,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Substrate_Start_Time_local as timestamp,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as timestamp,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as timestamp,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as short,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as timestamp,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as timestamp,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as double,\n\t\tGeneral_Info_Number_of_Data_Points as short,\n\t\tGeneral_Info_Number_of_Scans as boolean,\n\t\tGeneral_Info_Number_of_Bins as short,\n\t\tBins as short,\n\t\tTimePoints as short,\n\t\tTimeRelativesec as double,\n\t\tTimeAbsoluteUTC as double,\n\t\tTimeAbsoluteDate_Time as string,\n\t\tStep as boolean,\n\t\tStatus as boolean,\n\t\tTool_Pres_CM_mTorr_SVID167813621 as short,\n\t\tTool_Pwr_Bot_RF_Fwd_W_SVID167813623 as short,\n\t\tTool_Pwr_Bot_RF_Refl_W_SVID167813625 as short,\n\t\tTool_Pwr_Bot_RF_VPP_V_SVID167813627 as short,\n\t\tTool_Pwr_Bot_RF_VDC_V_SVID167813629 as short,\n\t\tTool_Gas_C4F8_Flow_sccm_SVID167813630 as double,\n\t\tTool_Gas_C5F8_Flow_sccm_SVID167813631 as double,\n\t\tTool_Gas_CO_Flow_sccm_SVID167813632 as double,\n\t\tTool_Gas_Ar_Flow_sccm_SVID167813633 as double,\n\t\tTool_Gas_O2_30_sccm_Flow_sccm_SVID167813634 as double,\n\t\tTool_Gas_CHF3_Flow_sccm_SVID167813635 as double,\n\t\tTool_Gas_CF4_Flow_sccm_SVID167813636 as double,\n\t\tTool_Gas_O2_1_SLM_Flow_sccm_SVID167813637 as double,\n\t\tTool_Temp_Elec_Top_degC_SVID167813638 as double,\n\t\tTool_Temp_Wall_Side_degC_SVID167813639 as double,\n\t\tTool_Temp_Elec_Bot_degC_SVID167813640 as double,\n\t\tTool_He_Pres_Back_1_Torr_SVID167813641 as double,\n\t\tTool_He_Pres_Back_2_Torr_SVID167813642 as double,\n\t\tTool_He_Flow_1_sccm_SVID167813643 as double,\n\t\tTool_He_Flow_2_sccm_SVID167813644 as double,\n\t\tTool_ESC_Voltage_V_SVID167813645 as short,\n\t\tTool_ESC_Current_uA_SVID167813646 as short,\n\t\tTool_Pres_APC_Pos_deg_SVID167813647 as double,\n\t\tTool_Gap_Dist_mm_SVID167813648 as double,\n\t\tTool_Cap_C1_Bot_Pos_SVID167813651 as short,\n\t\tTool_Cap_C2_Bot_Pos_SVID167813652 as short,\n\t\tTool_Imped_R_Top_ohm_SVID167813653 as boolean,\n\t\tTool_Imped_Jx_Top_ohm_SVID167813654 as boolean,\n\t\tTool_Imped_R_Bot_ohm_SVID167813655 as boolean,\n\t\tTool_Imped_Jx_Bot_ohm_SVID167813656 as boolean,\n\t\tTool_Phase_SVID167813658 as short,\n\t\tTool_Magnitude_SVID167813659 as short,\n\t\t{Tool_Rcp_Step_Num_SVID167813666_[Tool's_Step]} as short,\n\t\tTool_Rcp_Step_Time_sec_SVID167813667 as double,\n\t\tTool_Gas_CH2F2_Flow_sccm_SVID167813678 as double,\n\t\tTool_Gas_N2_Flow_sccm_SVID167813679 as double,\n\t\tTool_Gas_He_Flow_sccm_SVID167813680 as short,\n\t\tTool_Gas_H2_Flow_sccm_SVID167813681 as double,\n\t\tTool_Gas_CHF3_2_Flow as double,\n\t\tTool_Bin_Polling_Latency as double,\n\t\tTool_Bin_Data_Age as double,\n\t\tTool_Bin_Data_Age_SECS as double,\n\t\tSig_Bot_RF_On as boolean,\n\t\tSig_Edge_He_Backside_Pressure_RF_On as double,\n\t\tSig_Center_He_Backside_Pressure_RF_On as double,\n\t\tSig_Center_He_Backside_Flow_RF_On as double,\n\t\tSig_Edge_He_Backside_Flow_RF_On as double,\n\t\tSig_Upper_Temperature_RF_On as double,\n\t\tSig_Side_Temperature_RF_On as double,\n\t\tSig_Lower_Temperature_RF_On as double,\n\t\tSig_ElectroStatic_Chuck_Voltage_RF_On as double,\n\t\tSig_ElectroStatic_Chuck_Current_RF_On as double,\n\t\tSig_Chamber_Pressure_RF_On_Steady_State_post_Run as double,\n\t\tSig_CH2F2_Flow_RF_On as double,\n\t\tSig_Vpp_Arc_Counter_1450_W as double,\n\t\t{Sig_No_arc_=_0} as double,\n\t\t{Sig_Vpp_Arc_Counter_1200-1450_W} as double,\n\t\tSig_Vpp_Arc_Counter_1450_W_v2_post_Run as double,\n\t\tSig_Reflected_Power_of_Stady_State_post_Run as double,\n\t\tSig_Filter_Acceptable_Data_Age as boolean,\n\t\t{Sig_Pwr_Bot_RF_Fwd_DevAvg_Steady_State_5-60} as double,\n\t\t{Sig_Gas_Ar_Steady_State_5-60_RF_On_post_Run} as double,\n\t\t{Sig_Gas_Ar_DevAvg_Steady_State_5-60_RF_On_post_Run} as double,\n\t\tSig_VPP_TRIM_Step_4_post_Run as double,\n\t\tSig_C4F8_TRIM_Step_4_post_Run as double,\n\t\tSig_VPP_TRIM_Step_2_post_Run as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,'=','') = $$)\n\t),\n\tpartitionBy('hash', 1)) ~> sink1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tfileSystem: 'adls',\n\tfolderPath: 'translated/examples/ETH.delta.df',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,'=','') = $$)\n\t),\n\tpartitionBy('hash', 1)) ~> sink2"
+					"script": "source(output(\n\t\t{_c0} as short,\n\t\tFilename_Translated as string,\n\t\tFilename_Original as string,\n\t\tFabGuard_Version as string,\n\t\tRun_Path_and_Name as string,\n\t\tRecipe_Path_and_Name as string,\n\t\tSensorID as string,\n\t\tVersion as string,\n\t\tAcquired_with_Version as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Group as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Area as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Tool_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_FabGuard as short,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_ID as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Description as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_Chamber_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Type as string,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Serial_Number as integer,\n\t\tEquipment_Information_Tool_Chamber_and_Sensor_1_TDS_Version as string,\n\t\tSubstrate_Information_Lot_ID as string,\n\t\tSubstrate_Information_Cassette_ID as short,\n\t\tSubstrate_Information_Slot_ID as short,\n\t\tSubstrate_Information_Substrate_ID as string,\n\t\tSubstrate_Information_Part_ID as string,\n\t\tSubstrate_Information_Layer_ID as string,\n\t\tSubstrate_Information_Technology_ID as string,\n\t\tSubstrate_Information_Substrate_Start_Time_local as timestamp,\n\t\tSubstrate_Information_Substrate_Start_Time_GMT as timestamp,\n\t\tProcess_Information_Operator_ID as string,\n\t\tProcess_Information_Sequence_ID as string,\n\t\tProcess_Information_Recipe_ID as string,\n\t\tProcess_Information_Control_Job_ID as string,\n\t\tProcess_Information_Process_ID as string,\n\t\tExtra_Information_Extra_1_ID as string,\n\t\tExtra_Information_Extra_2_ID as string,\n\t\tExtra_Information_Extra_3_ID as string,\n\t\tExtra_Information_Extra_4_ID as string,\n\t\tExtra_Information_Extra_5_ID as string,\n\t\tExtra_Information_Extra_6_ID as string,\n\t\tExtra_Information_Extra_7_ID as string,\n\t\tExtra_Information_Extra_8_ID as string,\n\t\tGeneral_Info_Start_Time as string,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_location as timestamp,\n\t\tGeneral_Info_FabGuards_Recipe_Path_and_Name as string,\n\t\tGeneral_Info_FabGuards_Recipe_Revision as short,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_by as string,\n\t\tGeneral_Info_FabGuards_Recipe_last_modified_Time_local as timestamp,\n\t\tGeneral_Info_Start_Time_at_the_acquisition_GMT as timestamp,\n\t\tGeneral_Info_Run_Path_and_Name as string,\n\t\tGeneral_Info_Duration_s as double,\n\t\tGeneral_Info_Number_of_Data_Points as short,\n\t\tGeneral_Info_Number_of_Scans as boolean,\n\t\tGeneral_Info_Number_of_Bins as short,\n\t\tBins as short,\n\t\tTimePoints as short,\n\t\tTimeRelativesec as double,\n\t\tTimeAbsoluteUTC as double,\n\t\tTimeAbsoluteDate_Time as string,\n\t\tStep as boolean,\n\t\tStatus as boolean,\n\t\tTool_Pres_CM_mTorr_SVID167813621 as short,\n\t\tTool_Pwr_Bot_RF_Fwd_W_SVID167813623 as short,\n\t\tTool_Pwr_Bot_RF_Refl_W_SVID167813625 as short,\n\t\tTool_Pwr_Bot_RF_VPP_V_SVID167813627 as short,\n\t\tTool_Pwr_Bot_RF_VDC_V_SVID167813629 as short,\n\t\tTool_Gas_C4F8_Flow_sccm_SVID167813630 as double,\n\t\tTool_Gas_C5F8_Flow_sccm_SVID167813631 as double,\n\t\tTool_Gas_CO_Flow_sccm_SVID167813632 as double,\n\t\tTool_Gas_Ar_Flow_sccm_SVID167813633 as double,\n\t\tTool_Gas_O2_30_sccm_Flow_sccm_SVID167813634 as double,\n\t\tTool_Gas_CHF3_Flow_sccm_SVID167813635 as double,\n\t\tTool_Gas_CF4_Flow_sccm_SVID167813636 as double,\n\t\tTool_Gas_O2_1_SLM_Flow_sccm_SVID167813637 as double,\n\t\tTool_Temp_Elec_Top_degC_SVID167813638 as double,\n\t\tTool_Temp_Wall_Side_degC_SVID167813639 as double,\n\t\tTool_Temp_Elec_Bot_degC_SVID167813640 as double,\n\t\tTool_He_Pres_Back_1_Torr_SVID167813641 as double,\n\t\tTool_He_Pres_Back_2_Torr_SVID167813642 as double,\n\t\tTool_He_Flow_1_sccm_SVID167813643 as double,\n\t\tTool_He_Flow_2_sccm_SVID167813644 as double,\n\t\tTool_ESC_Voltage_V_SVID167813645 as short,\n\t\tTool_ESC_Current_uA_SVID167813646 as short,\n\t\tTool_Pres_APC_Pos_deg_SVID167813647 as double,\n\t\tTool_Gap_Dist_mm_SVID167813648 as double,\n\t\tTool_Cap_C1_Bot_Pos_SVID167813651 as short,\n\t\tTool_Cap_C2_Bot_Pos_SVID167813652 as short,\n\t\tTool_Imped_R_Top_ohm_SVID167813653 as boolean,\n\t\tTool_Imped_Jx_Top_ohm_SVID167813654 as boolean,\n\t\tTool_Imped_R_Bot_ohm_SVID167813655 as boolean,\n\t\tTool_Imped_Jx_Bot_ohm_SVID167813656 as boolean,\n\t\tTool_Phase_SVID167813658 as short,\n\t\tTool_Magnitude_SVID167813659 as short,\n\t\t{Tool_Rcp_Step_Num_SVID167813666_[Tool's_Step]} as short,\n\t\tTool_Rcp_Step_Time_sec_SVID167813667 as double,\n\t\tTool_Gas_CH2F2_Flow_sccm_SVID167813678 as double,\n\t\tTool_Gas_N2_Flow_sccm_SVID167813679 as double,\n\t\tTool_Gas_He_Flow_sccm_SVID167813680 as short,\n\t\tTool_Gas_H2_Flow_sccm_SVID167813681 as double,\n\t\tTool_Gas_CHF3_2_Flow as double,\n\t\tTool_Bin_Polling_Latency as double,\n\t\tTool_Bin_Data_Age as double,\n\t\tTool_Bin_Data_Age_SECS as double,\n\t\tSig_Bot_RF_On as boolean,\n\t\tSig_Edge_He_Backside_Pressure_RF_On as double,\n\t\tSig_Center_He_Backside_Pressure_RF_On as double,\n\t\tSig_Center_He_Backside_Flow_RF_On as double,\n\t\tSig_Edge_He_Backside_Flow_RF_On as double,\n\t\tSig_Upper_Temperature_RF_On as double,\n\t\tSig_Side_Temperature_RF_On as double,\n\t\tSig_Lower_Temperature_RF_On as double,\n\t\tSig_ElectroStatic_Chuck_Voltage_RF_On as double,\n\t\tSig_ElectroStatic_Chuck_Current_RF_On as double,\n\t\tSig_Chamber_Pressure_RF_On_Steady_State_post_Run as double,\n\t\tSig_CH2F2_Flow_RF_On as double,\n\t\tSig_Vpp_Arc_Counter_1450_W as double,\n\t\t{Sig_No_arc_=_0} as double,\n\t\t{Sig_Vpp_Arc_Counter_1200-1450_W} as double,\n\t\tSig_Vpp_Arc_Counter_1450_W_v2_post_Run as double,\n\t\tSig_Reflected_Power_of_Stady_State_post_Run as double,\n\t\tSig_Filter_Acceptable_Data_Age as boolean,\n\t\t{Sig_Pwr_Bot_RF_Fwd_DevAvg_Steady_State_5-60} as double,\n\t\t{Sig_Gas_Ar_Steady_State_5-60_RF_On_post_Run} as double,\n\t\t{Sig_Gas_Ar_DevAvg_Steady_State_5-60_RF_On_post_Run} as double,\n\t\tSig_VPP_TRIM_Step_4_post_Run as double,\n\t\tSig_C4F8_TRIM_Step_4_post_Run as double,\n\t\tSig_VPP_TRIM_Step_2_post_Run as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpartitionBy('hash', 1)) ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,'=','') = $$)\n\t),\n\tpartitionBy('hash', 1)) ~> sink1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tfileSystem: 'adls',\n\tfolderPath: 'translated/examples/ETH.delta.df',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\teach(match(true()),\n\t\t\treplace($$,'=','') = $$)\n\t),\n\tpartitionBy('hash', 1)) ~> sink2"
 				}
 			},
 			"dependsOn": [
@@ -31719,7 +32049,7 @@
 							"name": "DerivedColumn1"
 						}
 					],
-					"script": "source(output(\n\t\tLotId as string,\n\t\tFab as string,\n\t\tFamily as string,\n\t\tTechnology as string,\n\t\tPlan as string,\n\t\tDevice as string,\n\t\tSourceLot as string,\n\t\tLotClass as string,\n\t\twf_num as short,\n\t\twf_id as string,\n\t\tSequence as string,\n\t\tProcStep as string,\n\t\tStage as string,\n\t\torig_slot as short,\n\t\tfinal_slot as short,\n\t\torig_cass as short,\n\t\tfinal_cass as short,\n\t\tzone as string,\n\t\tzone_seat as string,\n\t\tboat_seat as string,\n\t\tsubtool as string,\n\t\tequipment as string,\n\t\ttrackInTime as string,\n\t\ttrackOutTime as string,\n\t\trecipe as string,\n\t\tOperator as string,\n\t\tTooling as string,\n\t\tReworkCount as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tskipLines: 1,\n\twildcardPaths:['inbound/site/USR/WEH/*.gz']) ~> source2\nsource2 derive(trackInTime_formated = toTimestamp(trackInTime, 'yyyyMMddHHmmss'),\n\t\ttrackOutTime_formated = toTimestamp(trackOutTime, 'yyyyMMddHHmmss')) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'adls',\n\tfolderPath: 'translated/delta/site/USR/WEH',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink4"
+					"script": "source(output(\n\t\tLotId as string,\n\t\tFab as string,\n\t\tFamily as string,\n\t\tTechnology as string,\n\t\tPlan as string,\n\t\tDevice as string,\n\t\tSourceLot as string,\n\t\tLotClass as string,\n\t\twf_num as short,\n\t\twf_id as string,\n\t\tSequence as string,\n\t\tProcStep as string,\n\t\tStage as string,\n\t\torig_slot as short,\n\t\tfinal_slot as short,\n\t\torig_cass as short,\n\t\tfinal_cass as short,\n\t\tzone as string,\n\t\tzone_seat as string,\n\t\tboat_seat as string,\n\t\tsubtool as string,\n\t\tequipment as string,\n\t\ttrackInTime as string,\n\t\ttrackOutTime as string,\n\t\trecipe as string,\n\t\tOperator as string,\n\t\tTooling as string,\n\t\tReworkCount as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tskipLines: 1,\n\twildcardPaths:['inbound/site/USR/WEH/*.gz']) ~> source2\nsource2 derive(trackInTime_formated = toTimestamp(trackInTime, 'yyyyMMddHHmmss'),\n\t\ttrackOutTime_formated = toTimestamp(trackOutTime, 'yyyyMMddHHmmss')) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'adls',\n\tfolderPath: 'translated/delta/site/USR/WEH',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink4"
 				}
 			},
 			"dependsOn": [

@@ -38,6 +38,12 @@
 		"ONPREMVM_password": {
 			"value": ""
 		},
+		"Oracle1_connectionString": {
+			"value": ""
+		},
+		"Oracle2_connectionString": {
+			"value": ""
+		},
 		"fabtimesqlserver_connectionString": {
 			"value": ""
 		},
