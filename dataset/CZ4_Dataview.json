@@ -1,0 +1,16 @@
+{
+	"name": "CZ4_Dataview",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Oracle2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "NEWTON",
+			"table": "NEWT_METADATA"
+		}
+	}
+}
