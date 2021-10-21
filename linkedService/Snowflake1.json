@@ -1,0 +1,16 @@
+{
+	"name": "Snowflake1",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "Snowflake",
+		"typeProperties": {
+			"connectionString": "jdbc:snowflake://onsemi.west-us-2.azure.snowflakecomputing.com/?user=MDLPOC_SERVICE_ETL_USER&db=MDLPOC&warehouse=MDLPOC_CWH&role=MDLPOC_SERVICE_ETL",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI4Mjg5ZTdmMy03NjJlLTRiYzMtYTQ4ZS0xNWY3MjNiYTQ3YTgiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "IntegrationRuntimeMDLPHXCOLO",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
