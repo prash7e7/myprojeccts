@@ -2,7 +2,7 @@
 	"name": "trigger_EveryDay_translation",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Stopped",
+		"runtimeState": "Started",
 		"pipelines": [
 			{
 				"pipelineReference": {
