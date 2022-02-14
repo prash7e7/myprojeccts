@@ -27,7 +27,11 @@
 						},
 						"formatSettings": {
 							"type": "ParquetWriteSettings",
-							"maxRowsPerFile": 1000000
+							"maxRowsPerFile": 2000000,
+							"fileNamePrefix": {
+								"value": "@utcnow()",
+								"type": "Expression"
+							}
 						}
 					},
 					"enableStaging": false,
