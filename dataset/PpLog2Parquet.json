@@ -1,0 +1,20 @@
+{
+	"name": "PpLog2Parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "onsemidevmdlstoragelink",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "inbound/user/fg69gy/translated",
+				"fileSystem": "adls"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}

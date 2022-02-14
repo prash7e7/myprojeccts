@@ -1,0 +1,16 @@
+{
+	"name": "RefDb",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ExnPrd",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "REFDB",
+			"table": "PP_LOG"
+		}
+	}
+}
