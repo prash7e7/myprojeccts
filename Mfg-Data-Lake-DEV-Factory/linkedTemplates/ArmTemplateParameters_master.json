@@ -38,13 +38,13 @@
 		"ONPREMVM_password": {
 			"value": ""
 		},
-		"Oracle1_connectionString": {
-			"value": ""
-		},
 		"Oracle2_connectionString": {
 			"value": ""
 		},
 		"fabtimesqlserver_connectionString": {
+			"value": ""
+		},
+		"ExnPrd_connectionString": {
 			"value": ""
 		},
 		"ExtensioAPI_properties_typeProperties_url": {
@@ -70,6 +70,9 @@
 		},
 		"ONPREMVM_properties_typeProperties_userId": {
 			"value": "onsemi\\fabtimesys"
+		},
+		"Snowflake1_connectionString": {
+			"value": ""
 		},
 		"onsemidevmdlstoragelink_properties_typeProperties_url": {
 			"value": "https://onsemidevmdlstorage.dfs.core.windows.net"

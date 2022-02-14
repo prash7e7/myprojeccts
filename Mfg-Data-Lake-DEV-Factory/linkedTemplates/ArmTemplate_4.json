@@ -7,17 +7,9 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "Mfg-Data-Lake-DEV-Factory"
 		},
-		"ONPREMALLUSERSPHXCOLO_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'ONPREMALLUSERSPHXCOLO'"
-		},
 		"ONPREMVM_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ONPREMVM'"
-		},
-		"Oracle1_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Oracle1'"
 		},
 		"Oracle2_connectionString": {
 			"type": "secureString",
@@ -27,13 +19,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
 		},
-		"ONPREMALLUSERSPHXCOLO_properties_typeProperties_host": {
-			"type": "string",
-			"defaultValue": "\\\\USAZ15WS078\\adls"
-		},
-		"ONPREMALLUSERSPHXCOLO_properties_typeProperties_userId": {
-			"type": "string",
-			"defaultValue": "onsemi\\fabtimesys"
+		"ExnPrd_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ExnPrd'"
 		},
 		"ONPREMVM_properties_typeProperties_host": {
 			"type": "string",
@@ -42,34 +30,16 @@
 		"ONPREMVM_properties_typeProperties_userId": {
 			"type": "string",
 			"defaultValue": "onsemi\\fabtimesys"
+		},
+		"Snowflake1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Snowflake1'"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('factoryName'), '/ONPREMALLUSERSPHXCOLO')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "FileServer",
-				"typeProperties": {
-					"host": "[parameters('ONPREMALLUSERSPHXCOLO_properties_typeProperties_host')]",
-					"userId": "[parameters('ONPREMALLUSERSPHXCOLO_properties_typeProperties_userId')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('ONPREMALLUSERSPHXCOLO_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "IntegrationRuntimeMDLPHXCOLO",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ONPREMVM')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
@@ -94,23 +64,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Oracle1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "Oracle",
-				"typeProperties": {
-					"connectionString": "[parameters('Oracle1_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "IntegrationRuntimeMDLPHXCOLO",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Oracle2')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -122,6 +75,23 @@
 				},
 				"connectVia": {
 					"referenceName": "integrationRuntimeMfgDataLake",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Snowflake1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('Snowflake1_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "IntegrationRuntimeMDLPHXCOLO",
 					"type": "IntegrationRuntimeReference"
 				}
 			},
@@ -141,6 +111,46 @@
 					"referenceName": "integrationRuntimeMfgDataLake",
 					"type": "IntegrationRuntimeReference"
 				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ExnPrd')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Oracle",
+				"typeProperties": {
+					"connectionString": "[parameters('ExnPrd_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "IntegrationRuntimeMDLPHXCOLO",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PpLog2Parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "inbound/user/fg69gy/translated",
+						"fileSystem": "adls"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
 			},
 			"dependsOn": []
 		},
@@ -2298,24 +2308,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/Oracle2')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ExtensioRestLoginDS')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ExtensioAPI",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {
-					"relativeUrl": "session/login"
-				},
-				"schema": []
-			},
-			"dependsOn": []
 		}
 	]
 }

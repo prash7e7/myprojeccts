@@ -51,10 +51,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ONPREMVM'"
 		},
-		"Oracle1_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Oracle1'"
-		},
 		"Oracle2_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Oracle2'"
@@ -62,6 +58,10 @@
 		"fabtimesqlserver_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'fabtimesqlserver'"
+		},
+		"ExnPrd_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ExnPrd'"
 		},
 		"ExtensioAPI_properties_typeProperties_url": {
 			"type": "string",
@@ -94,6 +94,10 @@
 		"ONPREMVM_properties_typeProperties_userId": {
 			"type": "string",
 			"defaultValue": "onsemi\\fabtimesys"
+		},
+		"Snowflake1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Snowflake1'"
 		},
 		"onsemidevmdlstoragelink_properties_typeProperties_url": {
 			"type": "string",
@@ -273,6 +277,9 @@
 					"ONPREMALLUSERS_password": {
 						"value": "[parameters('ONPREMALLUSERS_password')]"
 					},
+					"ONPREMALLUSERSPHXCOLO_password": {
+						"value": "[parameters('ONPREMALLUSERSPHXCOLO_password')]"
+					},
 					"ExtensioAPI_properties_typeProperties_url": {
 						"value": "[parameters('ExtensioAPI_properties_typeProperties_url')]"
 					},
@@ -284,6 +291,12 @@
 					},
 					"ONPREMALLUSERS_properties_typeProperties_userId": {
 						"value": "[parameters('ONPREMALLUSERS_properties_typeProperties_userId')]"
+					},
+					"ONPREMALLUSERSPHXCOLO_properties_typeProperties_host": {
+						"value": "[parameters('ONPREMALLUSERSPHXCOLO_properties_typeProperties_host')]"
+					},
+					"ONPREMALLUSERSPHXCOLO_properties_typeProperties_userId": {
+						"value": "[parameters('ONPREMALLUSERSPHXCOLO_properties_typeProperties_userId')]"
 					}
 				}
 			},
@@ -305,14 +318,8 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"ONPREMALLUSERSPHXCOLO_password": {
-						"value": "[parameters('ONPREMALLUSERSPHXCOLO_password')]"
-					},
 					"ONPREMVM_password": {
 						"value": "[parameters('ONPREMVM_password')]"
-					},
-					"Oracle1_connectionString": {
-						"value": "[parameters('Oracle1_connectionString')]"
 					},
 					"Oracle2_connectionString": {
 						"value": "[parameters('Oracle2_connectionString')]"
@@ -320,17 +327,17 @@
 					"fabtimesqlserver_connectionString": {
 						"value": "[parameters('fabtimesqlserver_connectionString')]"
 					},
-					"ONPREMALLUSERSPHXCOLO_properties_typeProperties_host": {
-						"value": "[parameters('ONPREMALLUSERSPHXCOLO_properties_typeProperties_host')]"
-					},
-					"ONPREMALLUSERSPHXCOLO_properties_typeProperties_userId": {
-						"value": "[parameters('ONPREMALLUSERSPHXCOLO_properties_typeProperties_userId')]"
+					"ExnPrd_connectionString": {
+						"value": "[parameters('ExnPrd_connectionString')]"
 					},
 					"ONPREMVM_properties_typeProperties_host": {
 						"value": "[parameters('ONPREMVM_properties_typeProperties_host')]"
 					},
 					"ONPREMVM_properties_typeProperties_userId": {
 						"value": "[parameters('ONPREMVM_properties_typeProperties_userId')]"
+					},
+					"Snowflake1_connectionString": {
+						"value": "[parameters('Snowflake1_connectionString')]"
 					}
 				}
 			},
@@ -398,6 +405,26 @@
 					},
 					"USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath": {
 						"value": "[parameters('USR_WEH_Trigger_properties_unzip_plus_transformcsv_parameters_LoggingPath')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'Mfg-Data-Lake-DEV-Factory_ArmTemplate_5')]"
+			]
+		},
+		{
+			"name": "Mfg-Data-Lake-DEV-Factory_ArmTemplate_7",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_7.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder": {
 						"value": "[parameters('trigger_copyadlstoonprem_properties_CopyFiles_from_adls_toprem_parameters_SourceFileFolder')]"
@@ -414,7 +441,7 @@
 				}
 			},
 			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'Mfg-Data-Lake-DEV-Factory_ArmTemplate_5')]"
+				"[resourceId('Microsoft.Resources/deployments', 'Mfg-Data-Lake-DEV-Factory_ArmTemplate_6')]"
 			]
 		}
 	]
