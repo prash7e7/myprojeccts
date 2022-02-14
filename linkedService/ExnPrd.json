@@ -1,0 +1,16 @@
+{
+	"name": "ExnPrd",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "Oracle",
+		"typeProperties": {
+			"connectionString": "host=exnprd-db.onsemi.com;port=1729;servicename=EXNPRD.onsemi.com;user id=exn_read",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIwMDRjMjFjNy0xZjI4LTQ4ZGUtODRmYi04Y2E0Y2MyNzYxM2IiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "IntegrationRuntimeMDLPHXCOLO",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
