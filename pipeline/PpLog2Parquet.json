@@ -48,6 +48,7 @@
 						}
 					},
 					"enableStaging": false,
+					"parallelCopies": 1,
 					"translator": {
 						"type": "TabularTranslator",
 						"typeConversion": true,
@@ -66,7 +67,11 @@
 				"outputs": [
 					{
 						"referenceName": "PpLog2Parquet",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"earliest": "@variables('earliest')",
+							"latest": "@variables('latest')"
+						}
 					}
 				]
 			},

@@ -5,6 +5,14 @@
 			"referenceName": "onsemidevmdlstoragelink",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"earliest": {
+				"type": "string"
+			},
+			"latest": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
