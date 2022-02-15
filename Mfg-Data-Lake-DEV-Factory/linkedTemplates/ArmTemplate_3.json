@@ -7,47 +7,75 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "Mfg-Data-Lake-DEV-Factory"
 		},
-		"ExtensioAPI_password": {
+		"ExnPrd_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'ExtensioAPI'"
-		},
-		"ONPREMALLUSERS_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'ONPREMALLUSERS'"
-		},
-		"ONPREMALLUSERSPHXCOLO_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'ONPREMALLUSERSPHXCOLO'"
-		},
-		"ExtensioAPI_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://spark-mas-in-01.canyon.aws.pdf.com/api/v1"
-		},
-		"ExtensioAPI_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "exn_dba"
-		},
-		"ONPREMALLUSERS_properties_typeProperties_host": {
-			"type": "string",
-			"defaultValue": "\\\\USCO01WS0029\\adls"
-		},
-		"ONPREMALLUSERS_properties_typeProperties_userId": {
-			"type": "string",
-			"defaultValue": "onsemi\\fabtimesys"
-		},
-		"ONPREMALLUSERSPHXCOLO_properties_typeProperties_host": {
-			"type": "string",
-			"defaultValue": "\\\\USAZ15WS078\\adls"
-		},
-		"ONPREMALLUSERSPHXCOLO_properties_typeProperties_userId": {
-			"type": "string",
-			"defaultValue": "onsemi\\fabtimesys"
+			"metadata": "Secure string for 'connectionString' of 'ExnPrd'"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/compressedcsv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "onsemidevmdlstoragelink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "inbound/site/USR/WEH",
+						"fileSystem": "adls"
+					},
+					"columnDelimiter": "|",
+					"compressionCodec": "gzip",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/folderout1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLSBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "output/mydataflow123partfiles",
+						"container": "mycontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/inbound_data')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -496,65 +524,14 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ExtensioAPI')]",
+			"name": "[concat(parameters('factoryName'), '/ExnPrd')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"type": "RestService",
+				"type": "Oracle",
 				"typeProperties": {
-					"url": "[parameters('ExtensioAPI_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": false,
-					"authenticationType": "Basic",
-					"userName": "[parameters('ExtensioAPI_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('ExtensioAPI_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntimeMfgDataLake",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ONPREMALLUSERS')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "FileServer",
-				"typeProperties": {
-					"host": "[parameters('ONPREMALLUSERS_properties_typeProperties_host')]",
-					"userId": "[parameters('ONPREMALLUSERS_properties_typeProperties_userId')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('ONPREMALLUSERS_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntimeMfgDataLake",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ONPREMALLUSERSPHXCOLO')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "FileServer",
-				"typeProperties": {
-					"host": "[parameters('ONPREMALLUSERSPHXCOLO_properties_typeProperties_host')]",
-					"userId": "[parameters('ONPREMALLUSERSPHXCOLO_properties_typeProperties_userId')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('ONPREMALLUSERSPHXCOLO_password')]"
-					}
+					"connectionString": "[parameters('ExnPrd_connectionString')]"
 				},
 				"connectVia": {
 					"referenceName": "IntegrationRuntimeMDLPHXCOLO",

@@ -13,6 +13,25 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/CZ4_Dataview')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Oracle2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "OracleTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "NEWTON",
+					"table": "NEWT_METADATA"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ExtensioRestLoginDS')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -90,6 +109,25 @@
 							"type": "Expression"
 						}
 					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RefDb')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ExnPrd",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "OracleTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "REFDB",
+					"table": "PP_LOG"
 				}
 			},
 			"dependsOn": []
@@ -589,25 +627,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/RefDb')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ExnPrd",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "OracleTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "REFDB",
-					"table": "PP_LOG"
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/ASH_test')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -658,92 +677,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/cleanCSV_Delta_Parquet_ASH')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Batch_inference_store_results_filter_results')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "batch_inference",
-						"description": "takes best_model.pt and images from inbound batch set and outputs csv/parquet to scored/results. ",
-						"type": "DatabricksSparkPython",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pythonFile": "dbfs://Users/zbm9dp@onsemi.com/data_factory_image_classification/batch_inference",
-							"parameters": [
-								"CZ4"
-							]
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "filter_results",
-						"type": "DatabricksSparkPython",
-						"dependsOn": [
-							{
-								"activity": "batch_inference",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pythonFile": "dbfs:///Users/zbm9dp@onsemi.com/data_factory_image_classification/filter_csv",
-							"parameters": [
-								"CZ4"
-							]
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks_rado",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Execute Pipeline1",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "Create_Retrain_new_model",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "CZ4_Defect_classification"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
 		}
 	]
 }

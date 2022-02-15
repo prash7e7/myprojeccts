@@ -26,6 +26,9 @@
 		"AzureSynapseDLLink_connectionString": {
 			"value": ""
 		},
+		"ExnPrd_connectionString": {
+			"value": ""
+		},
 		"ExtensioAPI_password": {
 			"value": ""
 		},
@@ -42,9 +45,6 @@
 			"value": ""
 		},
 		"fabtimesqlserver_connectionString": {
-			"value": ""
-		},
-		"ExnPrd_connectionString": {
 			"value": ""
 		},
 		"ExtensioAPI_properties_typeProperties_url": {
