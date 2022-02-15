@@ -5,7 +5,20 @@
 			{
 				"name": "RefDbToParquet",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Latest run",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Earliest run",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -56,8 +69,38 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "Earliest run",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "earliest",
+					"value": ""
+				}
+			},
+			{
+				"name": "Latest run",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "latest",
+					"value": ""
+				}
 			}
 		],
+		"variables": {
+			"earliest": {
+				"type": "String",
+				"defaultValue": "@adddays(utcnow(),-1)"
+			},
+			"latest": {
+				"type": "String",
+				"defaultValue": "@adddays(utcnow())"
+			}
+		},
 		"folder": {
 			"name": "RefDb"
 		},
