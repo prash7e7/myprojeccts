@@ -77,7 +77,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "earliest",
-					"value": ""
+					"value": "@utcnow()"
 				}
 			},
 			{
@@ -87,7 +87,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "latest",
-					"value": ""
+					"value": "@utcnow()"
 				}
 			}
 		],
@@ -98,7 +98,7 @@
 			},
 			"latest": {
 				"type": "String",
-				"defaultValue": "@adddays(utcnow())"
+				"defaultValue": "@adddays(utcnow(),1)"
 			}
 		},
 		"folder": {
