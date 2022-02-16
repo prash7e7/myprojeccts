@@ -17,6 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "OracleSource",
+						"oracleReaderQuery": "select * from refdb.pp_log where process_datetime > sysdate - 1 and process_datetime <= sysdate",
 						"partitionOption": "None",
 						"queryTimeout": "02:00:00"
 					},
