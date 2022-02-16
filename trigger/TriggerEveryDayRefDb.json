@@ -2,7 +2,7 @@
 	"name": "TriggerEveryDayRefDb",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Stopped",
+		"runtimeState": "Started",
 		"pipelines": [
 			{
 				"pipelineReference": {
@@ -16,7 +16,7 @@
 			"recurrence": {
 				"frequency": "Day",
 				"interval": 1,
-				"startTime": "2022-02-15T21:13:00Z",
+				"startTime": "2022-02-16T21:52:00Z",
 				"timeZone": "UTC"
 			}
 		}

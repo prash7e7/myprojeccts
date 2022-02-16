@@ -5,20 +5,7 @@
 			{
 				"name": "RefDbToParquet",
 				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "Latest run",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					},
-					{
-						"activity": "Earliest run",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -67,33 +54,9 @@
 				"outputs": [
 					{
 						"referenceName": "PpLog2Parquet",
-						"type": "DatasetReference",
-						"parameters": {
-							"earliest": "@variables('earliest')",
-							"latest": "@variables('latest')"
-						}
+						"type": "DatasetReference"
 					}
 				]
-			},
-			{
-				"name": "Earliest run",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "earliest",
-					"value": "@utcnow()"
-				}
-			},
-			{
-				"name": "Latest run",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "latest",
-					"value": "@utcnow()"
-				}
 			}
 		],
 		"variables": {
