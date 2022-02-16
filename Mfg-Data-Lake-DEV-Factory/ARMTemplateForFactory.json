@@ -2856,6 +2856,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "OracleSource",
+								"oracleReaderQuery": "select * from refdb.pp_log where process_datetime > sysdate - 1 and process_datetime <= sysdate",
 								"partitionOption": "None",
 								"queryTimeout": "02:00:00"
 							},
@@ -2874,6 +2875,7 @@
 								}
 							},
 							"enableStaging": false,
+							"parallelCopies": 1,
 							"translator": {
 								"type": "TabularTranslator",
 								"typeConversion": true,
@@ -2902,6 +2904,16 @@
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"variables": {
+					"earliest": {
+						"type": "String",
+						"defaultValue": "@adddays(utcnow(),-1)"
+					},
+					"latest": {
+						"type": "String",
+						"defaultValue": "@adddays(utcnow(),1)"
+					}
 				},
 				"folder": {
 					"name": "RefDb"
@@ -31178,8 +31190,7 @@
 						"PYSPARK_PYTHON": "/databricks/python3/bin/python3"
 					},
 					"newClusterVersion": "7.4.x-gpu-ml-scala2.12",
-					"newClusterInitScripts": [],
-					"clusterOption": "Fixed"
+					"newClusterInitScripts": []
 				}
 			},
 			"dependsOn": []
@@ -31548,6 +31559,37 @@
 				"[concat(variables('factoryId'), '/pipelines/Create_Retrain_new_model')]",
 				"[concat(variables('factoryId'), '/pipelines/Test_existing_model')]",
 				"[concat(variables('factoryId'), '/pipelines/model_deploy')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TriggerEveryDayRefDb')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "PpLog2Parquet",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2022-02-16T21:52:00Z",
+						"timeZone": "UTC",
+						"schedule": {}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/PpLog2Parquet')]"
 			]
 		},
 		{
@@ -32204,37 +32246,6 @@
 				"[concat(variables('factoryId'), '/datasets/compressedcsv')]",
 				"[concat(variables('factoryId'), '/datasets/USRWEH_Parquet')]",
 				"[concat(variables('factoryId'), '/linkedServices/onsemidevmdlstoragelink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TriggerEveryDayRefDb')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "PpLog2Parquet",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2022-02-15T21:13:00Z",
-						"timeZone": "UTC",
-						"schedule": {}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/PpLog2Parquet')]"
 			]
 		}
 	]

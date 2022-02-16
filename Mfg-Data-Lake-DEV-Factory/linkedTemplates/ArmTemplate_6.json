@@ -937,6 +937,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "OracleSource",
+								"oracleReaderQuery": "select * from refdb.pp_log where process_datetime > sysdate - 1 and process_datetime <= sysdate",
 								"partitionOption": "None",
 								"queryTimeout": "02:00:00"
 							},
@@ -955,6 +956,7 @@
 								}
 							},
 							"enableStaging": false,
+							"parallelCopies": 1,
 							"translator": {
 								"type": "TabularTranslator",
 								"typeConversion": true,
@@ -983,6 +985,16 @@
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"variables": {
+					"earliest": {
+						"type": "String",
+						"defaultValue": "@adddays(utcnow(),-1)"
+					},
+					"latest": {
+						"type": "String",
+						"defaultValue": "@adddays(utcnow(),1)"
+					}
 				},
 				"folder": {
 					"name": "RefDb"
