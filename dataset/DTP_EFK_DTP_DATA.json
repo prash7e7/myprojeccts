@@ -1,0 +1,19 @@
+{
+	"name": "DTP_EFK_DTP_DATA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DTP_EFK",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "DataPort"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "DATAPORT_UWA_OWNER",
+			"table": "DTP_DATA"
+		}
+	}
+}
