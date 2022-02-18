@@ -1,0 +1,16 @@
+{
+	"name": "DTP_EFK",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "Oracle",
+		"typeProperties": {
+			"connectionString": "host=gyqsp-db.onsemi.com;port=1546;sid=GYQSP;user id=DATAPORT_UWA_READ",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJhZjgzZDg5Ni0xN2NkLTQyZmUtOWNjZi01MDUzZmQ1NjRjNjQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "IntegrationRuntimeMDLPHXCOLO",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
